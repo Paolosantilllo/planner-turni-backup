@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planner Turni Apple Style</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Maggio 2026</h1>
+  <div class="buttons">
+    <button>Anno</button>
+    <button class="active">Mese</button>
+    <button>Settimana</button>
+  </div>
+</header>
+
+<main class="calendar-container">
+
+  <div class="calendar-grid" id="calendarGrid"></div>
+
+  <section class="details">
+    <h2>Inserimento rapido</h2>
+
+    <div class="quick-form">
+      <select id="employee">
+        <option>Mario Rossi</option>
+        <option>Luca Bianchi</option>
+        <option>Anna Verdi</option>
+        <option>Giulia Neri</option>
+        <option>Paolo Conti</option>
+      </select>
+
+      <input type="date" id="fromDate">
+      <input type="date" id="toDate">
+
+      <select id="shiftType">
+        <option value="">-- Tipo turno --</option>
+        <option value="Rep">Rep</option>
+        <option value="Frep">Frep</option>
+        <option value="LO">LO</option>
+        <option value="REC">REC</option>
+        <option value="CFI">CFI</option>
+        <option value="CFI/REP">CFI/REP</option>
+      </select>
+
+      <button onclick="applyShift()">Applica</button>
+    </div>
+
+    <div class="legend">
+      <span class="rep">Rep</span>
+      <span class="frep">Frep</span>
+      <span class="lo">LO</span>
+      <span class="cfi">CFI</span>
+      <span class="cfi">CFI/REP</span>
+      <span class="lo">REC</span>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/app.js"></script>
+</body>
+</html>
