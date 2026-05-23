@@ -149,17 +149,32 @@ function renderCalendar() {
 
     dayBox.appendChild(dayNumber);
 
-    const events = savedEvents.filter(event => {
+  const selectedEmployee =
+  document.getElementById("employeeFilter").value;
 
-      const eventDate = new Date(event.date);
+const events = savedEvents.filter(event => {
 
-      return (
-        eventDate.getDate() === day &&
-        eventDate.getMonth() === month &&
-        eventDate.getFullYear() === year
-      );
+  const eventDate = new Date(event.date);
 
-    });
+  const sameDay = (
+
+    eventDate.getDate() === day &&
+    eventDate.getMonth() === month &&
+    eventDate.getFullYear() === year
+
+  );
+
+  const employeeMatch = (
+
+    selectedEmployee === "ALL" ||
+
+    event.employee === selectedEmployee
+
+  );
+
+  return sameDay && employeeMatch;
+
+});
 
     events.forEach(event => {
 
