@@ -32,9 +32,30 @@ function renderCalendar() {
   monthTitle.innerText =
     monthNames[month] + " " + year;
 
+  const firstDay =
+    new Date(year, month, 1).getDay();
+
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
+  // Adattamento calendario europeo
+  let startDay = firstDay - 1;
+
+  if(startDay < 0){
+    startDay = 6;
+  }
+
+  // Celle vuote iniziali
+  for(let i = 0; i < startDay; i++){
+
+    const emptyDay = document.createElement("div");
+    emptyDay.classList.add("empty-day");
+
+    calendar.appendChild(emptyDay);
+
+  }
+
+  // Giorni mese
   for(let day = 1; day <= daysInMonth; day++) {
 
     const dayBox = document.createElement("div");
@@ -75,7 +96,6 @@ function renderCalendar() {
   }
 
 }
-
 function openPopup() {
   popup.style.display = "flex";
 }
