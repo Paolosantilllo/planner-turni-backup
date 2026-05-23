@@ -1,57 +1,120 @@
+const calendar = document.getElementById("calendar");
+const monthTitle = document.getElementById("monthTitle");
 
-const grid = document.getElementById('calendarGrid');
+const popup = document.getElementById("popup");
 
-function createCalendar() {
-  for(let i=1;i<=31;i++){
+const currentDate = new Date();
 
-    const day = document.createElement('div');
-    day.classList.add('day');
+const monthNames = [
+  "Gennaio",
+  "Febbraio",
+  "Marzo",
+  "Aprile",
+  "Maggio",
+  "Giugno",
+  "Luglio",
+  "Agosto",
+  "Settembre",
+  "Ottobre",
+  "Novembre",
+  "Dicembre"
+];
 
-    const date = new Date(2026,4,i);
-    const weekday = date.getDay();
+let savedEvents = JSON.parse(localStorage.getItem("events")) || [];
 
-    if(weekday === 6){
-      day.classList.add('saturday');
-    }
+function renderCalendar() {
 
-    if(weekday === 0){
-      day.classList.add('sunday');
-    }
+  calendar.innerHTML = "";
 
-    day.innerHTML = `
-      <div class="day-number">${i}</div>
-      <div class="event rep">Rep</div>
-      <div class="event cfi">CFI</div>
-    `;
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-    grid.appendChild(day);
+  monthTitle.innerText =
+    monthNames[month] + " " + year;
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  for(let day = 1; day <= daysInMonth; day++) {
+
+    const dayBox = document.createElement("div");
+    dayBox.classList.add("day");
+
+    const dayNumber = document.createElement("div");
+    dayNumber.classList.add("day-number");
+    dayNumber.innerText = day;
+
+    dayBox.appendChild(dayNumber);
+
+    const events = savedEvents.filter(event => {
+
+      const eventDate = new Date(event.date);
+
+      return (
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === month &&
+        eventDate.getFullYear() === year
+      );
+
+    });
+
+    events.forEach(event => {
+
+      const eventDiv = document.createElement("div");
+      eventDiv.classList.add("event");
+
+      eventDiv.innerText =
+        event.employee + " - " + event.shift;
+
+      dayBox.appendChild(eventDiv);
+
+    });
+
+    calendar.appendChild(dayBox);
+
   }
+
 }
 
-createCalendar();
+function openPopup() {
+  popup.style.display = "flex";
+}
 
-function applyShift(){
-  const employee = document.getElementById('employee').value;
-  const shift = document.getElementById('shiftType').value;
+function closePopup() {
+  popup.style.display = "none";
+}
 
-  if(!shift){
-    alert("Seleziona un turno");
+function saveShift() {
+
+  const employee =
+    document.getElementById("employee").value;
+
+  const date =
+    document.getElementById("date").value;
+
+  const shift =
+    document.getElementById("shift").value;
+
+  if(!date) {
+    alert("Seleziona una data");
     return;
   }
 
-  alert(`Turno ${shift} applicato a ${employee}`);
+  savedEvents.push({
+    employee,
+    date,
+    shift
+  });
+
+  localStorage.setItem(
+    "events",
+    JSON.stringify(savedEvents)
+  );
+
+  closePopup();
+
+  renderCalendar();
+
 }
 
-/*
-REGOLE DA IMPLEMENTARE:
-
-- REP massimo 6
-- FREP massimo 2
-- FREP solo domenica/festivi
-- REP vietato festivi/domenica
-- Conteggio CFI weekend doppio
-- Vista annuale
-- Vista settimanale
-- Database salvataggio
-
-*/
+renderCalendar();
