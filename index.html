@@ -13,7 +13,23 @@
 
     <header class="topbar">
       <h1 id="monthTitle"></h1>
+<select id="employeeFilter" onchange="renderCalendar()">
 
+  <option value="ALL">Tutti</option>
+
+  <option value="PERCACCIOLI">
+    PERCACCIOLI
+  </option>
+
+  <option value="MANUNTA">
+    MANUNTA
+  </option>
+
+  <option value="SANTILLO">
+    SANTILLO
+  </option>
+
+</select>
       <button class="add-btn" onclick="openPopup()">
         +
       </button>
