@@ -20,7 +20,69 @@ const monthNames = [
   "Dicembre"
 ];
 
-let savedEvents = JSON.parse(localStorage.getItem("events")) || [];
+let savedEvents =
+  JSON.parse(localStorage.getItem("events")) || [];
+
+let editingIndex = null;
+
+
+
+function isHoliday(date){
+
+  const day = date.getDay();
+
+  // Domenica
+  if(day === 0){
+    return true;
+  }
+
+  const month = date.getMonth() + 1;
+  const dayNumber = date.getDate();
+
+  const holidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
+
+  return holidays.includes(
+    `${dayNumber}-${month}`
+  );
+
+}
+
+
+
+function countMonthlyShift(
+  employee,
+  shift,
+  year,
+  month
+){
+
+  return savedEvents.filter(event => {
+
+    const d = new Date(event.date);
+
+    return (
+      event.employee === employee &&
+      event.shift === shift &&
+      d.getFullYear() === year &&
+      d.getMonth() === month
+    );
+
+  }).length;
+
+}
+
+
 
 function renderCalendar() {
 
@@ -38,7 +100,6 @@ function renderCalendar() {
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
-  // Adattamento calendario europeo
   let startDay = firstDay - 1;
 
   if(startDay < 0){
@@ -61,22 +122,27 @@ function renderCalendar() {
     const dayBox = document.createElement("div");
     dayBox.classList.add("day");
 
+    // CLICK GIORNO
     dayBox.addEventListener("click", () => {
 
-  openPopup();
+      editingIndex = null;
 
-  const selectedDate = new Date(year, month, day);
+      openPopup();
 
-  const formattedDate =
-    selectedDate.toISOString().split("T")[0];
+      const selectedDate =
+        new Date(year, month, day);
 
- document.getElementById("startDate").value =
-  formattedDate;
+      const formattedDate =
+        selectedDate.toISOString().split("T")[0];
 
-document.getElementById("endDate").value =
-  formattedDate;
+      document.getElementById("startDate").value =
+        formattedDate;
 
-});
+      document.getElementById("endDate").value =
+        formattedDate;
+
+    });
+
     const dayNumber = document.createElement("div");
     dayNumber.classList.add("day-number");
     dayNumber.innerText = day;
@@ -97,251 +163,65 @@ document.getElementById("endDate").value =
 
     events.forEach(event => {
 
-      const eventDiv = document.createElement("div");
-eventDiv.classList.add("event");
+      const eventIndex =
+        savedEvents.indexOf(event);
 
-if(event.employee === "PERCACCIOLI"){
-  eventDiv.classList.add("percaccioli");
-}
+      const eventDiv =
+        document.createElement("div");
 
-if(event.employee === "MANUNTA"){
-  eventDiv.classList.add("manunta");
-}
+      eventDiv.classList.add("event");
 
-if(event.employee === "SANTILLO"){
-  eventDiv.classList.add("santillo");
-}
-# Modifiche per REP e FREP
+      // COLORI DIPENDENTI
+      if(event.employee === "PERCACCIOLI"){
+        eventDiv.classList.add("percaccioli");
+      }
 
-Queste modifiche aggiungono:
+      if(event.employee === "MANUNTA"){
+        eventDiv.classList.add("manunta");
+      }
 
-* REP solo nei giorni feriali
-* massimo 6 REP al mese per dipendente
-* FREP solo nei giorni festivi
-* massimo 2 FREP al mese per dipendente
-* FREP scritto in rosso
+      if(event.employee === "SANTILLO"){
+        eventDiv.classList.add("santillo");
+      }
 
----
+      // FREP ROSSO
+      if(event.shift === "FREP"){
+        eventDiv.classList.add("frep");
+      }
 
-# 1. AGGIUNGI QUESTE FUNZIONI SOPRA `saveShift()`
+      eventDiv.innerHTML = `
+        <div class="event-name">
+          ${event.employee}
+        </div>
 
-```javascript
-function isHoliday(date){
+        <div class="event-shift">
+          ${event.shift}
+        </div>
+      `;
 
-  const day = date.getDay();
+      // CLICK MODIFICA EVENTO
+      eventDiv.addEventListener("click", (e) => {
 
-  // Domenica
-  if(day === 0){
-    return true;
-  }
+        e.stopPropagation();
 
-  const month = date.getMonth() + 1;
-  const dayNumber = date.getDate();
+        editingIndex = eventIndex;
 
-  const holidays = [
-    "1-1",   // Capodanno
-    "6-1",   // Epifania
-    "25-4",  // Liberazione
-    "1-5",   // Festa del lavoro
-    "2-6",   // Repubblica
-    "15-8",  // Ferragosto
-    "1-11",  // Ognissanti
-    "8-12",  // Immacolata
-    "25-12", // Natale
-    "26-12"  // Santo Stefano
-  ];
+        document.getElementById("employee").value =
+          event.employee;
 
-  return holidays.includes(
-    `${dayNumber}-${month}`
-  );
+        document.getElementById("startDate").value =
+          event.date;
 
-}
+        document.getElementById("endDate").value =
+          event.date;
 
-function countMonthlyShift(employee, shift, year, month){
+        document.getElementById("shift").value =
+          event.shift;
 
-  return savedEvents.filter(event => {
+        openPopup();
 
-    const d = new Date(event.date);
+      });
 
-    return (
-      event.employee === employee &&
-      event.shift === shift &&
-      d.getFullYear() === year &&
-      d.getMonth() === month
-    );
-
-  }).length;
-
-}
-```
-
----
-
-# 2. DENTRO `saveShift()`
-
-Trova questo blocco:
-
-```javascript
-while(current <= end){
-```
-
-E sostituisci tutto il contenuto del ciclo con questo:
-
-```javascript
-while(current <= end){
-
-  const currentDate = new Date(current);
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-
-  // REP
-  if(shift === "REP"){
-
-    if(isHoliday(currentDate)){
-
-      alert(
-        "REP può essere inserito solo nei giorni feriali"
-      );
-
-      return;
-
-    }
-
-    const repCount = countMonthlyShift(
-      employee,
-      "REP",
-      year,
-      month
-    );
-
-    if(repCount >= 6){
-
-      alert(
-        employee + " ha già 6 REP questo mese"
-      );
-
-      return;
-
-    }
-
-  }
-
-  // FREP
-  if(shift === "FREP"){
-
-    if(!isHoliday(currentDate)){
-
-      alert(
-        "FREP può essere inserito solo nei festivi"
-      );
-
-      return;
-
-    }
-
-    const frepCount = countMonthlyShift(
-      employee,
-      "FREP",
-      year,
-      month
-    );
-
-    if(frepCount >= 2){
-
-      alert(
-        employee + " ha già 2 FREP questo mese"
-      );
-
-      return;
-
-    }
-
-  }
-
-  savedEvents.push({
-
-    employee,
-
-    date:
-      currentDate.toISOString().split("T")[0],
-
-    shift
-
-  });
-
-  current.setDate(
-    current.getDate() + 1
-  );
-
-}
-```
-
----
-
-# 3. FREP IN ROSSO
-
-Dentro questa parte:
-
-```javascript
-if(event.employee === "PERCACCIOLI"){
-  eventDiv.classList.add("percaccioli");
-}
-```
-
-aggiungi subito sotto:
-
-```javascript
-if(event.shift === "FREP"){
-  eventDiv.classList.add("frep");
-}
-```
-
----
-
-# 4. CSS
-
-Aggiungi in fondo al CSS:
-
-```css
-.frep{
-  background:#ff3b30 !important;
-}
-```
-
----
-
-# RISULTATO
-
-Ora il sistema:
-
-✅ blocca REP nei festivi
-✅ massimo 6 REP al mese
-✅ blocca FREP nei feriali
-✅ massimo 2 FREP al mese
-✅ FREP rosso
-✅ controlla automaticamente tutte le date dell'intervallo
-
-Esempio:
-
-* REP dal 1 al 7 giugno
-  → se dentro c’è una domenica il sistema lo blocca.
-
-* FREP il martedì
-  → viene bloccato.
-
-* terzo FREP del mese
-  → viene bloccato automaticamente.
-
-eventDiv.innerHTML = `
-  <div class="event-name">
-    ${event.employee}
-  </div>
-
-  <div class="event-shift">
-    ${event.shift}
-  </div>
-`;
       dayBox.appendChild(eventDiv);
 
     });
@@ -351,503 +231,198 @@ eventDiv.innerHTML = `
   }
 
 }
+
+
+
 function openPopup() {
   popup.style.display = "flex";
 }
 
+
+
 function closePopup() {
   popup.style.display = "none";
 }
-# Modifiche per REP e FREP
 
-Queste modifiche aggiungono:
 
-* REP solo nei giorni feriali
-* massimo 6 REP al mese per dipendente
-* FREP solo nei giorni festivi
-* massimo 2 FREP al mese per dipendente
-* FREP scritto in rosso
-
----
-
-# 1. AGGIUNGI QUESTE FUNZIONI SOPRA `saveShift()`
-
-```javascript
-function isHoliday(date){
-
-  const day = date.getDay();
-
-  // Domenica
-  if(day === 0){
-    return true;
-  }
-
-  const month = date.getMonth() + 1;
-  const dayNumber = date.getDate();
-
-  const holidays = [
-    "1-1",   // Capodanno
-    "6-1",   // Epifania
-    "25-4",  // Liberazione
-    "1-5",   // Festa del lavoro
-    "2-6",   // Repubblica
-    "15-8",  // Ferragosto
-    "1-11",  // Ognissanti
-    "8-12",  // Immacolata
-    "25-12", // Natale
-    "26-12"  // Santo Stefano
-  ];
-
-  return holidays.includes(
-    `${dayNumber}-${month}`
-  );
-
-}
-
-function countMonthlyShift(employee, shift, year, month){
-
-  return savedEvents.filter(event => {
-
-    const d = new Date(event.date);
-
-    return (
-      event.employee === employee &&
-      event.shift === shift &&
-      d.getFullYear() === year &&
-      d.getMonth() === month
-    );
-
-  }).length;
-
-}
-```
-
----
-
-# 2. DENTRO `saveShift()`
-
-Trova questo blocco:
-
-```javascript
-while(current <= end){
-```
-
-E sostituisci tutto il contenuto del ciclo con questo:
-
-```javascript
-while(current <= end){
-
-  const currentDate = new Date(current);
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-
-  // REP
-  if(shift === "REP"){
-
-    if(isHoliday(currentDate)){
-
-      alert(
-        "REP può essere inserito solo nei giorni feriali"
-      );
-
-      return;
-
-    }
-
-    const repCount = countMonthlyShift(
-      employee,
-      "REP",
-      year,
-      month
-    );
-
-    if(repCount >= 6){
-
-      alert(
-        employee + " ha già 6 REP questo mese"
-      );
-
-      return;
-
-    }
-
-  }
-
-  // FREP
-  if(shift === "FREP"){
-
-    if(!isHoliday(currentDate)){
-
-      alert(
-        "FREP può essere inserito solo nei festivi"
-      );
-
-      return;
-
-    }
-
-    const frepCount = countMonthlyShift(
-      employee,
-      "FREP",
-      year,
-      month
-    );
-
-    if(frepCount >= 2){
-
-      alert(
-        employee + " ha già 2 FREP questo mese"
-      );
-
-      return;
-
-    }
-
-  }
-
-  savedEvents.push({
-
-    employee,
-
-    date:
-      currentDate.toISOString().split("T")[0],
-
-    shift
-
-  });
-
-  current.setDate(
-    current.getDate() + 1
-  );
-
-}
-```
-
----
-
-# 3. FREP IN ROSSO
-
-Dentro questa parte:
-
-```javascript
-if(event.employee === "PERCACCIOLI"){
-  eventDiv.classList.add("percaccioli");
-}
-```
-
-aggiungi subito sotto:
-
-```javascript
-if(event.shift === "FREP"){
-  eventDiv.classList.add("frep");
-}
-```
-
----
-
-# 4. CSS
-
-Aggiungi in fondo al CSS:
-
-```css
-.frep{
-  background:#ff3b30 !important;
-}
-```
-
----
-
-# RISULTATO
-
-Ora il sistema:
-
-✅ blocca REP nei festivi
-✅ massimo 6 REP al mese
-✅ blocca FREP nei feriali
-✅ massimo 2 FREP al mese
-✅ FREP rosso
-✅ controlla automaticamente tutte le date dell'intervallo
-
-Esempio:
-
-* REP dal 1 al 7 giugno
-  → se dentro c’è una domenica il sistema lo blocca.
-
-* FREP il martedì
-  → viene bloccato.
-
-* terzo FREP del mese
-  → viene bloccato automaticamente.
 
 function saveShift() {
 
   const employee =
     document.getElementById("employee").value;
 
-  const date =
-    document.getElementById("date").value;
+  const startDate =
+    document.getElementById("startDate").value;
+
+  const endDate =
+    document.getElementById("endDate").value;
 
   const shift =
     document.getElementById("shift").value;
 
- if(!startDate || !endDate) {
-    alert("Seleziona una data");
+  if(!startDate || !endDate){
+
+    alert("Seleziona le date");
+
     return;
+
   }
 
- if(editingIndex !== null){
+  // MODIFICA EVENTO
+  if(editingIndex !== null){
 
-  savedEvents[editingIndex] = {
+    savedEvents[editingIndex] = {
 
-    employee,
-
-    date: startDate,
-
-    shift
-
-  };
-
-}else{
-
-  let current =
-    new Date(startDate);
-
-  let end =
-    new Date(endDate);
-
- # Modifiche per REP e FREP
-
-Queste modifiche aggiungono:
-
-* REP solo nei giorni feriali
-* massimo 6 REP al mese per dipendente
-* FREP solo nei giorni festivi
-* massimo 2 FREP al mese per dipendente
-* FREP scritto in rosso
-
----
-
-# 1. AGGIUNGI QUESTE FUNZIONI SOPRA `saveShift()`
-
-```javascript
-function isHoliday(date){
-
-  const day = date.getDay();
-
-  // Domenica
-  if(day === 0){
-    return true;
-  }
-
-  const month = date.getMonth() + 1;
-  const dayNumber = date.getDate();
-
-  const holidays = [
-    "1-1",   // Capodanno
-    "6-1",   // Epifania
-    "25-4",  // Liberazione
-    "1-5",   // Festa del lavoro
-    "2-6",   // Repubblica
-    "15-8",  // Ferragosto
-    "1-11",  // Ognissanti
-    "8-12",  // Immacolata
-    "25-12", // Natale
-    "26-12"  // Santo Stefano
-  ];
-
-  return holidays.includes(
-    `${dayNumber}-${month}`
-  );
-
-}
-
-function countMonthlyShift(employee, shift, year, month){
-
-  return savedEvents.filter(event => {
-
-    const d = new Date(event.date);
-
-    return (
-      event.employee === employee &&
-      event.shift === shift &&
-      d.getFullYear() === year &&
-      d.getMonth() === month
-    );
-
-  }).length;
-
-}
-```
-
----
-
-# 2. DENTRO `saveShift()`
-
-Trova questo blocco:
-
-```javascript
-while(current <= end){
-```
-
-E sostituisci tutto il contenuto del ciclo con questo:
-
-```javascript
-while(current <= end){
-
-  const currentDate = new Date(current);
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-
-  // REP
-  if(shift === "REP"){
-
-    if(isHoliday(currentDate)){
-
-      alert(
-        "REP può essere inserito solo nei giorni feriali"
-      );
-
-      return;
-
-    }
-
-    const repCount = countMonthlyShift(
       employee,
-      "REP",
-      year,
-      month
-    );
 
-    if(repCount >= 6){
+      date: startDate,
 
-      alert(
-        employee + " ha già 6 REP questo mese"
+      shift
+
+    };
+
+  }else{
+
+    let current =
+      new Date(startDate);
+
+    let end =
+      new Date(endDate);
+
+    while(current <= end){
+
+      const currentDate =
+        new Date(current);
+
+      const year =
+        currentDate.getFullYear();
+
+      const month =
+        currentDate.getMonth();
+
+      // REP
+      if(shift === "REP"){
+
+        if(isHoliday(currentDate)){
+
+          alert(
+            "REP può essere inserito solo nei giorni feriali"
+          );
+
+          return;
+
+        }
+
+        const repCount =
+          countMonthlyShift(
+            employee,
+            "REP",
+            year,
+            month
+          );
+
+        if(repCount >= 6){
+
+          alert(
+            employee +
+            " ha già 6 REP questo mese"
+          );
+
+          return;
+
+        }
+
+      }
+
+      // FREP
+      if(shift === "FREP"){
+
+        if(!isHoliday(currentDate)){
+
+          alert(
+            "FREP può essere inserito solo nei festivi"
+          );
+
+          return;
+
+        }
+
+        const frepCount =
+          countMonthlyShift(
+            employee,
+            "FREP",
+            year,
+            month
+          );
+
+        if(frepCount >= 2){
+
+          alert(
+            employee +
+            " ha già 2 FREP questo mese"
+          );
+
+          return;
+
+        }
+
+      }
+
+      savedEvents.push({
+
+        employee,
+
+        date:
+          currentDate
+          .toISOString()
+          .split("T")[0],
+
+        shift
+
+      });
+
+      current.setDate(
+        current.getDate() + 1
       );
-
-      return;
 
     }
 
   }
-
-  // FREP
-  if(shift === "FREP"){
-
-    if(!isHoliday(currentDate)){
-
-      alert(
-        "FREP può essere inserito solo nei festivi"
-      );
-
-      return;
-
-    }
-
-    const frepCount = countMonthlyShift(
-      employee,
-      "FREP",
-      year,
-      month
-    );
-
-    if(frepCount >= 2){
-
-      alert(
-        employee + " ha già 2 FREP questo mese"
-      );
-
-      return;
-
-    }
-
-  }
-
-  savedEvents.push({
-
-    employee,
-
-    date:
-      currentDate.toISOString().split("T")[0],
-
-    shift
-
-  });
-
-  current.setDate(
-    current.getDate() + 1
-  );
-
-}
-```
-
----
-
-# 3. FREP IN ROSSO
-
-Dentro questa parte:
-
-```javascript
-if(event.employee === "PERCACCIOLI"){
-  eventDiv.classList.add("percaccioli");
-}
-```
-
-aggiungi subito sotto:
-
-```javascript
-if(event.shift === "FREP"){
-  eventDiv.classList.add("frep");
-}
-```
-
----
-
-# 4. CSS
-
-Aggiungi in fondo al CSS:
-
-```css
-.frep{
-  background:#ff3b30 !important;
-}
-```
-
----
-
-# RISULTATO
-
-Ora il sistema:
-
-✅ blocca REP nei festivi
-✅ massimo 6 REP al mese
-✅ blocca FREP nei feriali
-✅ massimo 2 FREP al mese
-✅ FREP rosso
-✅ controlla automaticamente tutte le date dell'intervallo
-
-Esempio:
-
-* REP dal 1 al 7 giugno
-  → se dentro c’è una domenica il sistema lo blocca.
-
-* FREP il martedì
-  → viene bloccato.
-
-* terzo FREP del mese
-  → viene bloccato automaticamente.
-
-
-}
 
   localStorage.setItem(
     "events",
     JSON.stringify(savedEvents)
   );
 
+  editingIndex = null;
+
   closePopup();
 
   renderCalendar();
 
 }
+
+
+
+function deleteShift(){
+
+  if(editingIndex === null) return;
+
+  savedEvents.splice(editingIndex, 1);
+
+  localStorage.setItem(
+    "events",
+    JSON.stringify(savedEvents)
+  );
+
+  editingIndex = null;
+
+  closePopup();
+
+  renderCalendar();
+
+}
+
+
+
+renderCalendar();
