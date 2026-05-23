@@ -133,3 +133,16 @@ body{
   font-weight:600;
   cursor:pointer;
 }
+.weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  margin-bottom:10px;
+  padding:0 5px;
+}
+
+.weekdays div{
+  text-align:center;
+  font-weight:600;
+  color:#8e8e93;
+  font-size:14px;
+}
