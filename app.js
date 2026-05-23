@@ -425,4 +425,17 @@ function deleteShift(){
 
 
 
+// CHIUSURA POPUP CLICK FUORI
+popup.addEventListener("click", (e) => {
+
+  if(e.target === popup){
+
+    closePopup();
+
+  }
+
+});
+
+
+
 renderCalendar();
