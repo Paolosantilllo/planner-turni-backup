@@ -95,11 +95,22 @@ function renderCalendar() {
     events.forEach(event => {
 
       const eventDiv = document.createElement("div");
-      eventDiv.classList.add("event");
+eventDiv.classList.add("event");
 
-      eventDiv.innerText =
-        event.employee + " - " + event.shift;
+if(event.employee === "PERCACCIOLI"){
+  eventDiv.classList.add("percaccioli");
+}
 
+if(event.employee === "MANUNTA"){
+  eventDiv.classList.add("manunta");
+}
+
+if(event.employee === "SANTILLO"){
+  eventDiv.classList.add("santillo");
+}
+
+eventDiv.innerText =
+  event.employee + " - " + event.shift;
       dayBox.appendChild(eventDiv);
 
     });
