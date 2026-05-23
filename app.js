@@ -70,8 +70,11 @@ function renderCalendar() {
   const formattedDate =
     selectedDate.toISOString().split("T")[0];
 
-  document.getElementById("date").value =
-    formattedDate;
+ document.getElementById("startDate").value =
+  formattedDate;
+
+document.getElementById("endDate").value =
+  formattedDate;
 
 });
     const dayNumber = document.createElement("div");
@@ -146,16 +149,51 @@ function saveShift() {
   const shift =
     document.getElementById("shift").value;
 
-  if(!date) {
+ if(!startDate || !endDate) {
     alert("Seleziona una data");
     return;
   }
 
-  savedEvents.push({
+ if(editingIndex !== null){
+
+  savedEvents[editingIndex] = {
+
     employee,
-    date,
+
+    date: startDate,
+
     shift
-  });
+
+  };
+
+}else{
+
+  let current =
+    new Date(startDate);
+
+  let end =
+    new Date(endDate);
+
+  while(current <= end){
+
+    savedEvents.push({
+
+      employee,
+
+      date:
+        current.toISOString().split("T")[0],
+
+      shift
+
+    });
+
+    current.setDate(
+      current.getDate() + 1
+    );
+
+  }
+
+}
 
   localStorage.setItem(
     "events",
@@ -167,5 +205,3 @@ function saveShift() {
   renderCalendar();
 
 }
-
-renderCalendar();
