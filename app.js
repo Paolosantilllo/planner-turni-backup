@@ -61,6 +61,19 @@ function renderCalendar() {
     const dayBox = document.createElement("div");
     dayBox.classList.add("day");
 
+    dayBox.addEventListener("click", () => {
+
+  openPopup();
+
+  const selectedDate = new Date(year, month, day);
+
+  const formattedDate =
+    selectedDate.toISOString().split("T")[0];
+
+  document.getElementById("date").value =
+    formattedDate;
+
+});
     const dayNumber = document.createElement("div");
     dayNumber.classList.add("day-number");
     dayNumber.innerText = day;
