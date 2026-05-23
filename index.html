@@ -1,67 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planner Turni Apple Style</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planner Turni</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header class="topbar">
-  <h1>Maggio 2026</h1>
-  <div class="buttons">
-    <button>Anno</button>
-    <button class="active">Mese</button>
-    <button>Settimana</button>
+  <div class="app">
+
+    <header class="topbar">
+      <h1 id="monthTitle"></h1>
+
+      <button class="add-btn" onclick="openPopup()">
+        +
+      </button>
+    </header>
+
+    <div class="calendar" id="calendar"></div>
+
   </div>
-</header>
 
-<main class="calendar-container">
+  <!-- POPUP -->
+  <div class="popup" id="popup">
 
-  <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="popup-content">
 
-  <section class="details">
-    <h2>Inserimento rapido</h2>
+      <div class="popup-header">
+        <h2>Nuovo Inserimento</h2>
 
-    <div class="quick-form">
+        <button class="close-btn" onclick="closePopup()">
+          ✕
+        </button>
+      </div>
+
+      <label>Dipendente</label>
+
       <select id="employee">
         <option>Mario Rossi</option>
         <option>Luca Bianchi</option>
         <option>Anna Verdi</option>
-        <option>Giulia Neri</option>
-        <option>Paolo Conti</option>
       </select>
 
-      <input type="date" id="fromDate">
-      <input type="date" id="toDate">
+      <label>Giorno</label>
+      <input type="date" id="date">
 
-      <select id="shiftType">
-        <option value="">-- Tipo turno --</option>
-        <option value="Rep">Rep</option>
-        <option value="Frep">Frep</option>
-        <option value="LO">LO</option>
-        <option value="REC">REC</option>
-        <option value="CFI">CFI</option>
-        <option value="CFI/REP">CFI/REP</option>
+      <label>Turno</label>
+
+      <select id="shift">
+        <option>CFI</option>
+        <option>REP</option>
+        <option>REPF</option>
+        <option>LIC</option>
+        <option>REC</option>
       </select>
 
-      <button onclick="applyShift()">Applica</button>
+      <button class="save-btn" onclick="saveShift()">
+        Salva
+      </button>
+
     </div>
 
-    <div class="legend">
-      <span class="rep">Rep</span>
-      <span class="frep">Frep</span>
-      <span class="lo">LO</span>
-      <span class="cfi">CFI</span>
-      <span class="cfi">CFI/REP</span>
-      <span class="lo">REC</span>
-    </div>
-  </section>
+  </div>
 
-</main>
+  <script src="app.js"></script>
 
-<script src="js/app.js"></script>
 </body>
 </html>
