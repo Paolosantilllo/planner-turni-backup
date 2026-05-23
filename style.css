@@ -166,3 +166,14 @@ body{
 .santillo{
   background:#007aff;
 }
+.event-name{
+  font-size:11px;
+  font-weight:700;
+  line-height:1.1;
+}
+
+.event-shift{
+  font-size:10px;
+  opacity:0.9;
+  margin-top:2px;
+}
