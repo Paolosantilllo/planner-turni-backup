@@ -188,3 +188,15 @@ body{
   opacity:0.9;
   margin-top:2px;
 }
+.delete-btn{
+  width:100%;
+  margin-top:10px;
+  padding:16px;
+  border:none;
+  border-radius:18px;
+  background:#ff3b30;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
