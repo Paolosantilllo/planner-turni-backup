@@ -146,3 +146,6 @@ body{
   color:#8e8e93;
   font-size:14px;
 }
+.empty-day{
+  min-height:110px;
+}
