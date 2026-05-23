@@ -109,8 +109,15 @@ if(event.employee === "SANTILLO"){
   eventDiv.classList.add("santillo");
 }
 
-eventDiv.innerText =
-  event.employee + " - " + event.shift;
+eventDiv.innerHTML = `
+  <div class="event-name">
+    ${event.employee}
+  </div>
+
+  <div class="event-shift">
+    ${event.shift}
+  </div>
+`;
       dayBox.appendChild(eventDiv);
 
     });
