@@ -318,15 +318,43 @@ function saveShift() {
       // REP
       if(shift === "REP"){
 
-        if(isHoliday(currentDate)){
+  // Blocca SOLO domeniche e festivi
+  const isSunday =
+    currentDate.getDay() === 0;
 
-          alert(
-            "REP può essere inserito solo nei giorni feriali"
-          );
+  const month =
+    currentDate.getMonth() + 1;
 
-          return;
+  const dayNumber =
+    currentDate.getDate();
 
-        }
+  const italianHolidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
+
+  const isItalianHoliday =
+    italianHolidays.includes(
+      `${dayNumber}-${month}`
+    );
+
+  if(isSunday || isItalianHoliday){
+
+    alert(
+      "REP può essere inserito solo dal lunedì al sabato"
+    );
+
+    return;
+
+  }
 
         const repCount =
           countMonthlyShift(
