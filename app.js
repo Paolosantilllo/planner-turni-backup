@@ -3,7 +3,7 @@ const monthTitle = document.getElementById("monthTitle");
 
 const popup = document.getElementById("popup");
 
-const currentDate = new Date();
+let currentDate = new Date();
 
 const monthNames = [
   "Gennaio",
