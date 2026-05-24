@@ -25,7 +25,7 @@ body{
   align-items:center;
   gap:15px;
 
-  margin-bottom:15px;
+  margin-bottom:10px;
 
 }
 
@@ -35,6 +35,42 @@ body{
   font-weight:700;
   min-width:220px;
   text-align:center;
+
+}
+
+
+
+/* PULSANTE MAIL SOTTO MESE */
+
+.mail-container{
+
+  display:flex;
+  justify-content:center;
+
+  margin-bottom:18px;
+
+}
+
+.send-btn{
+
+  width:180px;
+  height:48px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:#34c759;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(52,199,89,0.25);
 
 }
 
@@ -99,7 +135,18 @@ body{
 
 
 
-/* PULSANTE + */
+/* TOOLBAR BOTTONI */
+
+.toolbar-actions{
+
+  display:flex;
+  gap:10px;
+
+}
+
+
+
+/* AGGIUNGI */
 
 .add-btn{
 
@@ -119,6 +166,50 @@ body{
   cursor:pointer;
 
   box-shadow:0 8px 20px rgba(0,122,255,0.25);
+
+}
+
+
+
+/* CAMBIO TURNO */
+
+.change-btn{
+
+  width:55px;
+  height:55px;
+
+  border:none;
+  border-radius:18px;
+
+  background:#ff9500;
+  color:white;
+
+  font-size:22px;
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(255,149,0,0.25);
+
+}
+
+
+
+/* NOTIFICHE */
+
+.notify-btn{
+
+  width:55px;
+  height:55px;
+
+  border:none;
+  border-radius:18px;
+
+  background:#ff3b30;
+  color:white;
+
+  font-size:22px;
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(255,59,48,0.25);
 
 }
 
@@ -159,6 +250,7 @@ body{
 
 
 /* SABATO */
+
 .weekdays div:nth-child(6){
 
   color:#ff9500;
@@ -168,6 +260,7 @@ body{
 
 
 /* DOMENICA */
+
 .weekdays div:nth-child(7){
 
   color:#ff3b30;
@@ -232,6 +325,18 @@ body{
 
 
 
+/* FESTIVI */
+
+.holiday-day .day-number{
+
+  color:#ff3b30 !important;
+
+  font-weight:800;
+
+}
+
+
+
 /* EVENTI */
 
 .event{
@@ -265,6 +370,18 @@ body{
 .event-shift{
 
   font-size:10px;
+
+}
+
+
+
+/* FREP TESTO ROSSO */
+
+.frep-text{
+
+  color:#ff3b30;
+
+  font-weight:800;
 
 }
 
@@ -458,85 +575,13 @@ body{
   cursor:pointer;
 
 }
-.send-btn{
-
-  width:50px;
-  height:50px;
-
-  border:none;
-
-  border-radius:16px;
-
-  background:#34c759;
-
-  color:white;
-
-  font-size:22px;
-
-  cursor:pointer;
-
-}
-.frep{
-
-  background:#ff3b30 !important;
-
-}
-.frep-text{
-  color:#ff3b30;
-  font-weight:800;
-}
-.holiday-day .day-number{
-  color:#ff3b30 !important;
-  font-weight:800;
-}
-/* TOOLBAR BOTTONI */
-.toolbar-actions{
-  display:flex;
-  gap:10px;
-}
-
-
-
-/* CAMBIO TURNO */
-.change-btn{
-  width:55px;
-  height:55px;
-
-  border:none;
-  border-radius:18px;
-
-  background:#ff9500;
-  color:white;
-
-  font-size:22px;
-  cursor:pointer;
-
-  box-shadow:0 8px 20px rgba(255,149,0,0.25);
-}
-
-
-
-/* NOTIFICHE */
-.notify-btn{
-  width:55px;
-  height:55px;
-
-  border:none;
-  border-radius:18px;
-
-  background:#ff3b30;
-  color:white;
-
-  font-size:22px;
-  cursor:pointer;
-
-  box-shadow:0 8px 20px rgba(255,59,48,0.25);
-}
 
 
 
 /* CARD RICHIESTE */
+
 .request-card{
+
   background:white;
 
   padding:15px;
@@ -546,32 +591,41 @@ body{
   margin-top:12px;
 
   box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
 }
 
 
 
 /* TESTO CARD */
+
 .request-card-title{
+
   font-size:15px;
   font-weight:700;
 
   margin-bottom:8px;
+
 }
 
 
 
 /* BOTTONI CARD */
+
 .request-buttons{
+
   display:flex;
   gap:10px;
 
   margin-top:12px;
+
 }
 
 
 
 /* ACCETTA */
+
 .accept-btn{
+
   flex:1;
 
   border:none;
@@ -586,12 +640,15 @@ body{
   font-weight:700;
 
   cursor:pointer;
+
 }
 
 
 
 /* RIFIUTA */
+
 .reject-btn{
+
   flex:1;
 
   border:none;
@@ -606,4 +663,5 @@ body{
   font-weight:700;
 
   cursor:pointer;
+
 }
