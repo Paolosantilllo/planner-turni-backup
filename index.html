@@ -43,9 +43,10 @@
 
 
 
-    <!-- FILTRO + -->
+    <!-- TOOLBAR -->
     <div class="toolbar">
 
+      <!-- FILTRO -->
       <select
         id="employeeFilter"
         onchange="renderCalendar()"
@@ -69,12 +70,35 @@
 
       </select>
 
-      <button
-        class="add-btn"
-        onclick="openPopup()"
+
+
+      <!-- BOTTONI -->
+      <div
+        style="
+          display:flex;
+          gap:10px;
+        "
       >
-        +
-      </button>
+
+        <!-- INVIA PDF -->
+        <button
+          class="send-btn"
+          onclick="exportPDF()"
+        >
+          📤
+        </button>
+
+
+
+        <!-- AGGIUNGI -->
+        <button
+          class="add-btn"
+          onclick="openPopup()"
+        >
+          +
+        </button>
+
+      </div>
 
     </div>
 
@@ -127,6 +151,7 @@
 
 
 
+      <!-- DIPENDENTE -->
       <label>
         Dipendente
       </label>
@@ -149,6 +174,7 @@
 
 
 
+      <!-- DATA INIZIO -->
       <label>
         Data Inizio
       </label>
@@ -160,6 +186,7 @@
 
 
 
+      <!-- DATA FINE -->
       <label>
         Data Fine
       </label>
@@ -171,6 +198,7 @@
 
 
 
+      <!-- TURNO -->
       <label>
         Turno
       </label>
@@ -207,6 +235,7 @@
 
 
 
+      <!-- SALVA -->
       <button
         class="save-btn"
         onclick="saveShift()"
@@ -216,6 +245,7 @@
 
 
 
+      <!-- ELIMINA -->
       <button
         class="delete-btn"
         onclick="deleteShift()"
@@ -229,11 +259,20 @@
 
 
 
+  <!-- LIBRERIE PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+
   <!-- FIREBASE -->
   <script
     type="module"
     src="firebase.js"
   ></script>
+
+
 
   <!-- APP -->
   <script src="app.js"></script>
