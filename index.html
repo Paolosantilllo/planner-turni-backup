@@ -4,11 +4,7 @@
 <head>
 
   <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Planner Turni</title>
 
@@ -23,21 +19,11 @@
     <!-- HEADER -->
     <header class="topbar">
 
-      <button
-        class="month-btn"
-        onclick="prevMonth()"
-      >
-        ◀
-      </button>
+      <button class="month-btn" onclick="prevMonth()">◀</button>
 
       <h1 id="monthTitle"></h1>
 
-      <button
-        class="month-btn"
-        onclick="nextMonth()"
-      >
-        ▶
-      </button>
+      <button class="month-btn" onclick="nextMonth()">▶</button>
 
     </header>
 
@@ -47,55 +33,33 @@
     <div class="toolbar">
 
       <!-- FILTRO -->
-      <select
-        id="employeeFilter"
-        onchange="renderCalendar()"
-      >
+      <select id="employeeFilter" onchange="renderCalendar()">
 
-        <option value="ALL">
-          Tutti
-        </option>
-
-        <option value="PERCACCIOLI">
-          PERCACCIOLI
-        </option>
-
-        <option value="MANUNTA">
-          MANUNTA
-        </option>
-
-        <option value="SANTILLO">
-          SANTILLO
-        </option>
+        <option value="ALL">Tutti</option>
+        <option value="PERCACCIOLI">PERCACCIOLI</option>
+        <option value="MANUNTA">MANUNTA</option>
+        <option value="SANTILLO">SANTILLO</option>
 
       </select>
 
 
 
       <!-- BOTTONI -->
-      <div
-        style="
-          display:flex;
-          gap:10px;
-        "
-      >
+      <div class="toolbar-actions">
 
-        <!-- INVIA PDF -->
-        <button
-          class="send-btn"
-          onclick="exportPDF()"
-        >
-          📤
+        <!-- CAMBIO TURNO -->
+        <button class="change-btn" onclick="openChangePopup()">
+          🔁
         </button>
 
-
-
         <!-- AGGIUNGI -->
-        <button
-          class="add-btn"
-          onclick="openPopup()"
-        >
+        <button class="add-btn" onclick="openPopup()">
           +
+        </button>
+
+        <!-- EXPORT PDF -->
+        <button class="send-btn" onclick="exportPDF()">
+          📤
         </button>
 
       </div>
@@ -104,7 +68,7 @@
 
 
 
-    <!-- GIORNI -->
+    <!-- GIORNI SETTIMANA -->
     <div class="weekdays">
 
       <div>L</div>
@@ -120,136 +84,64 @@
 
 
     <!-- CALENDARIO -->
-    <div
-      class="calendar"
-      id="calendar"
-    ></div>
+    <div class="calendar" id="calendar"></div>
 
   </div>
 
 
 
-  <!-- POPUP -->
+  <!-- POPUP TURNI -->
   <div class="popup" id="popup">
 
     <div class="popup-content">
 
       <div class="popup-header">
 
-        <h2>
-          Nuovo Inserimento
-        </h2>
+        <h2>Nuovo Inserimento</h2>
 
-        <button
-          class="close-btn"
-          onclick="closePopup()"
-        >
-          ✕
-        </button>
+        <button class="close-btn" onclick="closePopup()">✕</button>
 
       </div>
 
 
 
-      <!-- DIPENDENTE -->
-      <label>
-        Dipendente
-      </label>
-
+      <label>Dipendente</label>
       <select id="employee">
-
-        <option>
-          PERCACCIOLI
-        </option>
-
-        <option>
-          MANUNTA
-        </option>
-
-        <option>
-          SANTILLO
-        </option>
-
+        <option>PERCACCIOLI</option>
+        <option>MANUNTA</option>
+        <option>SANTILLO</option>
       </select>
 
 
 
-      <!-- DATA INIZIO -->
-      <label>
-        Data Inizio
-      </label>
-
-      <input
-        type="date"
-        id="startDate"
-      >
+      <label>Data Inizio</label>
+      <input type="date" id="startDate">
 
 
 
-      <!-- DATA FINE -->
-      <label>
-        Data Fine
-      </label>
-
-      <input
-        type="date"
-        id="endDate"
-      >
+      <label>Data Fine</label>
+      <input type="date" id="endDate">
 
 
 
-      <!-- TURNO -->
-      <label>
-        Turno
-      </label>
-
+      <label>Turno</label>
       <select id="shift">
-
         <option></option>
-
-        <option>
-          REP
-        </option>
-
-        <option>
-          FREP
-        </option>
-
-        <option>
-          CFI
-        </option>
-
-        <option>
-          CFI/REP
-        </option>
-
-        <option>
-          LIC
-        </option>
-
-        <option>
-          REC
-        </option>
-
+        <option>REP</option>
+        <option>FREP</option>
+        <option>CFI</option>
+        <option>CFI/REP</option>
+        <option>LIC</option>
+        <option>REC</option>
       </select>
 
 
 
-      <!-- SALVA -->
-      <button
-        class="save-btn"
-        onclick="saveShift()"
-      >
+      <button class="save-btn" onclick="saveShift()">
         Salva
       </button>
 
-
-
-      <!-- ELIMINA -->
-      <button
-        class="delete-btn"
-        onclick="deleteShift()"
-      >
+      <button class="delete-btn" onclick="deleteShift()">
         Elimina
       </button>
 
@@ -261,18 +153,12 @@
 
   <!-- LIBRERIE PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 
 
   <!-- FIREBASE -->
-  <script
-    type="module"
-    src="firebase.js"
-  ></script>
-
-
+  <script type="module" src="firebase.js"></script>
 
   <!-- APP -->
   <script src="app.js"></script>
