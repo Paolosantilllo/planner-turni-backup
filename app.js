@@ -155,11 +155,21 @@ function renderCalendar() {
       const selectedDate =
         new Date(year, month, day);
 
-      const formattedDate =
-        selectedDate
-        .toISOString()
-        .split("T")[0];
+      const yearFormatted =
+  selectedDate.getFullYear();
 
+const monthFormatted =
+  String(
+    selectedDate.getMonth() + 1
+  ).padStart(2, "0");
+
+const dayFormatted =
+  String(
+    selectedDate.getDate()
+  ).padStart(2, "0");
+
+const formattedDate =
+  `${yearFormatted}-${monthFormatted}-${dayFormatted}`;
       document.getElementById("startDate").value =
         formattedDate;
 
