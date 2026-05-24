@@ -158,6 +158,24 @@ body{
 
 
 
+/* SABATO */
+.weekdays div:nth-child(6){
+
+  color:#ff9500;
+
+}
+
+
+
+/* DOMENICA */
+.weekdays div:nth-child(7){
+
+  color:#ff3b30;
+
+}
+
+
+
 /* CALENDARIO */
 
 .calendar{
