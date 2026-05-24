@@ -27,6 +27,7 @@ let editingIndex = null;
 
 
 
+// FESTIVI
 function isHoliday(date){
 
   const day = date.getDay();
@@ -37,6 +38,7 @@ function isHoliday(date){
   }
 
   const month = date.getMonth() + 1;
+
   const dayNumber = date.getDate();
 
   const holidays = [
@@ -60,6 +62,7 @@ function isHoliday(date){
 
 
 
+// CONTEGGIO TURNI
 function countMonthlyShift(
   employee,
   shift,
@@ -72,10 +75,12 @@ function countMonthlyShift(
     const d = new Date(event.date);
 
     return (
+
       event.employee === employee &&
       event.shift === shift &&
       d.getFullYear() === year &&
       d.getMonth() === month
+
     );
 
   }).length;
@@ -84,21 +89,29 @@ function countMonthlyShift(
 
 
 
+// RENDER CALENDARIO
 function renderCalendar() {
 
   calendar.innerHTML = "";
 
   const year = currentDate.getFullYear();
+
   const month = currentDate.getMonth();
 
   monthTitle.innerText =
     monthNames[month] + " " + year;
 
+
+
   const firstDay =
     new Date(year, month, 1).getDay();
 
+
+
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
+
+
 
   let startDay = firstDay - 1;
 
@@ -106,21 +119,31 @@ function renderCalendar() {
     startDay = 6;
   }
 
-  // Celle vuote iniziali
+
+
+  // CELLE VUOTE
   for(let i = 0; i < startDay; i++){
 
-    const emptyDay = document.createElement("div");
+    const emptyDay =
+      document.createElement("div");
+
     emptyDay.classList.add("empty-day");
 
     calendar.appendChild(emptyDay);
 
   }
 
-  // Giorni mese
+
+
+  // GIORNI
   for(let day = 1; day <= daysInMonth; day++) {
 
-    const dayBox = document.createElement("div");
+    const dayBox =
+      document.createElement("div");
+
     dayBox.classList.add("day");
+
+
 
     // CLICK GIORNO
     dayBox.addEventListener("click", () => {
@@ -133,7 +156,9 @@ function renderCalendar() {
         new Date(year, month, day);
 
       const formattedDate =
-        selectedDate.toISOString().split("T")[0];
+        selectedDate
+        .toISOString()
+        .split("T")[0];
 
       document.getElementById("startDate").value =
         formattedDate;
@@ -143,39 +168,55 @@ function renderCalendar() {
 
     });
 
-    const dayNumber = document.createElement("div");
+
+
+    // NUMERO GIORNO
+    const dayNumber =
+      document.createElement("div");
+
     dayNumber.classList.add("day-number");
+
     dayNumber.innerText = day;
 
     dayBox.appendChild(dayNumber);
 
-  const selectedEmployee =
-  document.getElementById("employeeFilter").value;
 
-const events = savedEvents.filter(event => {
 
-  const eventDate = new Date(event.date);
+    // FILTRO DIPENDENTE
+    const selectedEmployee =
+      document.getElementById("employeeFilter").value;
 
-  const sameDay = (
 
-    eventDate.getDate() === day &&
-    eventDate.getMonth() === month &&
-    eventDate.getFullYear() === year
 
-  );
+    // EVENTI GIORNO
+    const events = savedEvents.filter(event => {
 
-  const employeeMatch = (
+      const eventDate =
+        new Date(event.date);
 
-    selectedEmployee === "ALL" ||
+      const sameDay = (
 
-    event.employee === selectedEmployee
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === month &&
+        eventDate.getFullYear() === year
 
-  );
+      );
 
-  return sameDay && employeeMatch;
+      const employeeMatch = (
 
-});
+        selectedEmployee === "ALL" ||
 
+        event.employee === selectedEmployee
+
+      );
+
+      return sameDay && employeeMatch;
+
+    });
+
+
+
+    // CREAZIONE EVENTI
     events.forEach(event => {
 
       const eventIndex =
@@ -186,7 +227,9 @@ const events = savedEvents.filter(event => {
 
       eventDiv.classList.add("event");
 
-      // COLORI DIPENDENTI
+
+
+      // COLORI
       if(event.employee === "PERCACCIOLI"){
         eventDiv.classList.add("percaccioli");
       }
@@ -199,18 +242,20 @@ const events = savedEvents.filter(event => {
         eventDiv.classList.add("santillo");
       }
 
-      // FREP ROSSO
-      if(event.shift === "FREP"){
-        eventDiv.classList.add("frep");
-      }
 
+
+      // SOLO TURNO
       eventDiv.innerHTML = `
+
         <div class="event-shift">
           ${event.shift}
         </div>
+
       `;
 
-      // CLICK MODIFICA EVENTO
+
+
+      // CLICK MODIFICA
       eventDiv.addEventListener("click", (e) => {
 
         e.stopPropagation();
@@ -233,9 +278,13 @@ const events = savedEvents.filter(event => {
 
       });
 
+
+
       dayBox.appendChild(eventDiv);
 
     });
+
+
 
     calendar.appendChild(dayBox);
 
@@ -245,18 +294,25 @@ const events = savedEvents.filter(event => {
 
 
 
+// APRI POPUP
 function openPopup() {
+
   popup.style.display = "flex";
+
 }
 
 
 
+// CHIUDI POPUP
 function closePopup() {
+
   popup.style.display = "none";
+
 }
 
 
 
+// SALVA TURNO
 function saveShift() {
 
   const employee =
@@ -271,6 +327,8 @@ function saveShift() {
   const shift =
     document.getElementById("shift").value;
 
+
+
   if(!startDate || !endDate){
 
     alert("Seleziona le date");
@@ -279,15 +337,15 @@ function saveShift() {
 
   }
 
-  // MODIFICA EVENTO
+
+
+  // MODIFICA
   if(editingIndex !== null){
 
     savedEvents[editingIndex] = {
 
       employee,
-
       date: startDate,
-
       shift
 
     };
@@ -300,57 +358,69 @@ function saveShift() {
     let end =
       new Date(endDate);
 
+
+
     while(current <= end){
 
-      const currentDate =
+      const currentLoopDate =
         new Date(current);
 
       const year =
-        currentDate.getFullYear();
+        currentLoopDate.getFullYear();
 
       const month =
-        currentDate.getMonth();
+        currentLoopDate.getMonth();
 
+
+
+      // FESTIVI
+      const isSunday =
+        currentLoopDate.getDay() === 0;
+
+      const holidayMonth =
+        currentLoopDate.getMonth() + 1;
+
+      const holidayDay =
+        currentLoopDate.getDate();
+
+      const italianHolidays = [
+        "1-1",
+        "6-1",
+        "25-4",
+        "1-5",
+        "2-6",
+        "15-8",
+        "1-11",
+        "8-12",
+        "25-12",
+        "26-12"
+      ];
+
+      const isItalianHoliday =
+        italianHolidays.includes(
+          `${holidayDay}-${holidayMonth}`
+        );
+
+      const isFestive =
+        isSunday || isItalianHoliday;
+
+
+
+      // ====================
       // REP
-      if(shift === "REP"){
+      // ====================
 
-  // Blocca SOLO domeniche e festivi
-  const isSunday =
-    currentDate.getDay() === 0;
+      if(shift.trim() === "REP"){
 
-  const month =
-    currentDate.getMonth() + 1;
+        if(isFestive){
 
-  const dayNumber =
-    currentDate.getDate();
+          alert(
+            "REP può essere inserito solo dal lunedì al sabato"
+          );
 
-  const italianHolidays = [
-    "1-1",
-    "6-1",
-    "25-4",
-    "1-5",
-    "2-6",
-    "15-8",
-    "1-11",
-    "8-12",
-    "25-12",
-    "26-12"
-  ];
+          return;
 
-  const isItalianHoliday =
-    italianHolidays.includes(
-      `${dayNumber}-${month}`
-    );
-
-  if(isSunday || isItalianHoliday){
-
-    alert(
-      "REP può essere inserito solo dal lunedì al sabato"
-    );
-
-    return;
-
-  }
+        }
 
         const repCount =
           countMonthlyShift(
@@ -373,10 +443,15 @@ function saveShift() {
 
       }
 
-      // FREP
-      if(shift === "FREP"){
 
-        if(!isHoliday(currentDate)){
+
+      // ====================
+      // FREP
+      // ====================
+
+      if(shift.trim() === "FREP"){
+
+        if(!isFestive){
 
           alert(
             "FREP può essere inserito solo nei festivi"
@@ -407,18 +482,23 @@ function saveShift() {
 
       }
 
+
+
+      // SALVA EVENTO
       savedEvents.push({
 
         employee,
 
         date:
-          currentDate
+          currentLoopDate
           .toISOString()
           .split("T")[0],
 
         shift
 
       });
+
+
 
       current.setDate(
         current.getDate() + 1
@@ -428,10 +508,14 @@ function saveShift() {
 
   }
 
+
+
   localStorage.setItem(
     "events",
     JSON.stringify(savedEvents)
   );
+
+
 
   editingIndex = null;
 
@@ -443,6 +527,7 @@ function saveShift() {
 
 
 
+// ELIMINA
 function deleteShift(){
 
   if(editingIndex === null) return;
@@ -503,5 +588,5 @@ function prevMonth(){
 
 
 
-// AVVIO CALENDARIO
+// AVVIO
 renderCalendar();
