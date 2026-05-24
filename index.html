@@ -4,7 +4,11 @@
 <head>
 
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Planner Turni</title>
 
@@ -19,11 +23,21 @@
     <!-- HEADER -->
     <header class="topbar">
 
-      <button class="month-btn" onclick="prevMonth()">◀</button>
+      <button
+        class="month-btn"
+        onclick="prevMonth()"
+      >
+        ◀
+      </button>
 
       <h1 id="monthTitle"></h1>
 
-      <button class="month-btn" onclick="nextMonth()">▶</button>
+      <button
+        class="month-btn"
+        onclick="nextMonth()"
+      >
+        ▶
+      </button>
 
     </header>
 
@@ -33,12 +47,26 @@
     <div class="toolbar">
 
       <!-- FILTRO -->
-      <select id="employeeFilter" onchange="renderCalendar()">
+      <select
+        id="employeeFilter"
+        onchange="renderCalendar()"
+      >
 
-        <option value="ALL">Tutti</option>
-        <option value="PERCACCIOLI">PERCACCIOLI</option>
-        <option value="MANUNTA">MANUNTA</option>
-        <option value="SANTILLO">SANTILLO</option>
+        <option value="ALL">
+          Tutti
+        </option>
+
+        <option value="PERCACCIOLI">
+          PERCACCIOLI
+        </option>
+
+        <option value="MANUNTA">
+          MANUNTA
+        </option>
+
+        <option value="SANTILLO">
+          SANTILLO
+        </option>
 
       </select>
 
@@ -48,17 +76,40 @@
       <div class="toolbar-actions">
 
         <!-- CAMBIO TURNO -->
-        <button class="change-btn" onclick="openChangePopup()">
+        <button
+          class="change-btn"
+          onclick="openChangePopup()"
+        >
           🔁
         </button>
 
+
+
+        <!-- RICHIESTE -->
+        <button
+          class="notify-btn"
+          onclick="openRequestsPopup()"
+        >
+          🔔
+        </button>
+
+
+
         <!-- AGGIUNGI -->
-        <button class="add-btn" onclick="openPopup()">
+        <button
+          class="add-btn"
+          onclick="openPopup()"
+        >
           +
         </button>
 
+
+
         <!-- EXPORT PDF -->
-        <button class="send-btn" onclick="exportPDF()">
+        <button
+          class="send-btn"
+          onclick="exportPDF()"
+        >
           📤
         </button>
 
@@ -68,7 +119,7 @@
 
 
 
-    <!-- GIORNI SETTIMANA -->
+    <!-- GIORNI -->
     <div class="weekdays">
 
       <div>L</div>
@@ -76,15 +127,24 @@
       <div>Me</div>
       <div>G</div>
       <div>V</div>
-      <div>S</div>
-      <div>D</div>
+
+      <div class="saturday">
+        S
+      </div>
+
+      <div class="sunday">
+        D
+      </div>
 
     </div>
 
 
 
     <!-- CALENDARIO -->
-    <div class="calendar" id="calendar"></div>
+    <div
+      class="calendar"
+      id="calendar"
+    ></div>
 
   </div>
 
@@ -97,51 +157,120 @@
 
       <div class="popup-header">
 
-        <h2>Nuovo Inserimento</h2>
+        <h2>
+          Nuovo Inserimento
+        </h2>
 
-        <button class="close-btn" onclick="closePopup()">✕</button>
+        <button
+          class="close-btn"
+          onclick="closePopup()"
+        >
+          ✕
+        </button>
 
       </div>
 
 
 
-      <label>Dipendente</label>
+      <!-- DIPENDENTE -->
+      <label>
+        Dipendente
+      </label>
+
       <select id="employee">
-        <option>PERCACCIOLI</option>
-        <option>MANUNTA</option>
-        <option>SANTILLO</option>
+
+        <option>
+          PERCACCIOLI
+        </option>
+
+        <option>
+          MANUNTA
+        </option>
+
+        <option>
+          SANTILLO
+        </option>
+
       </select>
 
 
 
-      <label>Data Inizio</label>
-      <input type="date" id="startDate">
+      <!-- DATA INIZIO -->
+      <label>
+        Data Inizio
+      </label>
+
+      <input
+        type="date"
+        id="startDate"
+      >
 
 
 
-      <label>Data Fine</label>
-      <input type="date" id="endDate">
+      <!-- DATA FINE -->
+      <label>
+        Data Fine
+      </label>
+
+      <input
+        type="date"
+        id="endDate"
+      >
 
 
 
-      <label>Turno</label>
+      <!-- TURNO -->
+      <label>
+        Turno
+      </label>
+
       <select id="shift">
+
         <option></option>
-        <option>REP</option>
-        <option>FREP</option>
-        <option>CFI</option>
-        <option>CFI/REP</option>
-        <option>LIC</option>
-        <option>REC</option>
+
+        <option>
+          REP
+        </option>
+
+        <option>
+          FREP
+        </option>
+
+        <option>
+          CFI
+        </option>
+
+        <option>
+          CFI/REP
+        </option>
+
+        <option>
+          LIC
+        </option>
+
+        <option>
+          REC
+        </option>
+
       </select>
 
 
 
-      <button class="save-btn" onclick="saveShift()">
+      <!-- SALVA -->
+      <button
+        class="save-btn"
+        onclick="saveShift()"
+      >
         Salva
       </button>
 
-      <button class="delete-btn" onclick="deleteShift()">
+
+
+      <!-- ELIMINA -->
+      <button
+        class="delete-btn"
+        onclick="deleteShift()"
+      >
         Elimina
       </button>
 
@@ -151,14 +280,175 @@
 
 
 
+  <!-- POPUP CAMBIO TURNO -->
+  <div class="popup" id="changePopup">
+
+    <div class="popup-content">
+
+      <div class="popup-header">
+
+        <h2>
+          Richiesta Cambio
+        </h2>
+
+        <button
+          class="close-btn"
+          onclick="closeChangePopup()"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+
+      <label>
+        Chi richiede
+      </label>
+
+      <select id="changeFrom">
+
+        <option>
+          PERCACCIOLI
+        </option>
+
+        <option>
+          MANUNTA
+        </option>
+
+        <option>
+          SANTILLO
+        </option>
+
+      </select>
+
+
+
+      <label>
+        Cambio con
+      </label>
+
+      <select id="changeTo">
+
+        <option>
+          PERCACCIOLI
+        </option>
+
+        <option>
+          MANUNTA
+        </option>
+
+        <option>
+          SANTILLO
+        </option>
+
+      </select>
+
+
+
+      <label>
+        Data
+      </label>
+
+      <input
+        type="date"
+        id="changeDate"
+      >
+
+
+
+      <label>
+        Turno
+      </label>
+
+      <select id="changeShift">
+
+        <option>
+          REP
+        </option>
+
+        <option>
+          FREP
+        </option>
+
+        <option>
+          CFI
+        </option>
+
+        <option>
+          CFI/REP
+        </option>
+
+        <option>
+          LIC
+        </option>
+
+        <option>
+          REC
+        </option>
+
+      </select>
+
+
+
+      <button
+        class="save-btn"
+        onclick="sendChangeRequest()"
+      >
+        Invia Richiesta
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- POPUP RICHIESTE -->
+  <div class="popup" id="requestsPopup">
+
+    <div class="popup-content">
+
+      <div class="popup-header">
+
+        <h2>
+          Richieste Cambio Turno
+        </h2>
+
+        <button
+          class="close-btn"
+          onclick="closeRequestsPopup()"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+
+      <!-- LISTA -->
+      <div id="requestsList"></div>
+
+    </div>
+
+  </div>
+
+
+
   <!-- LIBRERIE PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 
 
   <!-- FIREBASE -->
-  <script type="module" src="firebase.js"></script>
+  <script
+    type="module"
+    src="firebase.js"
+  ></script>
+
+
 
   <!-- APP -->
   <script src="app.js"></script>
