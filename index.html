@@ -456,7 +456,25 @@
 
   <!-- APP -->
   <script src="app.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+    authDomain: "calendario-rep.firebaseapp.com",
+    projectId: "calendario-rep",
+    storageBucket: "calendario-rep.firebasestorage.app",
+    messagingSenderId: "1067128179274",
+    appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 </body>
 
 </html>
