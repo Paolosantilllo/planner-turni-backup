@@ -1,53 +1,109 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>Planner Turni</title>
+
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
   <div class="app">
 
+    <!-- HEADER -->
     <header class="topbar">
-      <h1 id="monthTitle"></h1>
-<select id="employeeFilter" onchange="renderCalendar()">
 
-  <option value="ALL">Tutti</option>
-
-  <option value="PERCACCIOLI">
-    PERCACCIOLI
-  </option>
-
-  <option value="MANUNTA">
-    MANUNTA
-  </option>
-
-  <option value="SANTILLO">
-    SANTILLO
-  </option>
-
-</select>
-      <button class="add-btn" onclick="openPopup()">
-        +
+      <button
+        class="month-btn"
+        onclick="prevMonth()"
+      >
+        ◀
       </button>
+
+      <h1 id="monthTitle"></h1>
+
+      <button
+        class="month-btn"
+        onclick="nextMonth()"
+      >
+        ▶
+      </button>
+
     </header>
 
-  <div class="weekdays">
-  <div>L</div>
-  <div>Ma</div>
-  <div>Me</div>
-  <div>G</div>
-  <div>V</div>
-  <div>S</div>
-  <div>D</div>
-</div>
 
-<div class="calendar" id="calendar"></div>
+
+    <!-- FILTRO + -->
+    <div class="toolbar">
+
+      <select
+        id="employeeFilter"
+        onchange="renderCalendar()"
+      >
+
+        <option value="ALL">
+          Tutti
+        </option>
+
+        <option value="PERCACCIOLI">
+          PERCACCIOLI
+        </option>
+
+        <option value="MANUNTA">
+          MANUNTA
+        </option>
+
+        <option value="SANTILLO">
+          SANTILLO
+        </option>
+
+      </select>
+
+      <button
+        class="add-btn"
+        onclick="openPopup()"
+      >
+        +
+      </button>
+
+    </div>
+
+
+
+    <!-- GIORNI -->
+    <div class="weekdays">
+
+      <div>L</div>
+      <div>Ma</div>
+      <div>Me</div>
+      <div>G</div>
+      <div>V</div>
+      <div>S</div>
+      <div>D</div>
+
+    </div>
+
+
+
+    <!-- CALENDARIO -->
+    <div
+      class="calendar"
+      id="calendar"
+    ></div>
 
   </div>
+
+
 
   <!-- POPUP -->
   <div class="popup" id="popup">
@@ -55,49 +111,133 @@
     <div class="popup-content">
 
       <div class="popup-header">
-        <h2>Nuovo Inserimento</h2>
 
-        <button class="close-btn" onclick="closePopup()">
+        <h2>
+          Nuovo Inserimento
+        </h2>
+
+        <button
+          class="close-btn"
+          onclick="closePopup()"
+        >
           ✕
         </button>
+
       </div>
 
-      <label>Dipendente</label>
+
+
+      <label>
+        Dipendente
+      </label>
 
       <select id="employee">
-        <option>PERCACCIOLI</option>
-        <option>MANUNTA</option>
-        <option>SANTILLO</option>
+
+        <option>
+          PERCACCIOLI
+        </option>
+
+        <option>
+          MANUNTA
+        </option>
+
+        <option>
+          SANTILLO
+        </option>
+
       </select>
 
-    <label>Data Inizio</label>
-<input type="date" id="startDate">
 
-<label>Data Fine</label>
-<input type="date" id="endDate">
 
-      <label>Turno</label>
+      <label>
+        Data Inizio
+      </label>
+
+      <input
+        type="date"
+        id="startDate"
+      >
+
+
+
+      <label>
+        Data Fine
+      </label>
+
+      <input
+        type="date"
+        id="endDate"
+      >
+
+
+
+      <label>
+        Turno
+      </label>
 
       <select id="shift">
-        <option>   </option>
-        <option>REP</option>
-        <option>FREP</option>
-        <option>CFI</option>
-        <option>CFI/REP</option>
-        <option>LIC</option>
-        <option>REC</option>
+
+        <option></option>
+
+        <option>
+          REP
+        </option>
+
+        <option>
+          FREP
+        </option>
+
+        <option>
+          CFI
+        </option>
+
+        <option>
+          CFI/REP
+        </option>
+
+        <option>
+          LIC
+        </option>
+
+        <option>
+          REC
+        </option>
+
       </select>
 
-      <button class="save-btn" onclick="saveShift()">
+
+
+      <button
+        class="save-btn"
+        onclick="saveShift()"
+      >
         Salva
+      </button>
+
+
+
+      <button
+        class="delete-btn"
+        onclick="deleteShift()"
+      >
+        Elimina
       </button>
 
     </div>
 
   </div>
 
-  <script type="module" src="firebase.js"></script>
-<script src="app.js"></script>
+
+
+  <!-- FIREBASE -->
+  <script
+    type="module"
+    src="firebase.js"
+  ></script>
+
+  <!-- APP -->
+  <script src="app.js"></script>
 
 </body>
+
 </html>
