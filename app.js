@@ -453,4 +453,31 @@ popup.addEventListener("click", (e) => {
 
 
 
+// MESE SUCCESSIVO
+function nextMonth(){
+
+  currentDate.setMonth(
+    currentDate.getMonth() + 1
+  );
+
+  renderCalendar();
+
+}
+
+
+
+// MESE PRECEDENTE
+function prevMonth(){
+
+  currentDate.setMonth(
+    currentDate.getMonth() - 1
+  );
+
+  renderCalendar();
+
+}
+
+
+
+// AVVIO CALENDARIO
 renderCalendar();
