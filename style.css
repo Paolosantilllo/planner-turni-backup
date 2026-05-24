@@ -11,195 +11,74 @@ body{
 }
 
 .app{
-  padding:20px;
+  padding:15px;
 }
 
+
+
+/* HEADER */
+
 .topbar{
+
   display:flex;
-  justify-content:space-between;
+  justify-content:center;
   align-items:center;
-  margin-bottom:25px;
+  gap:15px;
+
+  margin-bottom:15px;
+
 }
 
 .topbar h1{
-  font-size:32px;
+
+  font-size:28px;
   font-weight:700;
+  min-width:220px;
+  text-align:center;
+
 }
 
-.add-btn{
-  width:55px;
-  height:55px;
+
+
+/* BOTTONI MESE */
+
+.month-btn{
+
+  width:42px;
+  height:42px;
+
   border:none;
-  border-radius:18px;
-  background:#007aff;
+
+  border-radius:14px;
+
+  background:#1c1c1e;
+
   color:white;
-  font-size:32px;
-  cursor:pointer;
-  box-shadow:0 8px 20px rgba(0,122,255,0.25);
-}
 
-.calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-}
-
-.day{
-  background:white;
-  border-radius:22px;
-  height:110px;
-  padding:10px;
-
-  overflow-y:auto;
-
-  box-shadow:0 4px 15px rgba(0,0,0,0.05);
-  transition:0.2s;
-}
-
-.day:hover{
-  transform:translateY(-3px);
-}
-
-.day-number{
   font-size:18px;
-  font-weight:600;
-  margin-bottom:8px;
+
+  cursor:pointer;
+
 }
 
-.event{
-  background:#007aff;
-  color:white;
-  padding:6px 10px;
-  border-radius:12px;
-  font-size:12px;
-  margin-top:5px;
 
-  font-weight:600;
 
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
+/* TOOLBAR */
 
-.popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
+.toolbar{
 
-.popup-content{
-  width:100%;
-  max-width:400px;
-  background:white;
-  border-radius:28px;
-  padding:25px;
-}
-
-.popup-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:20px;
+
+  margin-bottom:15px;
+
 }
 
-.close-btn{
-  border:none;
-  background:none;
-  font-size:22px;
-  cursor:pointer;
-}
 
-.popup label{
-  display:block;
-  margin-top:15px;
-  margin-bottom:8px;
-  font-weight:600;
-}
 
-.popup input,
-.popup select{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:#f2f2f7;
-  font-size:16px;
-}
+/* FILTRO */
 
-.save-btn{
-  width:100%;
-  margin-top:25px;
-  padding:16px;
-  border:none;
-  border-radius:18px;
-  background:#007aff;
-  color:white;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-}
-.weekdays{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-
-  position:sticky;
-  top:0;
-
-  background:#f2f2f7;
-
-  z-index:20;
-
-  margin-bottom:10px;
-  padding:10px 5px;
-}
-
-.weekdays div{
-  text-align:center;
-  font-weight:600;
-  color:#8e8e93;
-  font-size:14px;
-}
-.empty-day{
-  min-height:110px;
-}
-.percaccioli{
-  background:#ff9500;
-}
-
-.manunta{
-  background:#34c759;
-}
-
-.santillo{
-  background:#007aff;
-}
-.event-name{
-  font-size:11px;
-  font-weight:700;
-  line-height:1.1;
-}
-
-.event-shift{
-  font-size:10px;
-  opacity:0.9;
-  margin-top:2px;
-}
-.delete-btn{
-  width:100%;
-  margin-top:10px;
-  padding:16px;
-  border:none;
-  border-radius:18px;
-  background:#ff3b30;
-  color:white;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-}
 #employeeFilter{
 
   border:none;
@@ -215,5 +94,349 @@ body{
   font-weight:600;
 
   box-shadow:0 4px 15px rgba(0,0,0,0.05);
+
+}
+
+
+
+/* PULSANTE + */
+
+.add-btn{
+
+  width:50px;
+  height:50px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:#007aff;
+
+  color:white;
+
+  font-size:30px;
+
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(0,122,255,0.25);
+
+}
+
+
+
+/* GIORNI SETTIMANA */
+
+.weekdays{
+
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+
+  position:sticky;
+  top:0;
+
+  background:#f2f2f7;
+
+  z-index:20;
+
+  margin-bottom:8px;
+
+  padding:8px 2px;
+
+}
+
+.weekdays div{
+
+  text-align:center;
+
+  font-weight:700;
+
+  color:#8e8e93;
+
+  font-size:13px;
+
+}
+
+
+
+/* CALENDARIO */
+
+.calendar{
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  gap:6px;
+
+}
+
+
+
+/* CELLE */
+
+.day{
+
+  background:white;
+
+  border-radius:18px;
+
+  min-height:72px;
+
+  padding:5px;
+
+  overflow-y:auto;
+
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+
+  transition:0.2s;
+
+}
+
+.day:hover{
+
+  transform:translateY(-2px);
+
+}
+
+
+
+/* NUMERO GIORNO */
+
+.day-number{
+
+  font-size:14px;
+
+  font-weight:700;
+
+  margin-bottom:4px;
+
+}
+
+
+
+/* EVENTI */
+
+.event{
+
+  color:white;
+
+  padding:4px;
+
+  border-radius:8px;
+
+  font-size:10px;
+
+  margin-top:3px;
+
+  font-weight:700;
+
+  text-align:center;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+
+}
+
+
+
+/* SOLO TURNO */
+
+.event-shift{
+
+  font-size:10px;
+
+}
+
+
+
+/* COLORI DIPENDENTI */
+
+.percaccioli{
+  background:#ff9500;
+}
+
+.manunta{
+  background:#34c759;
+}
+
+.santillo{
+  background:#007aff;
+}
+
+
+
+/* CELLE VUOTE */
+
+.empty-day{
+
+  min-height:72px;
+
+}
+
+
+
+/* POPUP */
+
+.popup{
+
+  position:fixed;
+
+  inset:0;
+
+  background:rgba(0,0,0,0.4);
+
+  display:none;
+
+  justify-content:center;
+
+  align-items:center;
+
+  padding:20px;
+
+}
+
+
+
+/* CONTENUTO POPUP */
+
+.popup-content{
+
+  width:100%;
+
+  max-width:400px;
+
+  background:white;
+
+  border-radius:28px;
+
+  padding:25px;
+
+}
+
+
+
+/* HEADER POPUP */
+
+.popup-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:20px;
+
+}
+
+
+
+/* CHIUSURA */
+
+.close-btn{
+
+  border:none;
+
+  background:none;
+
+  font-size:22px;
+
+  cursor:pointer;
+
+}
+
+
+
+/* LABEL */
+
+.popup label{
+
+  display:block;
+
+  margin-top:15px;
+
+  margin-bottom:8px;
+
+  font-weight:600;
+
+}
+
+
+
+/* INPUT */
+
+.popup input,
+.popup select{
+
+  width:100%;
+
+  padding:14px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:#f2f2f7;
+
+  font-size:16px;
+
+}
+
+
+
+/* SALVA */
+
+.save-btn{
+
+  width:100%;
+
+  margin-top:25px;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#007aff;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+}
+
+
+
+/* ELIMINA */
+
+.delete-btn{
+
+  width:100%;
+
+  margin-top:10px;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#ff3b30;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:600;
+
+  cursor:pointer;
 
 }
