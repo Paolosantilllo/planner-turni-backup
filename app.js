@@ -205,10 +205,6 @@ const events = savedEvents.filter(event => {
       }
 
       eventDiv.innerHTML = `
-        <div class="event-name">
-          ${event.employee}
-        </div>
-
         <div class="event-shift">
           ${event.shift}
         </div>
