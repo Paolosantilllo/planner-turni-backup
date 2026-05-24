@@ -253,16 +253,17 @@ const formattedDate =
       }
 
 
+// FREP ROSSO
+if(event.shift === "FREP"){
+  eventDiv.classList.add("frep");
+}
 
-      // SOLO TURNO
-      eventDiv.innerHTML = `
-
-        <div class="event-shift">
-          ${event.shift}
-        </div>
-
-      `;
-
+// SOLO TURNO
+eventDiv.innerHTML = `
+  <div class="event-shift">
+    ${event.shift}
+  </div>
+`;
 
 
       // CLICK MODIFICA
