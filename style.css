@@ -489,3 +489,121 @@ body{
   color:#ff3b30 !important;
   font-weight:800;
 }
+/* TOOLBAR BOTTONI */
+.toolbar-actions{
+  display:flex;
+  gap:10px;
+}
+
+
+
+/* CAMBIO TURNO */
+.change-btn{
+  width:55px;
+  height:55px;
+
+  border:none;
+  border-radius:18px;
+
+  background:#ff9500;
+  color:white;
+
+  font-size:22px;
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(255,149,0,0.25);
+}
+
+
+
+/* NOTIFICHE */
+.notify-btn{
+  width:55px;
+  height:55px;
+
+  border:none;
+  border-radius:18px;
+
+  background:#ff3b30;
+  color:white;
+
+  font-size:22px;
+  cursor:pointer;
+
+  box-shadow:0 8px 20px rgba(255,59,48,0.25);
+}
+
+
+
+/* CARD RICHIESTE */
+.request-card{
+  background:white;
+
+  padding:15px;
+
+  border-radius:18px;
+
+  margin-top:12px;
+
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+
+
+/* TESTO CARD */
+.request-card-title{
+  font-size:15px;
+  font-weight:700;
+
+  margin-bottom:8px;
+}
+
+
+
+/* BOTTONI CARD */
+.request-buttons{
+  display:flex;
+  gap:10px;
+
+  margin-top:12px;
+}
+
+
+
+/* ACCETTA */
+.accept-btn{
+  flex:1;
+
+  border:none;
+
+  background:#34c759;
+  color:white;
+
+  padding:12px;
+
+  border-radius:14px;
+
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+
+
+/* RIFIUTA */
+.reject-btn{
+  flex:1;
+
+  border:none;
+
+  background:#ff3b30;
+  color:white;
+
+  padding:12px;
+
+  border-radius:14px;
+
+  font-weight:700;
+
+  cursor:pointer;
+}
