@@ -600,3 +600,46 @@ function prevMonth(){
 
 // AVVIO
 renderCalendar();
+async function exportPDF(){
+
+  const { jsPDF } = window.jspdf;
+
+  const calendarElement =
+    document.querySelector(".app");
+
+  const canvas =
+    await html2canvas(calendarElement);
+
+  const imgData =
+    canvas.toDataURL("image/png");
+
+  const pdf =
+    new jsPDF("p", "mm", "a4");
+
+  const pdfWidth =
+    pdf.internal.pageSize.getWidth();
+
+  const pdfHeight =
+    (canvas.height * pdfWidth) /
+    canvas.width;
+
+  pdf.addImage(
+    imgData,
+    "PNG",
+    0,
+    0,
+    pdfWidth,
+    pdfHeight
+  );
+
+  const monthName =
+    monthNames[currentDate.getMonth()];
+
+  const year =
+    currentDate.getFullYear();
+
+  pdf.save(
+    `Turni_${monthName}_${year}.pdf`
+  );
+
+}
