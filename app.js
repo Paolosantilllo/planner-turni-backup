@@ -15,7 +15,34 @@ let savedEvents =
 
 let editingIndex = null;
 
+async function loadEventsFromFirebase(){
 
+  try{
+
+    const snapshot =
+      await window.firebaseFirestore.getDocs(
+        window.firebaseFirestore.collection(window.db,"events")
+      );
+
+    savedEvents = [];
+
+    snapshot.forEach(doc => {
+
+      savedEvents.push({
+        firebaseId: doc.id,
+        ...doc.data()
+      });
+
+    });
+
+    renderCalendar();
+
+  }catch(error){
+
+    console.log("Errore Firebase:", error);
+
+  }
+}
 
 // ======================
 // FESTIVI
