@@ -1,12 +1,3 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  onSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
@@ -33,8 +24,8 @@ async function loadEventsFromFirebase(){
   try{
 
     const snapshot =
-      await getDocs(
-        collection(window.db,"events")
+      await window.firebaseFirestore.getDocs(
+        window.firebaseFirestore.collection(window.db,"events")
       );
 
     savedEvents = [];
@@ -574,7 +565,7 @@ async function deleteShift(){
 
   if(event.firebaseId){
 
-    await deleteDoc(
+await window.firebaseFirestore.deleteDoc((
 
       doc(
         window.db,
