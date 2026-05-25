@@ -461,22 +461,23 @@ await window.firebaseFirestore.updateDoc(
 
 
       // REP
-      if(shift.trim() === "REP" && isFestive){
+     // REP solo feriali
+if(shift.trim() === "REP" && isFestive){
 
-        alert("REP solo feriali");
+  current.setDate(current.getDate()+1);
 
-        return;
-      }
+  continue;
+}
 
 
 
-      // FREP
-      if(shift.trim() === "FREP" && !isFestive){
+// FREP solo festivi
+if(shift.trim() === "FREP" && !isFestive){
 
-        alert("FREP solo festivi");
+  current.setDate(current.getDate()+1);
 
-        return;
-      }
+  continue;
+}
 
 
 
@@ -561,35 +562,43 @@ async function deleteShift(){
 
   if(editingIndex === null) return;
 
-  const event =
-    savedEvents[editingIndex];
+  try{
+
+    const event =
+      savedEvents[editingIndex];
 
 
 
-  if(event.firebaseId){
+    if(event.firebaseId){
 
-  await window.firebaseFirestore.deleteDoc(
+      await window.firebaseFirestore.deleteDoc(
 
-    window.firebaseFirestore.doc(
-      window.db,
-      "events",
-      event.firebaseId
-    )
+        window.firebaseFirestore.doc(
+          window.db,
+          "events",
+          event.firebaseId
+        )
 
-  );
+      );
+    }
+
+
+
+    savedEvents.splice(editingIndex,1);
+
+    editingIndex = null;
+
+    closePopup();
+
+    renderCalendar();
+
+  }catch(error){
+
+    console.log("Errore eliminazione:", error);
+
+    alert("Errore eliminazione turno");
+  }
 }
-
-
-
-  savedEvents.splice(editingIndex,1);
-
-  editingIndex = null;
-
-  closePopup();
-
-  renderCalendar();
-}
-
 
 
 // ======================
