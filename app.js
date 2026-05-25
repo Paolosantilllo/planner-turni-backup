@@ -478,11 +478,6 @@ window.firebaseFirestore.addDoc(
   }
 
 
-
-  localStorage.setItem("events", JSON.stringify(savedEvents));
-
-
-
   editingIndex = null;
 
   closePopup();
@@ -519,14 +514,6 @@ async function deleteShift(){
 
   // elimina locale
   savedEvents.splice(editingIndex,1);
-
-
-
-  localStorage.setItem(
-    "events",
-    JSON.stringify(savedEvents)
-  );
-
 
 
   editingIndex = null;
