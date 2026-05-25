@@ -487,13 +487,19 @@
 
     const app = initializeApp(firebaseConfig);
 
-    const db = getFirestore(app);
+const db = getFirestore(app);
 
+window.db = db;
 
+window.firebaseFirestore = {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc
+};
 
-    window.db = db;
-
-  </script>
+</script>
 
 </body>
 
