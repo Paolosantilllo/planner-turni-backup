@@ -14,25 +14,36 @@ let savedEvents =
 
 let editingIndex = null;
 
-async function loadEventsFromFirebase(){
+function loadEventsFromFirebase(){
 
-  try{
+  window.firebaseFirestore.onSnapshot(
 
-    const snapshot =
-      await window.firebaseFirestore.getDocs(
-        window.firebaseFirestore.collection(window.db,"events")
+    window.firebaseFirestore.collection(window.db,"events"),
+
+    (snapshot) => {
+
+      savedEvents = [];
+
+      snapshot.forEach(doc => {
+
+        savedEvents.push({
+          firebaseId: doc.id,
+          ...doc.data()
+        });
+
+      });
+
+      localStorage.setItem(
+        "events",
+        JSON.stringify(savedEvents)
       );
 
-    savedEvents = [];
+      renderCalendar();
+    }
 
-snapshot.forEach(doc => {
+  );
 
-  savedEvents.push({
-    firebaseId: doc.id,
-    ...doc.data()
-  });
-
-});
+}
 
     localStorage.setItem(
       "events",
