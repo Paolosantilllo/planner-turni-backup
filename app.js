@@ -55,10 +55,9 @@ async function loadEventsFromFirebase(){
 // ======================
 function startRealtimeUpdates(){
 
-  onSnapshot(
+window.firebaseFirestore.onSnapshot(
 
-    collection(window.db,"events"),
-
+  window.firebaseFirestore.collection(window.db,"events"),
     (snapshot) => {
 
       savedEvents = [];
@@ -423,16 +422,20 @@ async function saveShift(){
 
     if(event.firebaseId){
 
-      await updateDoc(
+await window.firebaseFirestore.updateDoc(
 
-        doc(window.db,"events",event.firebaseId),
+  window.firebaseFirestore.doc(
+    window.db,
+    "events",
+    event.firebaseId
+  ),
 
-        {
-          employee,
-          date: startDate,
-          shift
-        }
-      );
+  {
+    employee,
+    date: startDate,
+    shift
+  }
+);
     }
 
   }else{
@@ -515,12 +518,12 @@ async function saveShift(){
 
 
 
-      await addDoc(
+     await window.firebaseFirestore.addDoc(
 
-        collection(window.db,"events"),
+  window.firebaseFirestore.collection(window.db,"events"),
 
-        newEvent
-      );
+  newEvent
+);
 
 
 
@@ -565,15 +568,16 @@ async function deleteShift(){
 
   if(event.firebaseId){
 
-await window.firebaseFirestore.deleteDoc((
+  await window.firebaseFirestore.deleteDoc(
 
-      doc(
-        window.db,
-        "events",
-        event.firebaseId
-      )
-    );
-  }
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      event.firebaseId
+    )
+
+  );
+}
 
 
 
