@@ -660,3 +660,15 @@ async function exportPDF(){
 loadEventsFromFirebase();
 
 startRealtimeUpdates();
+
+window.openPopup = openPopup;
+window.closePopup = closePopup;
+
+window.saveShift = saveShift;
+window.deleteShift = deleteShift;
+
+window.nextMonth = nextMonth;
+window.prevMonth = prevMonth;
+
+window.renderCalendar = renderCalendar;
+window.exportPDF = exportPDF;
