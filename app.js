@@ -396,14 +396,18 @@ function saveShift(){
 
 
 
-      savedEvents.push({
+     const newEvent = {
+  employee,
+  date: d.toISOString().split("T")[0],
+  shift
+};
 
-        employee,
+savedEvents.push(newEvent);
 
-        date: d.toISOString().split("T")[0],
-
-        shift
-      });
+window.firebaseFirestore.addDoc(
+  window.firebaseFirestore.collection(window.db,"events"),
+  newEvent
+);
 
 
 
