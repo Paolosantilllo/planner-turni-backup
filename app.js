@@ -234,8 +234,64 @@ function saveShift(){
   const shift =
     document.getElementById("shift").value;
 
+
+
   if(!startDate || !endDate){
+
     alert("Seleziona le date");
+
+    return;
+  }
+
+
+
+  // conteggi mensili
+  const start = new Date(startDate);
+
+  const year = start.getFullYear();
+
+  const month = start.getMonth();
+
+
+
+  let repCount =
+    countMonthlyShift(employee,"REP",year,month);
+
+  let frepCount =
+    countMonthlyShift(employee,"FREP",year,month);
+
+
+
+  // se sto modificando un evento
+  // tolgo il vecchio conteggio
+  if(editingIndex !== null){
+
+    const oldEvent = savedEvents[editingIndex];
+
+    if(oldEvent.shift === "REP")
+      repCount--;
+
+    if(oldEvent.shift === "FREP")
+      frepCount--;
+  }
+
+
+
+  // limite REP
+  if(shift.trim() === "REP" && repCount >= 6){
+
+    alert("Massimo 6 REP");
+
+    return;
+  }
+
+
+
+  // limite FREP
+  if(shift.trim() === "FREP" && frepCount >= 2){
+
+    alert("Massimo 2 FREP");
+
     return;
   }
 
@@ -245,56 +301,111 @@ function saveShift(){
   if(editingIndex !== null){
 
     savedEvents[editingIndex] = {
+
       employee,
+
       date: startDate,
+
       shift
     };
 
   }else{
 
     let current = new Date(startDate);
+
     let end = new Date(endDate);
+
+
 
     while(current <= end){
 
       const d = new Date(current);
 
-      const year = d.getFullYear();
-      const month = d.getMonth();
 
-      const isSunday = d.getDay() === 0;
+
+      const isSunday =
+        d.getDay() === 0;
+
+
 
       const holidays = [
+
         "1-1","6-1","25-4","1-5","2-6",
-        "15-8","1-1","8-12","25-12","26-12"
+
+        "15-8","1-11","8-12","25-12","26-12"
+
       ];
+
+
 
       const isItalianHoliday =
         holidays.includes(`${d.getDate()}-${d.getMonth()+1}`);
 
-      const isFestive = isSunday || isItalianHoliday;
+
+
+      const isFestive =
+        isSunday || isItalianHoliday;
 
 
 
-      // REP
+      // REP solo feriali
       if(shift.trim() === "REP" && isFestive){
+
         alert("REP solo lun-sab");
+
         return;
       }
 
-      // FREP
+
+
+      // FREP solo festivi
       if(shift.trim() === "FREP" && !isFestive){
+
         alert("FREP solo festivi");
+
         return;
       }
 
 
 
       savedEvents.push({
+
         employee,
+
         date: d.toISOString().split("T")[0],
+
         shift
       });
+
+
+
+      // aggiorna conteggi
+      if(shift.trim() === "REP")
+        repCount++;
+
+      if(shift.trim() === "FREP")
+        frepCount++;
+
+
+
+      // blocco durante inserimenti multipli
+      if(repCount > 6){
+
+        alert("Massimo 6 REP");
+
+        return;
+      }
+
+
+
+      if(frepCount > 2){
+
+        alert("Massimo 2 FREP");
+
+        return;
+      }
+
+
 
       current.setDate(current.getDate()+1);
     }
@@ -304,12 +415,14 @@ function saveShift(){
 
   localStorage.setItem("events", JSON.stringify(savedEvents));
 
+
+
   editingIndex = null;
+
   closePopup();
+
   renderCalendar();
 }
-
-
 
 // ======================
 // DELETE
