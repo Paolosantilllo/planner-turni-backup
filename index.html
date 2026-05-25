@@ -446,21 +446,25 @@
 
 
 
+  <!-- APP -->
+  <script src="app.js"></script>
+
+
+
   <!-- FIREBASE -->
   <script type="module">
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
-  import {
+    import {
   getFirestore,
   collection,
   addDoc,
   getDocs,
   deleteDoc,
-  doc,
-  onSnapshot,
-  updateDoc
+  doc
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
 
 
     const firebaseConfig = {
@@ -492,14 +496,13 @@ window.firebaseFirestore = {
   addDoc,
   getDocs,
   deleteDoc,
-  doc,
-  onSnapshot,
-  updateDoc
+  doc
 };
 
 </script>
 
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
+
 </body>
 
 </html>
