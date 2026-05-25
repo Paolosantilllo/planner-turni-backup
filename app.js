@@ -10,7 +10,8 @@ const monthNames = [
   "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
 
-let savedEvents = [];
+let savedEvents =
+  JSON.parse(localStorage.getItem("events")) || [];
 
 let editingIndex = null;
 
