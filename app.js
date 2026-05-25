@@ -332,18 +332,39 @@ function saveShift(){
 
 
   // modifica
-  if(editingIndex !== null){
+  // modifica
+if(editingIndex !== null){
 
-    savedEvents[editingIndex] = {
+  const oldEvent = savedEvents[editingIndex];
 
-      employee,
+  const updatedEvent = {
+    employee,
+    date: startDate,
+    shift
+  };
 
-      date: startDate,
+  // aggiorna locale
+  savedEvents[editingIndex] = {
+    ...updatedEvent,
+    firebaseId: oldEvent.firebaseId
+  };
 
-      shift
-    };
+  // aggiorna Firebase
+  if(oldEvent.firebaseId){
 
-  }else{
+    await window.firebaseFirestore.updateDoc(
+
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        oldEvent.firebaseId
+      ),
+
+      updatedEvent
+    );
+  }
+
+}else{
 
     let current = new Date(startDate);
 
