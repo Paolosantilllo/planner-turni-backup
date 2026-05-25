@@ -1,4 +1,3 @@
-
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
