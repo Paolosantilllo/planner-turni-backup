@@ -10,8 +10,7 @@ const monthNames = [
   "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
 
-let savedEvents =
-  JSON.parse(localStorage.getItem("events")) || [];
+let savedEvents = [];
 
 let editingIndex = null;
 
@@ -24,8 +23,7 @@ async function loadEventsFromFirebase(){
         window.firebaseFirestore.collection(window.db,"events")
       );
 
-    savedEvents =
-      JSON.parse(localStorage.getItem("events")) || [];
+    savedEvents = [];
 
     snapshot.forEach(doc => {
 
@@ -35,11 +33,6 @@ async function loadEventsFromFirebase(){
       });
 
     });
-
-    localStorage.setItem(
-      "events",
-      JSON.stringify(savedEvents)
-    );
 
     renderCalendar();
 
@@ -72,11 +65,6 @@ function startRealtimeUpdates(){
         });
 
       });
-
-      localStorage.setItem(
-        "events",
-        JSON.stringify(savedEvents)
-      );
 
       renderCalendar();
     }
