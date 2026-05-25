@@ -1,12 +1,3 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-const db = window.db;
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
