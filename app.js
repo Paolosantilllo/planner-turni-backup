@@ -23,17 +23,16 @@ async function loadEventsFromFirebase(){
         window.firebaseFirestore.collection(window.db,"events")
       );
 
-    savedEvents =
-      JSON.parse(localStorage.getItem("events")) || [];
+    savedEvents = [];
 
-    snapshot.forEach(doc => {
+snapshot.forEach(doc => {
 
-      savedEvents.push({
-        firebaseId: doc.id,
-        ...doc.data()
-      });
+  savedEvents.push({
+    firebaseId: doc.id,
+    ...doc.data()
+  });
 
-    });
+});
 
     localStorage.setItem(
       "events",
