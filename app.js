@@ -1,12 +1,4 @@
-const db = window.db;
 
-const {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc
-} = window.firebaseFirestore;
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
