@@ -508,4 +508,4 @@ async function exportPDF(){
 
 
 // START
-renderCalendar();
+loadEventsFromFirebase();
