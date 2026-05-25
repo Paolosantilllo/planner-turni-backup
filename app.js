@@ -10,8 +10,7 @@ const monthNames = [
   "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
 
-let savedEvents =
-  JSON.parse(localStorage.getItem("events")) || [];
+let savedEvents = [];
 
 let editingIndex = null;
 
@@ -24,7 +23,7 @@ async function loadEventsFromFirebase(){
         window.firebaseFirestore.collection(window.db,"events")
       );
 
-    savedEvents = [];
+    savedEvents = JSON.parse(localStorage.getItem("events")) || [];
 
     snapshot.forEach(doc => {
 
