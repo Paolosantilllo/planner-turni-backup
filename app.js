@@ -35,7 +35,34 @@ async function loadEventsFromFirebase(){
       });
 
     });
+function startRealtimeUpdates(){
 
+  window.firebaseFirestore.onSnapshot(
+
+    window.firebaseFirestore.collection(window.db,"events"),
+
+    (snapshot) => {
+
+      savedEvents = [];
+
+      snapshot.forEach(doc => {
+
+        savedEvents.push({
+          firebaseId: doc.id,
+          ...doc.data()
+        });
+
+      });
+
+      localStorage.setItem(
+        "events",
+        JSON.stringify(savedEvents)
+      );
+
+      renderCalendar();
+    }
+  );
+}
     localStorage.setItem(
       "events",
       JSON.stringify(savedEvents)
