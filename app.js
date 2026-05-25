@@ -34,7 +34,7 @@ async function loadEventsFromFirebase(){
       });
 
     });
-
+localStorage.setItem("events", JSON.stringify(savedEvents));
     renderCalendar();
 
   }catch(error){
