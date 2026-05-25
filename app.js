@@ -254,7 +254,7 @@ function closePopup(){ popup.style.display="none"; }
 // ======================
 // SALVA
 // ======================
-function saveShift(){
+async function saveShift(){
 
   const employee =
     document.getElementById("employee").value;
