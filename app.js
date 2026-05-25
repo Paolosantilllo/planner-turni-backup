@@ -55,8 +55,7 @@ function startRealtimeUpdates(){
 
     (snapshot) => {
 
-      savedEvents =
-  JSON.parse(localStorage.getItem("events")) || [];
+      savedEvents = [];
 
       snapshot.forEach(doc => {
 
