@@ -334,8 +334,6 @@ async function saveShift(){
   const shift =
     document.getElementById("shift").value;
 
-
-
   if(!startDate || !endDate){
 
     alert("Seleziona le date");
@@ -343,15 +341,11 @@ async function saveShift(){
     return;
   }
 
-
-
   const start = new Date(startDate);
 
   const year = start.getFullYear();
 
   const month = start.getMonth();
-
-
 
   let repCount =
     countMonthlyShift(employee,"REP",year,month);
@@ -359,8 +353,7 @@ async function saveShift(){
   let frepCount =
     countMonthlyShift(employee,"FREP",year,month);
 
-
-
+  // MODIFICA
   if(editingIndex !== null){
 
     const oldEvent = savedEvents[editingIndex];
@@ -370,32 +363,34 @@ async function saveShift(){
 
     if(oldEvent.shift === "FREP")
       frepCount--;
-  }
 
+    // aggiorna Firebase
+    if(oldEvent.firebaseId){
 
+      await window.firebaseFirestore.updateDoc(
 
-  // limiti
-  if(shift.trim() === "REP" && repCount >= 6){
+        window.firebaseFirestore.doc(
+          window.db,
+          "events",
+          oldEvent.firebaseId
+        ),
 
-    alert("Massimo 6 REP");
+        {
+          employee,
+          date: startDate,
+          shift
+        }
+      );
+    }
+
+    closePopup();
 
     return;
   }
-
-  if(shift.trim() === "FREP" && frepCount >= 2){
-
-    alert("Massimo 2 FREP");
-
-    return;
-  }
-
-
 
   let current = new Date(startDate);
 
   let end = new Date(endDate);
-
-
 
   while(current <= end){
 
@@ -415,8 +410,6 @@ async function saveShift(){
     const isFestive =
       isSunday || isItalianHoliday;
 
-
-
     // REP
     if(shift.trim() === "REP" && isFestive){
 
@@ -424,8 +417,6 @@ async function saveShift(){
 
       return;
     }
-
-
 
     // FREP
     if(shift.trim() === "FREP" && !isFestive){
@@ -435,7 +426,21 @@ async function saveShift(){
       return;
     }
 
+    // LIMITE REP
+    if(shift.trim() === "REP" && repCount >= 6){
 
+      alert("Massimo 6 REP");
+
+      return;
+    }
+
+    // LIMITE FREP
+    if(shift.trim() === "FREP" && frepCount >= 2){
+
+      alert("Massimo 2 FREP");
+
+      return;
+    }
 
     const newEvent = {
 
@@ -446,29 +451,29 @@ async function saveShift(){
       shift
     };
 
-
-
     await window.firebaseFirestore.addDoc(
 
-      window.firebaseFirestore.collection(window.db,"events"),
+      window.firebaseFirestore.collection(
+        window.db,
+        "events"
+      ),
 
       newEvent
     );
 
+    if(shift.trim() === "REP")
+      repCount++;
 
+    if(shift.trim() === "FREP")
+      frepCount++;
 
     current.setDate(current.getDate()+1);
   }
-
-
 
   editingIndex = null;
 
   closePopup();
 }
-
-
-
 // ======================
 // DELETE
 // ======================
