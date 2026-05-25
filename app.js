@@ -35,6 +35,25 @@ async function loadEventsFromFirebase(){
       });
 
     });
+
+    localStorage.setItem(
+      "events",
+      JSON.stringify(savedEvents)
+    );
+
+    renderCalendar();
+
+  }catch(error){
+
+    console.log("Errore Firebase:", error);
+
+    renderCalendar();
+
+  }
+}
+
+
+
 function startRealtimeUpdates(){
 
   window.firebaseFirestore.onSnapshot(
@@ -63,22 +82,6 @@ function startRealtimeUpdates(){
     }
   );
 }
-    localStorage.setItem(
-      "events",
-      JSON.stringify(savedEvents)
-    );
-
-    renderCalendar();
-
-  }catch(error){
-
-    console.log("Errore Firebase:", error);
-
-    renderCalendar();
-
-  }
-}
-
 // ======================
 // FESTIVI
 // ======================
