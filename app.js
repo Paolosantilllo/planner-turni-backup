@@ -24,7 +24,8 @@ async function loadEventsFromFirebase(){
         window.firebaseFirestore.collection(window.db,"events")
       );
 
-    savedEvents = JSON.parse(localStorage.getItem("events")) || [];
+    savedEvents =
+      JSON.parse(localStorage.getItem("events")) || [];
 
     snapshot.forEach(doc => {
 
@@ -34,12 +35,19 @@ async function loadEventsFromFirebase(){
       });
 
     });
-localStorage.setItem("events", JSON.stringify(savedEvents));
+
+    localStorage.setItem(
+      "events",
+      JSON.stringify(savedEvents)
+    );
+
     renderCalendar();
 
   }catch(error){
 
     console.log("Errore Firebase:", error);
+
+    renderCalendar();
 
   }
 }
