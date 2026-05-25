@@ -575,3 +575,5 @@ async function exportPDF(){
 
 // START
 loadEventsFromFirebase();
+
+startRealtimeUpdates();
