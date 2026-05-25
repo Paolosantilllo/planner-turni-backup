@@ -467,21 +467,48 @@ window.firebaseFirestore.addDoc(
 // ======================
 // DELETE
 // ======================
-function deleteShift(){
+async function deleteShift(){
 
   if(editingIndex === null) return;
 
+  const event = savedEvents[editingIndex];
+
+
+
+  // elimina da Firebase
+  if(event.firebaseId){
+
+    await window.firebaseFirestore.deleteDoc(
+
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        event.firebaseId
+      )
+
+    );
+  }
+
+
+
+  // elimina locale
   savedEvents.splice(editingIndex,1);
 
-  localStorage.setItem("events", JSON.stringify(savedEvents));
+
+
+  localStorage.setItem(
+    "events",
+    JSON.stringify(savedEvents)
+  );
+
+
 
   editingIndex = null;
 
   closePopup();
+
   renderCalendar();
 }
-
-
 
 // ======================
 // NAV
