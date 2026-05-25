@@ -30,11 +30,11 @@ async function loadEventsFromFirebase(){
 
     savedEvents = [];
 
-    snapshot.forEach(docItem => {
+    snapshot.forEach(doc => {
 
       savedEvents.push({
-        firebaseId: docItem.id,
-        ...docItem.data()
+        firebaseId: doc.id,
+        ...doc.data()
       });
 
     });
@@ -45,28 +45,30 @@ async function loadEventsFromFirebase(){
 
     console.log("Errore Firebase:", error);
 
+    renderCalendar();
   }
 }
 
 
 
 // ======================
-// REALTIME UPDATES
+// REALTIME
 // ======================
 function startRealtimeUpdates(){
 
-window.firebaseFirestore.onSnapshot(
+  window.firebaseFirestore.onSnapshot(
 
-  window.firebaseFirestore.collection(window.db,"events"),
+    window.firebaseFirestore.collection(window.db,"events"),
+
     (snapshot) => {
 
       savedEvents = [];
 
-      snapshot.forEach(docItem => {
+      snapshot.forEach(doc => {
 
         savedEvents.push({
-          firebaseId: docItem.id,
-          ...docItem.data()
+          firebaseId: doc.id,
+          ...doc.data()
         });
 
       });
@@ -102,7 +104,7 @@ function isHoliday(date){
 
 
 // ======================
-// CONTEGGIO TURNI
+// CONTEGGIO
 // ======================
 function countMonthlyShift(employee, shift, year, month){
 
@@ -123,7 +125,7 @@ function countMonthlyShift(employee, shift, year, month){
 
 
 // ======================
-// RENDER CALENDARIO
+// RENDER
 // ======================
 function renderCalendar(){
 
@@ -144,9 +146,7 @@ function renderCalendar(){
 
   let startDay = firstDay - 1;
 
-  if(startDay < 0){
-    startDay = 6;
-  }
+  if(startDay < 0) startDay = 6;
 
 
 
@@ -169,12 +169,8 @@ function renderCalendar(){
 
     dayBox.classList.add("day");
 
-    const loopDate =
-      new Date(year, month, day);
+    const loopDate = new Date(year, month, day);
 
-
-
-    // festivi
     if(isHoliday(loopDate)){
 
       dayBox.classList.add("holiday-day");
@@ -199,18 +195,15 @@ function renderCalendar(){
 
       const formatted = `${y}-${m}-${d}`;
 
-      document.getElementById("startDate").value =
-        formatted;
+      document.getElementById("startDate").value = formatted;
 
-      document.getElementById("endDate").value =
-        formatted;
+      document.getElementById("endDate").value = formatted;
     });
 
 
 
     // numero giorno
-    const dayNumber =
-      document.createElement("div");
+    const dayNumber = document.createElement("div");
 
     dayNumber.classList.add("day-number");
 
@@ -220,29 +213,20 @@ function renderCalendar(){
 
 
 
-    // filtro dipendente
+    // eventi
     const selectedEmployee =
       document.getElementById("employeeFilter").value;
 
-
-
-    // eventi giorno
     const events = savedEvents.filter(event => {
 
-      const eventDate =
-        new Date(event.date);
+      const eventDate = new Date(event.date);
 
       return (
-
         eventDate.getDate() === day &&
-
         eventDate.getMonth() === month &&
-
         eventDate.getFullYear() === year &&
-
         (
           selectedEmployee === "ALL" ||
-
           event.employee === selectedEmployee
         )
       );
@@ -250,7 +234,6 @@ function renderCalendar(){
 
 
 
-    // render eventi
     events.forEach(event => {
 
       const eventIndex =
@@ -263,35 +246,28 @@ function renderCalendar(){
 
 
 
-      // colori dipendenti
-      if(event.employee === "PERCACCIOLI"){
+      // colori
+      if(event.employee === "PERCACCIOLI")
         eventDiv.classList.add("percaccioli");
-      }
 
-      if(event.employee === "MANUNTA"){
+      if(event.employee === "MANUNTA")
         eventDiv.classList.add("manunta");
-      }
 
-      if(event.employee === "SANTILLO"){
+      if(event.employee === "SANTILLO")
         eventDiv.classList.add("santillo");
-      }
 
 
 
-      // testo turno
+      // testo
       eventDiv.innerHTML = `
-
         <div class="event-shift ${event.shift === "FREP" ? "frep-text" : ""}">
-
           ${event.shift}
-
         </div>
-
       `;
 
 
 
-      // click modifica
+      // modifica
       eventDiv.addEventListener("click",(e)=>{
 
         e.stopPropagation();
@@ -341,19 +317,8 @@ function closePopup(){
 
 
 
-// chiudi cliccando fuori
-popup.addEventListener("click",(e)=>{
-
-  if(e.target === popup){
-
-    closePopup();
-  }
-});
-
-
-
 // ======================
-// SALVA
+// SAVE
 // ======================
 async function saveShift(){
 
@@ -380,14 +345,11 @@ async function saveShift(){
 
 
 
-  const start =
-    new Date(startDate);
+  const start = new Date(startDate);
 
-  const year =
-    start.getFullYear();
+  const year = start.getFullYear();
 
-  const month =
-    start.getMonth();
+  const month = start.getMonth();
 
 
 
@@ -399,149 +361,103 @@ async function saveShift(){
 
 
 
-  // modifica evento
   if(editingIndex !== null){
 
-    const event =
-      savedEvents[editingIndex];
+    const oldEvent = savedEvents[editingIndex];
+
+    if(oldEvent.shift === "REP")
+      repCount--;
+
+    if(oldEvent.shift === "FREP")
+      frepCount--;
+  }
 
 
 
-    savedEvents[editingIndex] = {
+  // limiti
+  if(shift.trim() === "REP" && repCount >= 6){
 
-      ...event,
+    alert("Massimo 6 REP");
+
+    return;
+  }
+
+  if(shift.trim() === "FREP" && frepCount >= 2){
+
+    alert("Massimo 2 FREP");
+
+    return;
+  }
+
+
+
+  let current = new Date(startDate);
+
+  let end = new Date(endDate);
+
+
+
+  while(current <= end){
+
+    const d = new Date(current);
+
+    const isSunday =
+      d.getDay() === 0;
+
+    const holidays = [
+      "1-1","6-1","25-4","1-5","2-6",
+      "15-8","1-11","8-12","25-12","26-12"
+    ];
+
+    const isItalianHoliday =
+      holidays.includes(`${d.getDate()}-${d.getMonth()+1}`);
+
+    const isFestive =
+      isSunday || isItalianHoliday;
+
+
+
+    // REP
+    if(shift.trim() === "REP" && isFestive){
+
+      alert("REP solo lun-sab");
+
+      return;
+    }
+
+
+
+    // FREP
+    if(shift.trim() === "FREP" && !isFestive){
+
+      alert("FREP solo festivi");
+
+      return;
+    }
+
+
+
+    const newEvent = {
 
       employee,
 
-      date: startDate,
+      date: d.toISOString().split("T")[0],
 
       shift
     };
 
 
 
-    if(event.firebaseId){
+    await window.firebaseFirestore.addDoc(
 
-await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.collection(window.db,"events"),
 
-  window.firebaseFirestore.doc(
-    window.db,
-    "events",
-    event.firebaseId
-  ),
-
-  {
-    employee,
-    date: startDate,
-    shift
-  }
-);
-    }
-
-  }else{
-
-    let current =
-      new Date(startDate);
-
-    let end =
-      new Date(endDate);
+      newEvent
+    );
 
 
 
-    while(current <= end){
-
-      const d =
-        new Date(current);
-
-
-
-      const isFestive =
-        isHoliday(d);
-
-
-
-      // REP
-     // REP solo feriali
-if(shift.trim() === "REP" && isFestive){
-
-  current.setDate(current.getDate()+1);
-
-  continue;
-}
-
-
-
-// FREP solo festivi
-if(shift.trim() === "FREP" && !isFestive){
-
-  current.setDate(current.getDate()+1);
-
-  continue;
-}
-
-
-
-      // max REP
-      if(
-        shift.trim() === "REP" &&
-        repCount >= 6
-      ){
-
-        alert("Massimo 6 REP");
-
-        return;
-      }
-
-
-
-      // max FREP
-      if(
-        shift.trim() === "FREP" &&
-        frepCount >= 2
-      ){
-
-        alert("Massimo 2 FREP");
-
-        return;
-      }
-
-
-
-      const newEvent = {
-
-        employee,
-
-        date:
-          d.toISOString().split("T")[0],
-
-        shift
-      };
-
-
-
-     await window.firebaseFirestore.addDoc(
-
-  window.firebaseFirestore.collection(window.db,"events"),
-
-  newEvent
-);
-
-
-
-      if(shift.trim() === "REP"){
-        repCount++;
-      }
-
-      if(shift.trim() === "FREP"){
-        frepCount++;
-      }
-
-
-
-      current.setDate(
-        current.getDate()+1
-      );
-    }
+    current.setDate(current.getDate()+1);
   }
 
 
@@ -549,8 +465,6 @@ if(shift.trim() === "FREP" && !isFestive){
   editingIndex = null;
 
   closePopup();
-
-  renderCalendar();
 }
 
 
@@ -562,47 +476,33 @@ async function deleteShift(){
 
   if(editingIndex === null) return;
 
-  try{
-
-    const event =
-      savedEvents[editingIndex];
+  const event = savedEvents[editingIndex];
 
 
 
-    if(event.firebaseId){
+  if(event.firebaseId){
 
-      await window.firebaseFirestore.deleteDoc(
+    await window.firebaseFirestore.deleteDoc(
 
-        window.firebaseFirestore.doc(
-          window.db,
-          "events",
-          event.firebaseId
-        )
-
-      );
-    }
-
-
-
-    savedEvents.splice(editingIndex,1);
-
-    editingIndex = null;
-
-    closePopup();
-
-    renderCalendar();
-
-  }catch(error){
-
-    console.log("Errore eliminazione:", error);
-
-    alert("Errore eliminazione turno");
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        event.firebaseId
+      )
+    );
   }
+
+
+
+  editingIndex = null;
+
+  closePopup();
 }
 
 
+
 // ======================
-// NAV MESE
+// NAV
 // ======================
 function nextMonth(){
 
@@ -612,8 +512,6 @@ function nextMonth(){
 
   renderCalendar();
 }
-
-
 
 function prevMonth(){
 
@@ -634,9 +532,7 @@ async function exportPDF(){
   const { jsPDF } = window.jspdf;
 
   const canvas =
-    await html2canvas(
-      document.querySelector(".app")
-    );
+    await html2canvas(document.querySelector(".app"));
 
   const pdf =
     new jsPDF("p","mm","a4");
@@ -663,21 +559,7 @@ async function exportPDF(){
 
 
 
-// ======================
 // START
-// ======================
 loadEventsFromFirebase();
 
 startRealtimeUpdates();
-
-window.openPopup = openPopup;
-window.closePopup = closePopup;
-
-window.saveShift = saveShift;
-window.deleteShift = deleteShift;
-
-window.nextMonth = nextMonth;
-window.prevMonth = prevMonth;
-
-window.renderCalendar = renderCalendar;
-window.exportPDF = exportPDF;
