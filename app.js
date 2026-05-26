@@ -308,6 +308,14 @@ function closePopup(){
   popup.style.display = "none";
 }
 
+function openChangePopup(){
+  document.getElementById("changePopup").style.display = "flex";
+}
+
+function closeChangePopup(){
+  document.getElementById("changePopup").style.display = "none";
+}
+
 
 
 // ======================
