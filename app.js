@@ -436,4 +436,8 @@ function prevMonth(){
 // ======================
 // START
 // ======================
-loadEventsFromFirebase();
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    loadEventsFromFirebase();
+  }, 500);
+});
