@@ -5,18 +5,8 @@ const popup = document.getElementById("popup");
 let currentDate = new Date();
 
 const monthNames = [
-  "Gennaio",
-  "Febbraio",
-  "Marzo",
-  "Aprile",
-  "Maggio",
-  "Giugno",
-  "Luglio",
-  "Agosto",
-  "Settembre",
-  "Ottobre",
-  "Novembre",
-  "Dicembre"
+  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
 
 let savedEvents = [];
@@ -25,21 +15,20 @@ let editingIndex = null;
 
 
 
-/* =========================
-   FIREBASE
-========================= */
-
-function loadEventsFromFirebase() {
+// ======================
+// FIREBASE
+// ======================
+function loadEventsFromFirebase(){
 
   window.firebaseFirestore.onSnapshot(
 
-    window.firebaseFirestore.collection(window.db, "events"),
+    window.firebaseFirestore.collection(window.db,"events"),
 
-    (snapshot) => {
+    (snapshot)=>{
 
       savedEvents = [];
 
-      snapshot.forEach((docSnap) => {
+      snapshot.forEach((docSnap)=>{
 
         savedEvents.push({
           firebaseId: docSnap.id,
@@ -49,14 +38,10 @@ function loadEventsFromFirebase() {
       });
 
       renderCalendar();
-
     }
-
   );
-
 }
 
-loadEventsFromFirebase();
 
 
 // ======================
@@ -65,9 +50,11 @@ loadEventsFromFirebase();
 function isHoliday(date){
 
   const day = date.getDay();
+
   if(day === 0) return true;
 
-  const month = date.getMonth() + 1;
+  const month = date.getMonth()+1;
+
   const dayNumber = date.getDate();
 
   const holidays = [
@@ -102,13 +89,14 @@ function countMonthlyShift(employee, shift, year, month){
 
 
 // ======================
-// RENDER CALENDAR
+// CALENDARIO
 // ======================
-function renderCalendar() {
+function renderCalendar(){
 
   calendar.innerHTML = "";
 
   const year = currentDate.getFullYear();
+
   const month = currentDate.getMonth();
 
   monthTitle.innerText =
@@ -121,14 +109,18 @@ function renderCalendar() {
     new Date(year, month + 1, 0).getDate();
 
   let startDay = firstDay - 1;
+
   if(startDay < 0) startDay = 6;
 
 
 
   // celle vuote
   for(let i=0;i<startDay;i++){
+
     const empty = document.createElement("div");
+
     empty.classList.add("empty-day");
+
     calendar.appendChild(empty);
   }
 
@@ -138,11 +130,13 @@ function renderCalendar() {
   for(let day=1; day<=daysInMonth; day++){
 
     const dayBox = document.createElement("div");
+
     dayBox.classList.add("day");
 
+    const loopDate =
+      new Date(year, month, day);
 
 
-    const loopDate = new Date(year, month, day);
 
     if(isHoliday(loopDate)){
       dayBox.classList.add("holiday-day");
@@ -151,14 +145,19 @@ function renderCalendar() {
 
 
     // click giorno
-    dayBox.addEventListener("click", () => {
+    dayBox.addEventListener("click",()=>{
 
       editingIndex = null;
+
       openPopup();
 
       const y = loopDate.getFullYear();
-      const m = String(loopDate.getMonth()+1).padStart(2,"0");
-      const d = String(loopDate.getDate()).padStart(2,"0");
+
+      const m =
+        String(loopDate.getMonth()+1).padStart(2,"0");
+
+      const d =
+        String(loopDate.getDate()).padStart(2,"0");
 
       const formatted = `${y}-${m}-${d}`;
 
@@ -170,8 +169,11 @@ function renderCalendar() {
 
     // numero giorno
     const dayNumber = document.createElement("div");
+
     dayNumber.classList.add("day-number");
+
     dayNumber.innerText = day;
+
     dayBox.appendChild(dayNumber);
 
 
@@ -188,7 +190,10 @@ function renderCalendar() {
         eventDate.getDate() === day &&
         eventDate.getMonth() === month &&
         eventDate.getFullYear() === year &&
-        (selectedEmployee === "ALL" || event.employee === selectedEmployee)
+        (
+          selectedEmployee === "ALL" ||
+          event.employee === selectedEmployee
+        )
       );
     });
 
@@ -196,14 +201,16 @@ function renderCalendar() {
 
     events.forEach(event => {
 
-      const eventIndex = savedEvents.indexOf(event);
+      const eventIndex =
+        savedEvents.indexOf(event);
 
-      const eventDiv = document.createElement("div");
+      const eventDiv =
+        document.createElement("div");
+
       eventDiv.classList.add("event");
 
 
 
-      // colori dipendenti
       if(event.employee === "PERCACCIOLI")
         eventDiv.classList.add("percaccioli");
 
@@ -215,7 +222,6 @@ function renderCalendar() {
 
 
 
-      // 👇 FREP SOLO TESTO ROSSO
       eventDiv.innerHTML = `
         <div class="event-shift ${event.shift === "FREP" ? "frep-text" : ""}">
           ${event.shift}
@@ -224,17 +230,24 @@ function renderCalendar() {
 
 
 
-      // click modifica
+      // modifica
       eventDiv.addEventListener("click",(e)=>{
 
         e.stopPropagation();
 
         editingIndex = eventIndex;
 
-        document.getElementById("employee").value = event.employee;
-        document.getElementById("startDate").value = event.date;
-        document.getElementById("endDate").value = event.date;
-        document.getElementById("shift").value = event.shift;
+        document.getElementById("employee").value =
+          event.employee;
+
+        document.getElementById("startDate").value =
+          event.date;
+
+        document.getElementById("endDate").value =
+          event.date;
+
+        document.getElementById("shift").value =
+          event.shift;
 
         openPopup();
       });
@@ -255,8 +268,13 @@ function renderCalendar() {
 // ======================
 // POPUP
 // ======================
-function openPopup(){ popup.style.display="flex"; }
-function closePopup(){ popup.style.display="none"; }
+function openPopup(){
+  popup.style.display = "flex";
+}
+
+function closePopup(){
+  popup.style.display = "none";
+}
 
 
 
@@ -288,209 +306,52 @@ async function saveShift(){
 
 
 
-  // conteggi mensili
-  const start = new Date(startDate);
+  let current = new Date(startDate);
 
-  const year = start.getFullYear();
-
-  const month = start.getMonth();
+  let end = new Date(endDate);
 
 
 
-  let repCount =
-    countMonthlyShift(employee,"REP",year,month);
+  while(current <= end){
 
-  let frepCount =
-    countMonthlyShift(employee,"FREP",year,month);
+    const d = new Date(current);
 
 
 
-  // se sto modificando un evento
-  // tolgo il vecchio conteggio
-  if(editingIndex !== null){
+    const newEvent = {
 
-    const oldEvent = savedEvents[editingIndex];
+      employee,
 
-    if(oldEvent.shift === "REP")
-      repCount--;
+      date: d.toISOString().split("T")[0],
 
-    if(oldEvent.shift === "FREP")
-      frepCount--;
-  }
+      shift
+    };
 
 
 
-  // limite REP
-  if(shift.trim() === "REP" && repCount >= 6){
+    await window.firebaseFirestore.addDoc(
 
-    alert("Massimo 6 REP");
-
-    return;
-  }
-
-
-
-  // limite FREP
-  if(shift.trim() === "FREP" && frepCount >= 2){
-
-    alert("Massimo 2 FREP");
-
-    return;
-  }
-
-
-
-  // modifica
-  // modifica
-if(editingIndex !== null){
-
-  const oldEvent = savedEvents[editingIndex];
-
-  const updatedEvent = {
-    employee,
-    date: startDate,
-    shift
-  };
-
-  // aggiorna locale
-  savedEvents[editingIndex] = {
-    ...updatedEvent,
-    firebaseId: oldEvent.firebaseId
-  };
-
-  // aggiorna Firebase
-  if(oldEvent.firebaseId){
-
-    await window.firebaseFirestore.updateDoc(
-
-      window.firebaseFirestore.doc(
+      window.firebaseFirestore.collection(
         window.db,
-        "events",
-        oldEvent.firebaseId
+        "events"
       ),
 
-      updatedEvent
+      newEvent
     );
+
+
+
+    current.setDate(current.getDate()+1);
   }
-
-}else{
-
-    let current = new Date(startDate);
-
-    let end = new Date(endDate);
-
-
-
-    while(current <= end){
-
-      const d = new Date(current);
-
-
-
-      const isSunday =
-        d.getDay() === 0;
-
-
-
-      const holidays = [
-
-        "1-1","6-1","25-4","1-5","2-6",
-
-        "15-8","1-11","8-12","25-12","26-12"
-
-      ];
-
-
-
-      const isItalianHoliday =
-        holidays.includes(`${d.getDate()}-${d.getMonth()+1}`);
-
-
-
-      const isFestive =
-        isSunday || isItalianHoliday;
-
-
-
-      // REP solo feriali
-      if(shift.trim() === "REP" && isFestive){
-
-        alert("REP solo lun-sab");
-
-        return;
-      }
-
-
-
-      // FREP solo festivi
-      if(shift.trim() === "FREP" && !isFestive){
-
-        alert("FREP solo festivi");
-
-        return;
-      }
-
-
-
-     const newEvent = {
-  employee,
-  date: d.toISOString().split("T")[0],
-  shift
-};
-
-savedEvents.push(newEvent);
-
-window.firebaseFirestore.addDoc(
-  window.firebaseFirestore.collection(window.db,"events"),
-  newEvent
-);
-
-
-
-      // aggiorna conteggi
-      if(shift.trim() === "REP")
-        repCount++;
-
-      if(shift.trim() === "FREP")
-        frepCount++;
-
-
-
-      // blocco durante inserimenti multipli
-      if(repCount > 6){
-
-        alert("Massimo 6 REP");
-
-        return;
-      }
-
-
-
-      if(frepCount > 2){
-
-        alert("Massimo 2 FREP");
-
-        return;
-      }
-
-
-
-      current.setDate(current.getDate()+1);
-    }
-  }
-
-
-
-  localStorage.setItem("events", JSON.stringify(savedEvents));
 
 
 
   editingIndex = null;
 
   closePopup();
-
-  renderCalendar();
 }
+
+
 
 // ======================
 // DELETE
@@ -503,7 +364,6 @@ async function deleteShift(){
 
 
 
-  // elimina da Firebase
   if(event.firebaseId){
 
     await window.firebaseFirestore.deleteDoc(
@@ -513,66 +373,42 @@ async function deleteShift(){
         "events",
         event.firebaseId
       )
-
     );
   }
-
-
-
-  // elimina locale
-  savedEvents.splice(editingIndex,1);
-
-
-
-  localStorage.setItem(
-    "events",
-    JSON.stringify(savedEvents)
-  );
 
 
 
   editingIndex = null;
 
   closePopup();
-
-  renderCalendar();
 }
+
+
 
 // ======================
 // NAV
 // ======================
 function nextMonth(){
-  currentDate.setMonth(currentDate.getMonth()+1);
+
+  currentDate.setMonth(
+    currentDate.getMonth()+1
+  );
+
   renderCalendar();
 }
 
 function prevMonth(){
-  currentDate.setMonth(currentDate.getMonth()-1);
+
+  currentDate.setMonth(
+    currentDate.getMonth()-1
+  );
+
   renderCalendar();
 }
 
 
 
 // ======================
-// PDF EXPORT
-// ======================
-async function exportPDF(){
-
-  const { jsPDF } = window.jspdf;
-
-  const canvas = await html2canvas(document.querySelector(".app"));
-
-  const pdf = new jsPDF("p","mm","a4");
-
-  const width = pdf.internal.pageSize.getWidth();
-  const height = (canvas.height * width) / canvas.width;
-
-  pdf.addImage(canvas.toDataURL("image/png"),"PNG",0,0,width,height);
-
-  pdf.save(`Turni_${monthNames[currentDate.getMonth()]}_${currentDate.getFullYear()}.pdf`);
-}
-
-
-
 // START
+// ======================
 loadEventsFromFirebase();
