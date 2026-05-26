@@ -189,18 +189,14 @@ function renderCalendar(){
 
     const events = savedEvents.filter(event => {
 
-      const eventDate = new Date(event.date);
+  const eventDate = new Date(event.date);
 
-      return (
-        eventDate.getDate() === day &&
-        eventDate.getMonth() === month &&
-        eventDate.getFullYear() === year &&
-        (
-          selectedEmployee === "ALL" ||
-          event.employee === selectedEmployee
-        )
-      );
-    });
+  return (
+    eventDate.getDate() === day &&
+    eventDate.getMonth() === month &&
+    eventDate.getFullYear() === year
+  );
+});
 
 
 
