@@ -458,6 +458,69 @@ if(shift === "FREP"){
 }
 
 // ======================
+// CAMBIO TURNO
+// ======================
+async function sendChangeRequest(){
+
+  const fromEmployee =
+    document.getElementById("changeFrom").value;
+
+  const toEmployee =
+    document.getElementById("changeTo").value;
+
+  const changeDate =
+    document.getElementById("changeDate").value;
+
+  const changeShift =
+    document.getElementById("changeShift").value;
+
+
+
+  // trova evento
+  const existingEvent = savedEvents.find(ev =>
+
+    ev.employee === fromEmployee &&
+    ev.date === changeDate &&
+    ev.shift === changeShift
+
+  );
+
+
+
+  if(!existingEvent){
+
+    alert("Turno non trovato");
+
+    return;
+  }
+
+
+
+  // aggiorna firebase
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      existingEvent.firebaseId
+    ),
+
+    {
+      employee: toEmployee
+    }
+
+  );
+
+
+
+  alert("Cambio effettuato");
+
+  closeChangePopup();
+}
+
+
+
+// ======================
 // DELETE
 // ======================
 async function deleteShift(){
