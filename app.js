@@ -98,6 +98,8 @@ function countMonthlyShift(employee, shift, year, month){
 // ======================
 function renderCalendar(){
 
+  console.log("renderCalendar partito");
+  
   calendar.innerHTML = "";
 
   const year = currentDate.getFullYear();
