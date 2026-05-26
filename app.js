@@ -333,10 +333,8 @@ async function saveShift(){
 
     const d = new Date(current);
 
-    const day = d.getDay(); // 0 domenica
-
-    const month = d.getMonth()+1;
-
+    const day = d.getDay(); // 0 = domenica
+    const month = d.getMonth() + 1;
     const dayNumber = d.getDate();
 
     const isSunday = day === 0;
@@ -350,6 +348,8 @@ async function saveShift(){
 
     const isFestive = isSunday || isHoliday;
 
+
+    /
 
 
     // =========================
