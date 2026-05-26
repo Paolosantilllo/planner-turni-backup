@@ -396,18 +396,43 @@ async function saveShift(){
     // =========================
     const sameDayEvents = savedEvents.filter(ev => ev.date === d.toISOString().split("T")[0]);
 
-    const hasRep = sameDayEvents.some(ev => ev.shift === "REP");
-    const hasFrep = sameDayEvents.some(ev => ev.shift === "FREP");
+    const hasRep =
+  sameDayEvents.some(ev => ev.shift === "REP");
 
-    if(shift === "REP" && hasFrep){
-      alert("Non puoi inserire REP: esiste già FREP quel giorno");
-      return;
-    }
+const hasFrep =
+  sameDayEvents.some(ev => ev.shift === "FREP");
 
-    if(shift === "FREP" && hasRep){
-      alert("Non puoi inserire FREP: esiste già REP quel giorno");
-      return;
-    }
+
+
+// blocco REP
+if(shift === "REP"){
+
+  if(hasRep){
+    alert("Esiste già un REP in questo giorno");
+    return;
+  }
+
+  if(hasFrep){
+    alert("Esiste già un FREP in questo giorno");
+    return;
+  }
+}
+
+
+
+// blocco FREP
+if(shift === "FREP"){
+
+  if(hasFrep){
+    alert("Esiste già un FREP in questo giorno");
+    return;
+  }
+
+  if(hasRep){
+    alert("Esiste già un REP in questo giorno");
+    return;
+  }
+}
 
 
 
