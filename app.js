@@ -321,63 +321,119 @@ async function saveShift(){
   const shift =
     document.getElementById("shift").value;
 
-
-
   if(!startDate || !endDate){
-
     alert("Seleziona le date");
-
     return;
   }
 
-
-
   let current = new Date(startDate);
-
   let end = new Date(endDate);
-
-
 
   while(current <= end){
 
     const d = new Date(current);
 
+    const day = d.getDay(); // 0 domenica
+
+    const month = d.getMonth()+1;
+
+    const dayNumber = d.getDate();
+
+    const isSunday = day === 0;
+
+    const holidays = [
+      "1-1","6-1","25-4","1-5","2-6",
+      "15-8","1-11","8-12","25-12","26-12"
+    ];
+
+    const isHoliday = holidays.includes(`${dayNumber}-${month}`);
+
+    const isFestive = isSunday || isHoliday;
 
 
+
+    // =========================
+    // 1. BLOCCO REP
+    // =========================
+    if(shift === "REP"){
+
+      if(isSunday){
+        alert("REP non valido la domenica");
+        return;
+      }
+
+      const repCount =
+        countMonthlyShift(employee,"REP",d.getFullYear(),d.getMonth());
+
+      if(repCount >= 6){
+        alert("Massimo 6 REP");
+        return;
+      }
+    }
+
+
+
+    // =========================
+    // 2. BLOCCO FREP
+    // =========================
+    if(shift === "FREP"){
+
+      if(!isFestive){
+        alert("FREP solo domenica e festivi");
+        return;
+      }
+
+      const frepCount =
+        countMonthlyShift(employee,"FREP",d.getFullYear(),d.getMonth());
+
+      if(frepCount >= 2){
+        alert("Massimo 2 FREP");
+        return;
+      }
+    }
+
+
+
+    // =========================
+    // 3. BLOCCO DUPLICATI STESSO GIORNO
+    // =========================
+    const sameDayEvents = savedEvents.filter(ev => ev.date === d.toISOString().split("T")[0]);
+
+    const hasRep = sameDayEvents.some(ev => ev.shift === "REP");
+    const hasFrep = sameDayEvents.some(ev => ev.shift === "FREP");
+
+    if(shift === "REP" && hasFrep){
+      alert("Non puoi inserire REP: esiste già FREP quel giorno");
+      return;
+    }
+
+    if(shift === "FREP" && hasRep){
+      alert("Non puoi inserire FREP: esiste già REP quel giorno");
+      return;
+    }
+
+
+
+    // =========================
+    // SALVATAGGIO
+    // =========================
     const newEvent = {
-
       employee,
-
       date: d.toISOString().split("T")[0],
-
       shift
     };
 
-
-
     await window.firebaseFirestore.addDoc(
-
-      window.firebaseFirestore.collection(
-        window.db,
-        "events"
-      ),
-
+      window.firebaseFirestore.collection(window.db,"events"),
       newEvent
     );
-
-
 
     current.setDate(current.getDate()+1);
   }
 
-
-
   editingIndex = null;
-
   closePopup();
 }
-
-
 
 // ======================
 // DELETE
