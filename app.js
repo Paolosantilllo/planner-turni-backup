@@ -121,6 +121,7 @@ function countMonthlyShift(employee, shift, year, month){
 function renderCalendar(){
 
   console.log("renderCalendar partito");
+  console.log("EVENTI IN MEMORIA:", savedEvents);
   
   calendar.innerHTML = "";
 
