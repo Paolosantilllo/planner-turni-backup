@@ -20,15 +20,31 @@ let editingIndex = null;
 // ======================
 function loadEventsFromFirebase(){
 
+  console.log("Firebase partito");
+
+  if(!window.firebaseFirestore){
+    console.log("firebaseFirestore NON trovato");
+    return;
+  }
+
+  if(!window.db){
+    console.log("db NON trovato");
+    return;
+  }
+
   window.firebaseFirestore.onSnapshot(
 
     window.firebaseFirestore.collection(window.db,"events"),
 
     (snapshot)=>{
 
+      console.log("Snapshot ricevuto");
+
       savedEvents = [];
 
       snapshot.forEach((docSnap)=>{
+
+        console.log(docSnap.data());
 
         const data = docSnap.data();
 
@@ -41,13 +57,19 @@ function loadEventsFromFirebase(){
 
       });
 
-      console.log(savedEvents);
+      console.log("Eventi caricati:", savedEvents);
 
       renderCalendar();
+    },
+
+    (error)=>{
+
+      console.log("ERRORE FIREBASE:");
+      console.log(error);
+
     }
   );
 }
-
 
 // ======================
 // FESTIVI
