@@ -284,128 +284,139 @@
 
 
 
-  <!-- POPUP CAMBIO TURNO -->
-  <div class="popup" id="changePopup">
+ <!-- POPUP CAMBIO TURNO -->
+<div class="popup" id="changePopup">
 
-    <div class="popup-content">
+  <div class="popup-content">
 
-      <div class="popup-header">
+    <div class="popup-header">
 
-        <h2>
-          Richiesta Cambio
-        </h2>
-
-        <button
-          class="close-btn"
-          onclick="closeChangePopup()"
-        >
-          ✕
-        </button>
-
-      </div>
-
-
-
-      <label>
-        Chi richiede
-      </label>
-
-      <select id="changeFrom">
-
-        <option>
-          PERCACCIOLI
-        </option>
-
-        <option>
-          MANUNTA
-        </option>
-
-        <option>
-          SANTILLO
-        </option>
-
-      </select>
-
-
-
-      <label>
-        Cambio con
-      </label>
-
-      <select id="changeTo">
-
-        <option>
-          PERCACCIOLI
-        </option>
-
-        <option>
-          MANUNTA
-        </option>
-
-        <option>
-          SANTILLO
-        </option>
-
-      </select>
-
-
-
-      <label>
-        Data
-      </label>
-
-      <input
-        type="date"
-        id="changeDate"
-      >
-
-
-
-      <label>
-        Turno
-      </label>
-
-      <select id="changeShift">
-
-        <option>
-          REP
-        </option>
-
-        <option>
-          FREP
-        </option>
-
-        <option>
-          CFI
-        </option>
-
-        <option>
-          CFI/REP
-        </option>
-
-        <option>
-          LIC
-        </option>
-
-        <option>
-          REC
-        </option>
-
-      </select>
-
-
+      <h2>
+        Richiesta Cambio
+      </h2>
 
       <button
-        class="save-btn"
-        onclick="sendChangeRequest()"
+        class="close-btn"
+        onclick="closeChangePopup()"
       >
-        Invia Richiesta
+        ✕
       </button>
 
     </div>
 
+
+
+    <label>
+      Chi richiede
+    </label>
+
+    <select id="changeFrom">
+
+      <option>
+        PERCACCIOLI
+      </option>
+
+      <option>
+        MANUNTA
+      </option>
+
+      <option>
+        SANTILLO
+      </option>
+
+    </select>
+
+
+
+    <label>
+      Cambio con
+    </label>
+
+    <select id="changeTo">
+
+      <option>
+        PERCACCIOLI
+      </option>
+
+      <option>
+        MANUNTA
+      </option>
+
+      <option>
+        SANTILLO
+      </option>
+
+    </select>
+
+
+
+    <label>
+      Data
+    </label>
+
+    <input
+      type="date"
+      id="changeDate"
+    >
+
+
+
+    <!-- 🆕 NUOVO CAMPO -->
+    <label>
+      Giorno da ricevere
+    </label>
+
+    <input
+      type="date"
+      id="changeToDate"
+    >
+
+
+
+    <label>
+      Turno
+    </label>
+
+    <select id="changeShift">
+
+      <option>
+        REP
+      </option>
+
+      <option>
+        FREP
+      </option>
+
+      <option>
+        CFI
+      </option>
+
+      <option>
+        CFI/REP
+      </option>
+
+      <option>
+        LIC
+      </option>
+
+      <option>
+        REC
+      </option>
+
+    </select>
+
+
+
+    <button
+      class="save-btn"
+      onclick="sendChangeRequest()"
+    >
+      Invia Richiesta
+    </button>
+
   </div>
 
+</div>
 
 
   <!-- POPUP RICHIESTE -->
