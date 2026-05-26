@@ -501,3 +501,10 @@ window.addEventListener("load", () => {
   }, 800);
 
 });
+window.addEventListener("focus", () => {
+  renderCalendar();
+});
+
+window.addEventListener("pageshow", () => {
+  renderCalendar();
+});
