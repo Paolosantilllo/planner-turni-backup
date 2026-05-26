@@ -326,6 +326,10 @@ function closeChangePopup(){
 // ======================
 async function saveShift(){
 
+  if(CURRENT_USER.role !== "admin"){
+  alert("Non hai permessi per inserire turni");
+  return;
+}
   const employee =
     document.getElementById("employee").value;
 
