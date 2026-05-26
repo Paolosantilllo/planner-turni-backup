@@ -5,46 +5,58 @@ const popup = document.getElementById("popup");
 let currentDate = new Date();
 
 const monthNames = [
-  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
-  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
+  "Gennaio",
+  "Febbraio",
+  "Marzo",
+  "Aprile",
+  "Maggio",
+  "Giugno",
+  "Luglio",
+  "Agosto",
+  "Settembre",
+  "Ottobre",
+  "Novembre",
+  "Dicembre"
 ];
 
-let savedEvents =
-  JSON.parse(localStorage.getItem("events")) || [];
+let savedEvents = [];
 
 let editingIndex = null;
 
-function loadEventsFromFirebase(){
+
+
+/* =========================
+   FIREBASE
+========================= */
+
+function loadEventsFromFirebase() {
 
   window.firebaseFirestore.onSnapshot(
 
-    window.firebaseFirestore.collection(window.db,"events"),
+    window.firebaseFirestore.collection(window.db, "events"),
 
     (snapshot) => {
 
-      savedEvents =
-  JSON.parse(localStorage.getItem("events")) || [];
+      savedEvents = [];
 
-      snapshot.forEach(doc => {
+      snapshot.forEach((docSnap) => {
 
         savedEvents.push({
-          firebaseId: doc.id,
-          ...doc.data()
+          firebaseId: docSnap.id,
+          ...docSnap.data()
         });
 
       });
 
-      localStorage.setItem(
-        "events",
-        JSON.stringify(savedEvents)
-      );
-
       renderCalendar();
+
     }
 
   );
 
 }
+
+loadEventsFromFirebase();
 
 
 // ======================
