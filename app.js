@@ -217,13 +217,19 @@ function renderCalendar(){
   const eventDate = new Date(event.date);
 
   return (
+
     eventDate.getDate() === day &&
     eventDate.getMonth() === month &&
-    eventDate.getFullYear() === year
+    eventDate.getFullYear() === year &&
+
+    (
+      selectedEmployee === "ALL" ||
+      event.employee === selectedEmployee
+    )
+
   );
+
 });
-
-
 
     events.forEach(event => {
 
