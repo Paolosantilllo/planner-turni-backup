@@ -46,15 +46,6 @@ function loadEventsFromFirebase(){
 }
 
 
-  }catch(error){
-
-    console.log("Errore Firebase:", error);
-
-    renderCalendar();
-
-  }
-}
-
 // ======================
 // FESTIVI
 // ======================
