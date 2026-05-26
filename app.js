@@ -30,12 +30,23 @@ function loadEventsFromFirebase(){
 
       snapshot.forEach((docSnap)=>{
 
+        const data = docSnap.data();
+
         savedEvents.push({
           firebaseId: docSnap.id,
-          ...docSnap.data()
+          employee: data.employee,
+          date: data.date,
+          shift: data.shift
         });
 
       });
+
+      console.log(savedEvents);
+
+      renderCalendar();
+    }
+  );
+}
 
       renderCalendar();
     }
