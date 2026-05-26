@@ -546,6 +546,10 @@ async function sendChangeRequest(){
 // ======================
 async function deleteShift(){
 
+  if(CURRENT_USER.role !== "admin"){
+  alert("Non hai permessi per eliminare turni");
+  return;
+}
   if(editingIndex === null) return;
 
   const event = savedEvents[editingIndex];
