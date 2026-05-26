@@ -448,9 +448,9 @@
   <!-- FIREBASE -->
   <script type="module">
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
-    import {
+import {
   getFirestore,
   collection,
   addDoc,
@@ -459,30 +459,25 @@
   updateDoc,
   onSnapshot,
   doc
-}
-      from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+const firebaseConfig = {
 
+  apiKey: "LA-TUA-API-KEY",
 
-    const firebaseConfig = {
+  authDomain: "calendario-rep.firebaseapp.com",
 
-      apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+  projectId: "calendario-rep",
 
-      authDomain: "calendario-rep.firebaseapp.com",
+  storageBucket: "calendario-rep.firebasestorage.app",
 
-      projectId: "calendario-rep",
+  messagingSenderId: "XXXXXXXX",
 
-      storageBucket: "calendario-rep.firebasestorage.app",
+  appId: "XXXXXXXX"
 
-      messagingSenderId: "1067128179274",
+};
 
-      appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
-
-    };
-
-
-
-    const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
@@ -500,7 +495,4 @@ window.firebaseFirestore = {
 
 </script>
 
- <script src="app.js"></script>
-</body>
-
-</html>
+<script src="app.js"></script>
