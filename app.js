@@ -349,9 +349,6 @@ async function saveShift(){
     const isFestive = isSunday || isHoliday;
 
 
-    /
-
-
     // =========================
     // 1. BLOCCO REP
     // =========================
