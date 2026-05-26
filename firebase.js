@@ -1,29 +1,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-
-import {
-  getFirestore
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyBNE6sjsiq1cT1JI_LbtjEwt1h4Lp1dFEk",
-
-  authDomain: "turni-f4774.firebaseapp.com",
-
-  projectId: "turni-f4774",
-
-  storageBucket: "turni-f4774.firebasestorage.app",
-
-  messagingSenderId: "765139281017",
-
-  appId: "1:765139281017:web:35c47e467125ae6fc060a8"
-
+  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+  authDomain: "calendario-rep.firebaseapp.com",
+  projectId: "calendario-rep",
+  storageBucket: "calendario-rep.firebasestorage.app",
+  messagingSenderId: "1067128179274",
+  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
 
-const app =
-  initializeApp(firebaseConfig);
-
-const db =
-  getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 window.db = db;
