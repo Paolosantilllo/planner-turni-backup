@@ -1,7 +1,10 @@
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
-
+const CURRENT_USER = {
+  name: "SANTILLO",
+  role: "admin"
+};
 let currentDate = new Date();
 
 const monthNames = [
