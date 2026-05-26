@@ -48,12 +48,6 @@ function loadEventsFromFirebase(){
   );
 }
 
-      renderCalendar();
-    }
-  );
-}
-
-
 
 // ======================
 // FESTIVI
