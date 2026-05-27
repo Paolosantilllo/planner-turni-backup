@@ -281,15 +281,35 @@ function loadChangeDays(){
 
 
 
-        if(isFrom){
+     if(isFrom){
 
-          selectedFrom = iso;
+  selectedFrom = iso;
 
-        }else{
+  document.getElementById(
+    "selectedFromText"
+  ).innerText = iso;
 
-          selectedTo = iso;
 
-        }
+
+  document
+    .getElementById("changeCalendarFrom")
+    .classList.add("hidden-calendar");
+
+}else{
+
+  selectedTo = iso;
+
+  document.getElementById(
+    "selectedToText"
+  ).innerText = iso;
+
+
+
+  document
+    .getElementById("changeCalendarTo")
+    .classList.add("hidden-calendar");
+
+}
 
       });
 
