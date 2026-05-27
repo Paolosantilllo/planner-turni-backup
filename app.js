@@ -398,31 +398,210 @@ function closeChangePopup(){
 // ======================
 async function saveShift(){
 
-  const employee = document.getElementById("employee").value;
-  const start = document.getElementById("startDate").value;
-  const end = document.getElementById("endDate").value;
-  const shift = document.getElementById("shift").value;
+  const employee =
+    document.getElementById("employee").value;
+
+  const start =
+    document.getElementById("startDate").value;
+
+  const end =
+    document.getElementById("endDate").value;
+
+  const shift =
+    document.getElementById("shift").value;
+
+
+
+  if(!start || !end){
+
+    alert("Seleziona le date");
+
+    return;
+  }
+
+
 
   let current = new Date(start);
+
   let stop = new Date(end);
+
+
 
   while(current <= stop){
 
-    const date = current.toISOString().split("T")[0];
-
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db,"events"),
-      { employee, date, shift }
+    // FIX FUSO ORARIO
+    const localDate = new Date(
+      current.getTime() - current.getTimezoneOffset()*60000
     );
 
-    current.setDate(current.getDate()+1);
+
+
+    const date =
+      localDate.toISOString().split("T")[0];
+
+
+
+    const day =
+      current.getDay();
+
+
+
+    const month =
+      current.getMonth()+1;
+
+
+
+    const dayNumber =
+      current.getDate();
+
+
+
+    // FESTIVI ITALIANI
+    const holidays = [
+      "1-1",
+      "6-1",
+      "25-4",
+      "1-5",
+      "2-6",
+      "15-8",
+      "1-11",
+      "8-12",
+      "25-12",
+      "26-12"
+    ];
+
+
+
+    const isHoliday =
+      holidays.includes(`${dayNumber}-${month}`);
+
+
+
+    const isSunday =
+      day === 0;
+
+
+
+    const isFestive =
+      isSunday || isHoliday;
+
+
+
+    // ======================
+    // BLOCCO REP
+    // ======================
+    if(shift === "REP"){
+
+      if(isSunday){
+
+        alert("REP non consentito la domenica");
+
+        return;
+      }
+
+
+
+      const repCount =
+        savedEvents.filter(ev => {
+
+          const d = new Date(ev.date);
+
+          return (
+
+            ev.employee === employee &&
+            ev.shift === "REP" &&
+
+            d.getMonth() === current.getMonth() &&
+            d.getFullYear() === current.getFullYear()
+
+          );
+
+        }).length;
+
+
+
+      if(repCount >= 6){
+
+        alert("Massimo 6 REP al mese");
+
+        return;
+      }
+    }
+
+
+
+    // ======================
+    // BLOCCO FREP
+    // ======================
+    if(shift === "FREP"){
+
+      if(!isFestive){
+
+        alert("FREP solo domenica e festivi");
+
+        return;
+      }
+
+
+
+      const frepCount =
+        savedEvents.filter(ev => {
+
+          const d = new Date(ev.date);
+
+          return (
+
+            ev.employee === employee &&
+            ev.shift === "FREP" &&
+
+            d.getMonth() === current.getMonth() &&
+            d.getFullYear() === current.getFullYear()
+
+          );
+
+        }).length;
+
+
+
+      if(frepCount >= 2){
+
+        alert("Massimo 2 FREP al mese");
+
+        return;
+      }
+    }
+
+
+
+    // ======================
+    // SALVA
+    // ======================
+    await window.firebaseFirestore.addDoc(
+
+      window.firebaseFirestore.collection(
+        window.db,
+        "events"
+      ),
+
+      {
+        employee,
+        date,
+        shift
+      }
+
+    );
+
+
+
+    current.setDate(
+      current.getDate()+1
+    );
   }
+
+
 
   closePopup();
 }
-
-
-
 // ======================
 // DELETE SHIFT
 // ======================
