@@ -301,7 +301,99 @@ function renderCalendar(){
   }
 }
 
+// ======================
+// HIGHLIGHT CAMBIO REP
+// ======================
+function highlightChangeDays(){
 
+  // pulisce vecchi highlight
+  document
+    .querySelectorAll(".day")
+    .forEach(day => {
+
+      day.classList.remove("select-from");
+      day.classList.remove("select-to");
+
+    });
+
+
+
+  const fromEmployee =
+    document.getElementById("changeFrom")?.value;
+
+  const toEmployee =
+    document.getElementById("changeTo")?.value;
+
+
+
+  const allDays =
+    document.querySelectorAll(".day");
+
+
+
+  allDays.forEach(dayBox => {
+
+    const dayNumberElement =
+      dayBox.querySelector(".day-number");
+
+    if(!dayNumberElement) return;
+
+    const dayNumber =
+      parseInt(dayNumberElement.innerText);
+
+    const year =
+      currentDate.getFullYear();
+
+    const month =
+      currentDate.getMonth();
+
+
+
+    const date =
+      new Date(year, month, dayNumber);
+
+    const formattedDate =
+      date.toISOString().split("T")[0];
+
+
+
+    // eventi giorno
+    const dayEvents =
+      savedEvents.filter(ev =>
+
+        ev.date === formattedDate &&
+        (
+          ev.shift === "REP" ||
+          ev.shift === "FREP"
+        )
+
+      );
+
+
+
+    // DIPENDENTE FROM
+    if(
+      dayEvents.some(ev =>
+        ev.employee === fromEmployee
+      )
+    ){
+      dayBox.classList.add("select-from");
+    }
+
+
+
+    // DIPENDENTE TO
+    if(
+      dayEvents.some(ev =>
+        ev.employee === toEmployee
+      )
+    ){
+      dayBox.classList.add("select-to");
+    }
+
+  });
+
+}
 
 // ======================
 // POPUP
