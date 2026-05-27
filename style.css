@@ -671,4 +671,16 @@ body{
   cursor:pointer;
 
 }
-.dipe
+/* ======================
+   CAMBIO REP HIGHLIGHT
+====================== */
+
+.select-from{
+  outline:4px solid #00ff88;
+  outline-offset:-4px;
+}
+
+.select-to{
+  outline:4px solid #4da6ff;
+  outline-offset:-4px;
+}
