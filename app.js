@@ -405,8 +405,11 @@ async function sendChangeRequest(){
   const fromEmployee = document.getElementById("changeFrom").value;
   const toEmployee = document.getElementById("changeTo").value;
 
-  const fromDate = document.getElementById("changeDate").value;
-  const toDate = document.getElementById("changeToDate").value;
+  const fromDate =
+  window._changeData.getFromDate();
+
+const toDate =
+  window._changeData.getToDate();
 
   const shift = document.getElementById("changeShift").value;
 
