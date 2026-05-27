@@ -244,16 +244,18 @@ function renderCalendar(){
 
       eventDiv.classList.add("event");
 
+     if(event.employee === "Dipendente D")
+        eventDiv.classList.add("dipendente-d");
 
 
       if(event.employee === "Dipendente C")
-        eventDiv.classList.add("Dipendente C");
+        eventDiv.classList.add("dipendente-c");
 
       if(event.employee === "Dipendente B")
-        eventDiv.classList.add("Dipendente B");
+        eventDiv.classList.add("dipendente-b");
 
       if(event.employee === "Dipendente A")
-        eventDiv.classList.add("Dipendente A");
+        eventDiv.classList.add("dipendente-a");
 
 
 
