@@ -379,14 +379,18 @@ const selectedToDate =
 
 
 
-    // DIPENDENTE FROM
-    if(
-      dayEvents.some(ev =>
-        ev.employee === fromEmployee
-      )
-    ){
-      dayBox.classList.add("select-from");
-    }
+ // DIPENDENTE FROM
+if(
+  dayEvents.some(ev =>
+    ev.employee === fromEmployee
+  )
+){
+  dayBox.classList.add("select-from");
+
+  if(formattedDate === selectedDate){
+    dayBox.classList.add("selected-day");
+  }
+}
 
 
 
