@@ -246,14 +246,14 @@ function renderCalendar(){
 
 
 
-      if(event.employee === "PERCACCIOLI")
-        eventDiv.classList.add("percaccioli");
+      if(event.employee === "Dipendente C")
+        eventDiv.classList.add("Dipendente C");
 
-      if(event.employee === "MANUNTA")
-        eventDiv.classList.add("manunta");
+      if(event.employee === "Dipendente B")
+        eventDiv.classList.add("Dipendente B");
 
-      if(event.employee === "SANTILLO")
-        eventDiv.classList.add("santillo");
+      if(event.employee === "Dipendente A")
+        eventDiv.classList.add("Dipendente A");
 
 
 
