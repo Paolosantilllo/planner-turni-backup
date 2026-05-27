@@ -684,6 +684,7 @@ body{
   outline:4px solid #4da6ff;
   outline-offset:-4px;
 }
+
 .selected-from-day{
   background:#4da3ff !important;
   border:4px solid #0066ff !important;
