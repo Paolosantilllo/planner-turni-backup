@@ -275,19 +275,15 @@ function loadChangeDays(){
 
 
 
-  const validShifts = [
-    "REP",
-    "FREP",
-    "CFI/REP"
-  ];
-
+const selectedShift =
+  document.getElementById("changeShift").value;
 
 
   const fromEvents =
     savedEvents.filter(ev =>
 
       ev.employee === fromEmployee &&
-      validShifts.includes(ev.shift)
+      ev.shift === selectedShift
 
     );
 
