@@ -304,133 +304,133 @@ const selectedShift =
 
 
 
-  function buildCalendar(
-    container,
-    events,
-    isFrom
-  ){
+function buildCalendar(container, events, isFrom){
 
-    for(let d=1; d<=daysInMonth; d++){
+  container.innerHTML = "";
 
-      const iso =
-        `${year}-${
-          String(month + 1).padStart(2,"0")
-        }-${
-          String(d).padStart(2,"0")
-        }`;
+  const firstDay =
+    new Date(year, month, 1).getDay();
+
+  let startDay = firstDay - 1;
+
+  if(startDay < 0) startDay = 6;
 
 
 
-      const div =
-        document.createElement("div");
+  // CELLE VUOTE
+  for(let i=0;i<startDay;i++){
 
-      div.classList.add("mini-day");
+    const empty =
+      document.createElement("div");
 
-      div.innerText = d;
+    empty.classList.add("mini-day");
+    empty.classList.add("disabled");
 
-
-
-      const hasEvent =
-        events.some(ev => ev.date === iso);
-
-
-
-      if(!hasEvent){
-
-        div.classList.add("disabled");
-
-      }
-
-
-
-      div.addEventListener("click",()=>{
-
-        if(!hasEvent) return;
-
-
-
-        container
-          .querySelectorAll(".mini-day")
-          .forEach(el => {
-
-            el.classList.remove("selected");
-
-          });
-
-
-
-        div.classList.add("selected");
-
-
-
-        if(isFrom){
-
-          selectedFrom = iso;
-
-          document.getElementById(
-            "selectedFromText"
-          ).innerText = iso;
-
-
-
-          document
-            .getElementById("changeCalendarFrom")
-            .classList.add("hidden-calendar");
-
-        }else{
-
-          selectedTo = iso;
-
-          document.getElementById(
-            "selectedToText"
-          ).innerText = iso;
-
-
-
-          document
-            .getElementById("changeCalendarTo")
-            .classList.add("hidden-calendar");
-
-        }
-
-      });
-
-
-
-      container.appendChild(div);
-
-    }
+    container.appendChild(empty);
   }
 
 
 
-  buildCalendar(
-    calFrom,
-    fromEvents,
-    true
-  );
+  // GIORNI
+  for(let d=1; d<=daysInMonth; d++){
+
+    const date =
+      new Date(year, month, d);
+
+    const y = date.getFullYear();
+
+    const m = String(
+      date.getMonth()+1
+    ).padStart(2,"0");
+
+    const dayNum = String(
+      date.getDate()
+    ).padStart(2,"0");
+
+    const iso =
+      `${y}-${m}-${dayNum}`;
 
 
 
-  buildCalendar(
-    calTo,
-    toEvents,
-    false
-  );
+    const div =
+      document.createElement("div");
+
+    div.classList.add("mini-day");
+
+    div.innerText = d;
 
 
 
-  window._changeData = {
+    const hasEvent =
+      events.some(ev => ev.date === iso);
 
-    getFromDate: ()=>selectedFrom,
 
-    getToDate: ()=>selectedTo
 
-  };
+    if(!hasEvent){
 
+      div.classList.add("disabled");
+
+    }
+
+
+
+    div.addEventListener("click",()=>{
+
+      if(!hasEvent) return;
+
+
+
+      container
+        .querySelectorAll(".mini-day")
+        .forEach(el => {
+
+          el.classList.remove("selected");
+
+        });
+
+
+
+      div.classList.add("selected");
+
+
+
+      if(isFrom){
+
+        selectedFrom = iso;
+
+        document.getElementById(
+          "selectedFromText"
+        ).innerText = iso;
+
+
+
+        document
+          .getElementById("changeCalendarFrom")
+          .classList.add("hidden-calendar");
+
+      }else{
+
+        selectedTo = iso;
+
+        document.getElementById(
+          "selectedToText"
+        ).innerText = iso;
+
+
+
+        document
+          .getElementById("changeCalendarTo")
+          .classList.add("hidden-calendar");
+
+      }
+
+    });
+
+
+
+    container.appendChild(div);
+  }
 }
-
-
 
 // ======================
 // TOGGLE MINI CALENDARI
