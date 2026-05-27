@@ -489,41 +489,64 @@ async function sendChangeRequest(){
   const toEmployee =
     document.getElementById("changeTo").value;
 
-  const changeDate =
+  const fromDate =
     document.getElementById("changeDate").value;
 
-  const changeShift =
+  const toDate =
+    document.getElementById("changeToDate").value;
+
+  const shift =
     document.getElementById("changeShift").value;
 
 
 
-  // trova evento
-  const existingEvent = savedEvents.find(ev =>
+  // evento A
+  const eventA = savedEvents.find(ev =>
 
     ev.employee === fromEmployee &&
-    ev.date === changeDate &&
-    ev.shift === changeShift
+    ev.date === fromDate &&
+    ev.shift === shift
 
   );
 
 
 
-  if(!existingEvent){
+  // evento B
+  const eventB = savedEvents.find(ev =>
 
-    alert("Turno non trovato");
+    ev.employee === toEmployee &&
+    ev.date === toDate &&
+    ev.shift === shift
+
+  );
+
+
+
+  if(!eventA){
+
+    alert(fromEmployee + " non ha questo turno");
 
     return;
   }
 
 
 
-  // aggiorna firebase
+  if(!eventB){
+
+    alert(toEmployee + " non ha questo turno");
+
+    return;
+  }
+
+
+
+  // SCAMBIO REALE
   await window.firebaseFirestore.updateDoc(
 
     window.firebaseFirestore.doc(
       window.db,
       "events",
-      existingEvent.firebaseId
+      eventA.firebaseId
     ),
 
     {
@@ -534,7 +557,23 @@ async function sendChangeRequest(){
 
 
 
-  alert("Cambio effettuato");
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      eventB.firebaseId
+    ),
+
+    {
+      employee: fromEmployee
+    }
+
+  );
+
+
+
+  alert("Cambio reperibilità effettuato");
 
   closeChangePopup();
 }
