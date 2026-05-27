@@ -306,111 +306,89 @@ function renderCalendar(){
 }
 
 // ======================
-// HIGHLIGHT CAMBIO REP
+// CARICA GIORNI CAMBIO
 // ======================
-function highlightChangeDays(){
-
-  // pulisce vecchi highlight
-  document
-    .querySelectorAll(".day")
-    .forEach(day => {
-
-      day.classList.remove("select-from");
-      day.classList.remove("select-to");
-
-    });
-
-
+function loadChangeDays(){
 
   const fromEmployee =
-    document.getElementById("changeFrom")?.value;
+    document.getElementById("changeFrom").value;
 
   const toEmployee =
-    document.getElementById("changeTo")?.value;
+    document.getElementById("changeTo").value;
 
-const selectedDate =
-  document.getElementById("changeDate")?.value;
+  const changeDate =
+    document.getElementById("changeDate");
 
-const selectedToDate =
-  document.getElementById("changeToDate")?.value;
-
-  const allDays =
-    document.querySelectorAll(".day");
+  const changeToDate =
+    document.getElementById("changeToDate");
 
 
 
-  allDays.forEach(dayBox => {
-
-    const dayNumberElement =
-      dayBox.querySelector(".day-number");
-
-    if(!dayNumberElement) return;
-
-    const dayNumber =
-      parseInt(dayNumberElement.innerText);
-
-    const year =
-      currentDate.getFullYear();
-
-    const month =
-      currentDate.getMonth();
+  // reset select
+  changeDate.innerHTML = "";
+  changeToDate.innerHTML = "";
 
 
 
-    const date =
-      new Date(year, month, dayNumber);
+  // giorni del richiedente
+  const fromDays =
+    savedEvents.filter(ev =>
 
-    const formattedDate =
-      date.toISOString().split("T")[0];
+      ev.employee === fromEmployee &&
+      (
+        ev.shift === "REP" ||
+        ev.shift === "FREP" ||
+        ev.shift === "CFI/REP"
+      )
 
-
-
-    // eventi giorno
-    const dayEvents =
-      savedEvents.filter(ev =>
-
-        ev.date === formattedDate &&
-        (
-          ev.shift === "REP" ||
-          ev.shift === "FREP" ||
-          ev.shift === "CFI/REP"
-        )
-
-      );
+    );
 
 
 
-// DIPENDENTE FROM
-if(
-  dayEvents.some(ev =>
-    ev.employee === fromEmployee
-  )
-){
-  dayBox.classList.add("select-from");
+  fromDays.forEach(ev => {
 
-  if(formattedDate === selectedDate){
-    dayBox.classList.add("selected-from-day");
-  }
-}
+    const option =
+      document.createElement("option");
+
+    option.value = ev.date;
+    option.textContent =
+      ev.date + " - " + ev.shift;
+
+    changeDate.appendChild(option);
+
+  });
 
 
-  // DIPENDENTE TO
-if(
-  dayEvents.some(ev =>
-    ev.employee === toEmployee
-  )
-){
-  dayBox.classList.add("select-to");
 
-  if(formattedDate === selectedToDate){
-    dayBox.classList.add("selected-to-day");
-  }
-}
+  // giorni da ricevere
+  const toDays =
+    savedEvents.filter(ev =>
+
+      ev.employee === toEmployee &&
+      (
+        ev.shift === "REP" ||
+        ev.shift === "FREP" ||
+        ev.shift === "CFI/REP"
+      )
+
+    );
+
+
+
+  toDays.forEach(ev => {
+
+    const option =
+      document.createElement("option");
+
+    option.value = ev.date;
+    option.textContent =
+      ev.date + " - " + ev.shift;
+
+    changeToDate.appendChild(option);
 
   });
 
 }
-
 // ======================
 // POPUP
 // ======================
