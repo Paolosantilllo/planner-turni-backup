@@ -750,3 +750,36 @@ body{
   box-shadow:0 4px 12px rgba(0,122,255,0.3);
 
 }
+/* ======================
+   SELECTOR MINI CALENDARIO
+====================== */
+
+.calendar-selector{
+
+  width:100%;
+
+  background:#f2f2f7;
+
+  border-radius:14px;
+
+  padding:14px;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  margin-top:8px;
+
+}
+
+
+
+/* NASCONDI */
+
+.hidden-calendar{
+
+  display:none;
+
+}
