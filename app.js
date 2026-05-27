@@ -394,14 +394,18 @@ if(
 
 
 
-    // DIPENDENTE TO
-    if(
-      dayEvents.some(ev =>
-        ev.employee === toEmployee
-      )
-    ){
-      dayBox.classList.add("select-to");
-    }
+  // DIPENDENTE TO
+if(
+  dayEvents.some(ev =>
+    ev.employee === toEmployee
+  )
+){
+  dayBox.classList.add("select-to");
+
+  if(formattedDate === selectedToDate){
+    dayBox.classList.add("selected-day");
+  }
+}
 
   });
 
