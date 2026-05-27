@@ -15,7 +15,8 @@ const monthNames = [
 let savedEvents = [];
 
 let editingIndex = null;
-
+let selectingChangeFrom = false;
+let selectingChangeTo = false;
 
 
 // ======================
