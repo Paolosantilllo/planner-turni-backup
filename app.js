@@ -249,7 +249,8 @@ function loadChangeDays(){
   const toEmployee =
     document.getElementById("changeTo").value;
 
-
+  const selectedShift =
+    document.getElementById("changeShift").value;
 
   const calFrom =
     document.getElementById("miniGridFrom");
@@ -257,12 +258,8 @@ function loadChangeDays(){
   const calTo =
     document.getElementById("miniGridTo");
 
-
-
   calFrom.innerHTML = "";
   calTo.innerHTML = "";
-
-
 
   const year =
     currentDate.getFullYear();
@@ -275,10 +272,7 @@ function loadChangeDays(){
 
 
 
-const selectedShift =
-  document.getElementById("changeShift").value;
-
-
+  // EVENTI DIPENDENTE CHE RICHIEDE
   const fromEvents =
     savedEvents.filter(ev =>
 
@@ -289,11 +283,12 @@ const selectedShift =
 
 
 
+  // EVENTI DIPENDENTE CON CUI CAMBIA
   const toEvents =
     savedEvents.filter(ev =>
 
       ev.employee === toEmployee &&
-      validShifts.includes(ev.shift)
+      ev.shift === selectedShift
 
     );
 
@@ -304,132 +299,155 @@ const selectedShift =
 
 
 
-function buildCalendar(container, events, isFrom){
+  function buildCalendar(container, events, isFrom){
 
-  container.innerHTML = "";
-
-  const firstDay =
-    new Date(year, month, 1).getDay();
-
-  let startDay = firstDay - 1;
-
-  if(startDay < 0) startDay = 6;
+    container.innerHTML = "";
 
 
 
-  // CELLE VUOTE
-  for(let i=0;i<startDay;i++){
+    const firstDay =
+      new Date(year, month, 1).getDay();
 
-    const empty =
-      document.createElement("div");
+    let startDay = firstDay - 1;
 
-    empty.classList.add("mini-day");
-    empty.classList.add("disabled");
-
-    container.appendChild(empty);
-  }
-
-
-
-  // GIORNI
-  for(let d=1; d<=daysInMonth; d++){
-
-    const date =
-      new Date(year, month, d);
-
-    const y = date.getFullYear();
-
-    const m = String(
-      date.getMonth()+1
-    ).padStart(2,"0");
-
-    const dayNum = String(
-      date.getDate()
-    ).padStart(2,"0");
-
-    const iso =
-      `${y}-${m}-${dayNum}`;
-
-
-
-    const div =
-      document.createElement("div");
-
-    div.classList.add("mini-day");
-
-    div.innerText = d;
-
-
-
-    const hasEvent =
-      events.some(ev => ev.date === iso);
-
-
-
-    if(!hasEvent){
-
-      div.classList.add("disabled");
-
+    if(startDay < 0){
+      startDay = 6;
     }
 
 
 
-    div.addEventListener("click",()=>{
+    // CELLE VUOTE
+    for(let i=0;i<startDay;i++){
 
-      if(!hasEvent) return;
+      const empty =
+        document.createElement("div");
 
+      empty.classList.add("mini-day");
+      empty.classList.add("disabled");
 
-
-      container
-        .querySelectorAll(".mini-day")
-        .forEach(el => {
-
-          el.classList.remove("selected");
-
-        });
+      container.appendChild(empty);
+    }
 
 
 
-      div.classList.add("selected");
+    // GIORNI
+    for(let d=1; d<=daysInMonth; d++){
+
+      const iso =
+        `${year}-${
+          String(month + 1).padStart(2,"0")
+        }-${
+          String(d).padStart(2,"0")
+        }`;
 
 
 
-      if(isFrom){
+      const div =
+        document.createElement("div");
 
-        selectedFrom = iso;
+      div.classList.add("mini-day");
 
-        document.getElementById(
-          "selectedFromText"
-        ).innerText = iso;
-
-
-
-        document
-          .getElementById("changeCalendarFrom")
-          .classList.add("hidden-calendar");
-
-      }else{
-
-        selectedTo = iso;
-
-        document.getElementById(
-          "selectedToText"
-        ).innerText = iso;
+      div.innerText = d;
 
 
 
-        document
-          .getElementById("changeCalendarTo")
-          .classList.add("hidden-calendar");
+      const hasEvent =
+        events.some(ev => ev.date === iso);
 
+
+
+      if(!hasEvent){
+
+        div.classList.add("disabled");
       }
 
-    });
+
+
+      div.addEventListener("click",()=>{
+
+        if(!hasEvent) return;
 
 
 
-    container.appendChild(div);
+        container
+          .querySelectorAll(".mini-day")
+          .forEach(el => {
+
+            el.classList.remove("selected");
+
+          });
+
+
+
+        div.classList.add("selected");
+
+
+
+        if(isFrom){
+
+          selectedFrom = iso;
+
+          document.getElementById(
+            "selectedFromText"
+          ).innerText = iso;
+
+
+
+          document
+            .getElementById("changeCalendarFrom")
+            .classList.add("hidden-calendar");
+
+        }else{
+
+          selectedTo = iso;
+
+          document.getElementById(
+            "selectedToText"
+          ).innerText = iso;
+
+
+
+          document
+            .getElementById("changeCalendarTo")
+            .classList.add("hidden-calendar");
+        }
+
+      });
+
+
+
+      container.appendChild(div);
+    }
   }
+
+
+
+  // COSTRUISCI CALENDARI
+  buildCalendar(
+    calFrom,
+    fromEvents,
+    true
+  );
+
+
+
+  buildCalendar(
+    calTo,
+    toEvents,
+    false
+  );
+
+
+
+  // SALVA DATE
+  window._changeData = {
+
+    getFromDate: ()=>selectedFrom,
+
+    getToDate: ()=>selectedTo
+
+  };
+
 }
 
 // ======================
