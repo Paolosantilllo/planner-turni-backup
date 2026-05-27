@@ -783,3 +783,103 @@ body{
   display:none;
 
 }
+/* MINI WEEKDAYS */
+
+.mini-weekdays{
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  margin-top:10px;
+  margin-bottom:6px;
+
+}
+
+.mini-weekdays div{
+
+  text-align:center;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  color:#8e8e93;
+
+}
+
+
+
+/* MINI CALENDAR */
+
+.mini-calendar{
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  gap:5px;
+
+  margin-top:8px;
+
+}
+
+
+
+/* GIORNI */
+
+.mini-day{
+
+  aspect-ratio:1;
+
+  border-radius:10px;
+
+  background:#f2f2f7;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:13px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+}
+
+
+
+/* DISABILITATI */
+
+.mini-day.disabled{
+
+  opacity:0.2;
+
+  pointer-events:none;
+
+}
+
+
+
+/* SELEZIONATI */
+
+.mini-day.selected{
+
+  background:#007aff;
+
+  color:white;
+
+}
+
+
+
+/* NASCONDI */
+
+.hidden-calendar{
+
+  display:none;
+
+}
