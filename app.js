@@ -171,54 +171,151 @@ function loadChangeDays(){
   const toEmployee =
     document.getElementById("changeTo").value;
 
-  const changeDate =
-    document.getElementById("changeDate");
-
-  const changeToDate =
-    document.getElementById("changeToDate");
 
 
+  const calFrom =
+    document.getElementById("changeCalendarFrom");
 
-  changeDate.innerHTML = "";
-  changeToDate.innerHTML = "";
+  const calTo =
+    document.getElementById("changeCalendarTo");
 
 
 
-  const validShifts = ["REP","FREP","CFI/REP"];
+  calFrom.innerHTML = "";
+  calTo.innerHTML = "";
 
 
 
-  const fromDays = savedEvents.filter(ev =>
-    ev.employee === fromEmployee &&
-    validShifts.includes(ev.shift)
-  );
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
 
 
 
-  const toDays = savedEvents.filter(ev =>
-    ev.employee === toEmployee &&
-    validShifts.includes(ev.shift)
-  );
+  const validShifts = [
+    "REP",
+    "FREP",
+    "CFI/REP"
+  ];
 
 
 
-  fromDays.forEach(ev => {
-    const opt = document.createElement("option");
-    opt.value = ev.date;
-    opt.textContent = `${ev.date} - ${ev.shift}`;
-    changeDate.appendChild(opt);
-  });
+  const fromEvents =
+    savedEvents.filter(ev =>
+
+      ev.employee === fromEmployee &&
+      validShifts.includes(ev.shift)
+
+    );
 
 
 
-  toDays.forEach(ev => {
-    const opt = document.createElement("option");
-    opt.value = ev.date;
-    opt.textContent = `${ev.date} - ${ev.shift}`;
-    changeToDate.appendChild(opt);
-  });
+  const toEvents =
+    savedEvents.filter(ev =>
+
+      ev.employee === toEmployee &&
+      validShifts.includes(ev.shift)
+
+    );
+
+
+
+  let selectedFrom = null;
+  let selectedTo = null;
+
+
+
+  function buildCalendar(container, events, isFrom){
+
+    for(let d=1; d<=daysInMonth; d++){
+
+      const date =
+        new Date(year, month, d);
+
+      const iso =
+        date.toISOString().split("T")[0];
+
+
+
+      const div =
+        document.createElement("div");
+
+      div.classList.add("mini-day");
+
+      div.innerText = d;
+
+
+
+      const hasEvent =
+        events.some(ev => ev.date === iso);
+
+
+
+      if(!hasEvent){
+
+        div.classList.add("disabled");
+
+      }
+
+
+
+      div.addEventListener("click",()=>{
+
+        if(!hasEvent) return;
+
+
+
+        container
+          .querySelectorAll(".mini-day")
+          .forEach(el => {
+
+            el.classList.remove("selected");
+
+          });
+
+
+
+        div.classList.add("selected");
+
+
+
+        if(isFrom){
+
+          selectedFrom = iso;
+
+        }else{
+
+          selectedTo = iso;
+
+        }
+
+      });
+
+
+
+      container.appendChild(div);
+    }
+  }
+
+
+
+  buildCalendar(calFrom, fromEvents, true);
+
+  buildCalendar(calTo, toEvents, false);
+
+
+
+  window._changeData = {
+
+    getFromDate: ()=>selectedFrom,
+
+    getToDate: ()=>selectedTo
+
+  };
+
 }
-
 
 
 // ======================
