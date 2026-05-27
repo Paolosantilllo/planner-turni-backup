@@ -654,7 +654,7 @@ async function saveShift(){
     // ======================
     if(shift === "REP"){
 
-      if(isSunday){
+     if(isFestive){
 
         alert(
           "REP non consentito la domenica"
