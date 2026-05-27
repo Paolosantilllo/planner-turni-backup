@@ -159,13 +159,37 @@
     <!-- MINI CALENDARIO FROM -->
     <label>Giorno da dare</label>
 
-    <div id="changeCalendarFrom" class="mini-calendar"></div>
+<div
+  class="calendar-selector"
+  onclick="toggleMiniCalendar('from')"
+>
+  <span id="selectedFromText">
+    Seleziona giorno
+  </span>
+</div>
 
-    <!-- MINI CALENDARIO TO -->
-    <label>Giorno da ricevere</label>
+<div
+  id="changeCalendarFrom"
+  class="mini-calendar hidden-calendar"
+></div>
 
-    <div id="changeCalendarTo" class="mini-calendar"></div>
 
+
+<label>Giorno da ricevere</label>
+
+<div
+  class="calendar-selector"
+  onclick="toggleMiniCalendar('to')"
+>
+  <span id="selectedToText">
+    Seleziona giorno
+  </span>
+</div>
+
+<div
+  id="changeCalendarTo"
+  class="mini-calendar hidden-calendar"
+></div>
     <!-- TURNO -->
     <label>Turno</label>
 
