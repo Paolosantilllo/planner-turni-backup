@@ -759,7 +759,57 @@ async function saveShift(){
       }
     }
 
+    // ======================
+    // UN SOLO REP AL GIORNO
+    // ======================
+    if(shift === "REP"){
 
+      const repExists =
+        savedEvents.some(ev =>
+
+          ev.date === date &&
+          ev.shift === "REP"
+
+        );
+
+
+
+      if(repExists){
+
+        alert(
+          "Esiste già un REP in questo giorno"
+        );
+
+        return;
+      }
+    }
+
+
+
+    // ======================
+    // UN SOLO FREP AL GIORNO
+    // ======================
+    if(shift === "FREP"){
+
+      const frepExists =
+        savedEvents.some(ev =>
+
+          ev.date === date &&
+          ev.shift === "FREP"
+
+        );
+
+
+
+      if(frepExists){
+
+        alert(
+          "Esiste già un FREP in questo giorno"
+        );
+
+        return;
+      }
+    }
 
     // ======================
     // SALVA
