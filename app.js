@@ -421,9 +421,20 @@ async function saveShift(){
 
 
 
-  let current = new Date(start);
+  const startParts = start.split("-");
+const endParts = end.split("-");
 
-  let stop = new Date(end);
+let current = new Date(
+  startParts[0],
+  startParts[1]-1,
+  startParts[2]
+);
+
+let stop = new Date(
+  endParts[0],
+  endParts[1]-1,
+  endParts[2]
+);
 
 
 
