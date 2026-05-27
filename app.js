@@ -252,10 +252,10 @@ function loadChangeDays(){
 
 
   const calFrom =
-    document.getElementById("changeCalendarFrom");
+    document.getElementById("miniGridFrom");
 
   const calTo =
-    document.getElementById("changeCalendarTo");
+    document.getElementById("miniGridTo");
 
 
 
