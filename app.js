@@ -758,7 +758,29 @@ async function saveShift(){
         return;
       }
     }
+    // ======================
+    // UN SOLO TURNO AL GIORNO
+    // ======================
+    const alreadyExists =
+      savedEvents.some(ev =>
 
+        ev.employee === employee &&
+        ev.date === date
+
+      );
+
+
+
+    if(alreadyExists){
+
+      alert(
+        "Questo dipendente ha già un turno in questo giorno"
+      );
+
+      return;
+    }
+
+    
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
