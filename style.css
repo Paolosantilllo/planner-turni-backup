@@ -672,25 +672,81 @@ body{
 
 }
 /* ======================
-   CAMBIO REP HIGHLIGHT
+   MINI CALENDARIO CAMBIO
 ====================== */
 
-.select-from{
-  outline:4px solid #00ff88;
-  outline-offset:-4px;
+.mini-calendar{
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  gap:5px;
+
+  margin-top:10px;
+  margin-bottom:18px;
+
 }
 
-.select-to{
-  outline:4px solid #4da6ff;
-  outline-offset:-4px;
+
+
+/* GIORNO */
+
+.mini-day{
+
+  background:#f2f2f7;
+
+  border-radius:10px;
+
+  min-height:38px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-size:13px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:0.2s;
+
 }
 
-.selected-from-day{
-  background:#4da3ff !important;
-  border:4px solid #0066ff !important;
+
+
+/* HOVER */
+
+.mini-day:hover{
+
+  transform:scale(1.05);
+
 }
 
-.selected-to-day{
-  background:#4dff88 !important;
-  border:4px solid #00c853 !important;
+
+
+/* GIORNI DISABILITATI */
+
+.mini-day.disabled{
+
+  opacity:0.25;
+
+  cursor:not-allowed;
+
+}
+
+
+
+/* GIORNO SELEZIONATO */
+
+.mini-day.selected{
+
+  background:#007aff;
+
+  color:white;
+
+  box-shadow:0 4px 12px rgba(0,122,255,0.3);
+
 }
