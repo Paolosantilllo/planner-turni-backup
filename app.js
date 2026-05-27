@@ -372,7 +372,8 @@ const selectedToDate =
         ev.date === formattedDate &&
         (
           ev.shift === "REP" ||
-          ev.shift === "FREP"
+          ev.shift === "FREP" ||
+          ev.shift === "CFI/REP"
         )
 
       );
