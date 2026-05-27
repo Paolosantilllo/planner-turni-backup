@@ -389,15 +389,19 @@ body{
 
 /* COLORI DIPENDENTI */
 
-.percaccioli{
+.dipendente-d{
+  background:#ff9800;
+}
+
+.dipendente-c{
   background:#ff9500;
 }
 
-.manunta{
+.dipendente-b{
   background:#34c759;
 }
 
-.santillo{
+.dipendente-a{
   background:#007aff;
 }
 
@@ -667,3 +671,4 @@ body{
   cursor:pointer;
 
 }
+.dipe
