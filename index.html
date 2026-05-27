@@ -55,7 +55,11 @@
 
   <!-- GIORNI -->
   <div class="weekdays">
-    <div>L</div><div>Ma</div><div>Me</div><div>G</div><div>V</div>
+    <div>L</div>
+    <div>Ma</div>
+    <div>Me</div>
+    <div>G</div>
+    <div>V</div>
     <div class="saturday">S</div>
     <div class="sunday">D</div>
   </div>
@@ -67,14 +71,19 @@
 
 <!-- POPUP TURNI -->
 <div class="popup" id="popup">
+
   <div class="popup-content">
 
     <div class="popup-header">
       <h2>Nuovo Inserimento</h2>
-      <button class="close-btn" onclick="closePopup()">✕</button>
+
+      <button class="close-btn" onclick="closePopup()">
+        ✕
+      </button>
     </div>
 
     <label>Dipendente</label>
+
     <select id="employee">
       <option>Dipendente D</option>
       <option>Dipendente C</option>
@@ -89,6 +98,7 @@
     <input type="date" id="endDate">
 
     <label>Turno</label>
+
     <select id="shift">
       <option></option>
       <option>REP</option>
@@ -99,22 +109,36 @@
       <option>REC</option>
     </select>
 
-    <button class="save-btn" onclick="saveShift()">Salva</button>
-    <button class="delete-btn" onclick="deleteShift()">Elimina</button>
+    <button class="save-btn" onclick="saveShift()">
+      Salva
+    </button>
+
+    <button class="delete-btn" onclick="deleteShift()">
+      Elimina
+    </button>
 
   </div>
+
 </div>
 
 <!-- POPUP CAMBIO TURNO -->
 <div class="popup" id="changePopup">
+
   <div class="popup-content">
 
     <div class="popup-header">
+
       <h2>Richiesta Cambio</h2>
-      <button class="close-btn" onclick="closeChangePopup()">✕</button>
+
+      <button class="close-btn" onclick="closeChangePopup()">
+        ✕
+      </button>
+
     </div>
 
+    <!-- CHI RICHIEDE -->
     <label>Chi richiede</label>
+
     <select id="changeFrom" onchange="loadChangeDays()">
       <option>Dipendente D</option>
       <option>Dipendente C</option>
@@ -122,7 +146,9 @@
       <option>Dipendente A</option>
     </select>
 
+    <!-- CAMBIO CON -->
     <label>Cambio con</label>
+
     <select id="changeTo" onchange="loadChangeDays()">
       <option>Dipendente D</option>
       <option>Dipendente C</option>
@@ -130,13 +156,19 @@
       <option>Dipendente A</option>
     </select>
 
+    <!-- MINI CALENDARIO FROM -->
     <label>Giorno da dare</label>
-    <select id="changeDate"></select>
 
+    <div id="changeCalendarFrom" class="mini-calendar"></div>
+
+    <!-- MINI CALENDARIO TO -->
     <label>Giorno da ricevere</label>
-    <select id="changeToDate"></select>
 
+    <div id="changeCalendarTo" class="mini-calendar"></div>
+
+    <!-- TURNO -->
     <label>Turno</label>
+
     <select id="changeShift">
       <option>REP</option>
       <option>FREP</option>
@@ -146,34 +178,46 @@
       <option>REC</option>
     </select>
 
+    <!-- INVIA -->
     <button class="save-btn" onclick="sendChangeRequest()">
       Invia Richiesta
     </button>
 
   </div>
+
 </div>
 
 <!-- POPUP RICHIESTE -->
 <div class="popup" id="requestsPopup">
+
   <div class="popup-content">
 
     <div class="popup-header">
+
       <h2>Richieste Cambio Turno</h2>
-      <button class="close-btn" onclick="closeRequestsPopup()">✕</button>
+
+      <button class="close-btn" onclick="closeRequestsPopup()">
+        ✕
+      </button>
+
     </div>
 
     <div id="requestsList"></div>
 
   </div>
+
 </div>
 
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- FIREBASE -->
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
 import {
   getFirestore,
   collection,
@@ -185,15 +229,22 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+
   authDomain: "calendario-rep.firebaseapp.com",
+
   projectId: "calendario-rep",
+
   storageBucket: "calendario-rep.firebasestorage.app",
+
   messagingSenderId: "1067128179274",
+
   appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
 window.db = db;
