@@ -791,12 +791,17 @@ async function saveShift(){
     if(shift === "REP"){
 
       const repExists =
-        savedEvents.some(ev =>
+  savedEvents.some(ev =>
 
-          ev.date === date &&
-          ev.shift === "REP"
+    ev.date === date &&
+    ev.shift === "REP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
 
-        );
+  );
 
 
 
@@ -818,12 +823,17 @@ async function saveShift(){
     if(shift === "FREP"){
 
       const frepExists =
-        savedEvents.some(ev =>
+  savedEvents.some(ev =>
 
-          ev.date === date &&
-          ev.shift === "FREP"
+    ev.date === date &&
+    ev.shift === "FREP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
 
-        );
+  );
 
 
 
