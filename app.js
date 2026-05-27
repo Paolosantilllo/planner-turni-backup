@@ -847,24 +847,48 @@ async function saveShift(){
       }
     }
 
-    // ======================
-    // SALVA
-    // ======================
-    await window.firebaseFirestore.addDoc(
+   // ======================
+// SALVA / MODIFICA
+// ======================
+if(editingIndex !== null){
 
-      window.firebaseFirestore.collection(
-        window.db,
-        "events"
-      ),
+  const oldEvent =
+    savedEvents[editingIndex];
 
-      {
-        employee,
-        date,
-        shift
-      }
+  await window.firebaseFirestore.updateDoc(
 
-    );
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      oldEvent.firebaseId
+    ),
 
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}else{
+
+  await window.firebaseFirestore.addDoc(
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "events"
+    ),
+
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}
 
 
     current.setDate(
