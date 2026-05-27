@@ -328,7 +328,11 @@ function highlightChangeDays(){
   const toEmployee =
     document.getElementById("changeTo")?.value;
 
+const selectedDate =
+  document.getElementById("changeDate")?.value;
 
+const selectedToDate =
+  document.getElementById("changeToDate")?.value;
 
   const allDays =
     document.querySelectorAll(".day");
