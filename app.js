@@ -441,14 +441,17 @@ let stop = new Date(
   while(current <= stop){
 
     // FIX FUSO ORARIO
-    const localDate = new Date(
-      current.getTime() - current.getTimezoneOffset()*60000
-    );
+    const y = current.getFullYear();
 
+const m = String(
+  current.getMonth() + 1
+).padStart(2,"0");
 
+const d = String(
+  current.getDate()
+).padStart(2,"0");
 
-    const date =
-      localDate.toISOString().split("T")[0];
+const date = `${y}-${m}-${d}`;
 
 
 
