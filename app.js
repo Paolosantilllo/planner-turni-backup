@@ -297,8 +297,12 @@ function renderCalendar(){
 
 
 
-    calendar.appendChild(dayBox);
+  calendar.appendChild(dayBox);
   }
+
+  // aggiorna highlight cambio turno
+  highlightChangeDays();
+
 }
 
 // ======================
