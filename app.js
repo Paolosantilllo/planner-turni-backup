@@ -762,13 +762,17 @@ async function saveShift(){
     // UN SOLO TURNO AL GIORNO
     // ======================
     const alreadyExists =
-      savedEvents.some(ev =>
+  savedEvents.some(ev =>
 
-        ev.employee === employee &&
-        ev.date === date
+    ev.employee === employee &&
+    ev.date === date &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
 
-      );
-
+  );
 
 
     if(alreadyExists){
