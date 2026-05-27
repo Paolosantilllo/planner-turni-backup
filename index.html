@@ -2,481 +2,177 @@
 <html lang="it">
 
 <head>
-
   <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Planner Turni</title>
-
   <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <!-- HEADER -->
-    <header class="topbar">
+  <!-- HEADER -->
+  <header class="topbar">
 
-      <button
-        class="month-btn"
-        onclick="prevMonth()"
-      >
-        ◀
-      </button>
+    <button class="month-btn" onclick="prevMonth()">◀</button>
 
-      <h1 id="monthTitle"></h1>
+    <h1 id="monthTitle"></h1>
 
-      <button
-        class="month-btn"
-        onclick="nextMonth()"
-      >
-        ▶
-      </button>
+    <button class="month-btn" onclick="nextMonth()">▶</button>
 
-    </header>
+  </header>
 
-
-
-    <!-- INVIO MENSILE -->
-    <div class="monthly-send">
-
-      <button
-        class="monthly-send-btn"
-        onclick="exportPDF()"
-      >
-        📤 Invia Mensile
-      </button>
-
-    </div>
-
-
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-
-      <!-- FILTRO -->
-      <select
-        id="employeeFilter"
-        onchange="renderCalendar()"
-      >
-
-        <option value="ALL">
-          Tutti
-        </option>
-
-        <option value="Dipendente D">
-          Dipendente D
-        </option>
-        
-        <option value="Dipendente C">
-          Dipendente C
-        </option>
-
-        <option value="Dipendente B">
-          Dipendente B
-        </option>
-
-        <option value="Dipendente A">
-          Dipendente A
-        </option>
-
-      </select>
-
-
-
-      <!-- BOTTONI -->
-      <div class="toolbar-actions">
-
-        <!-- CAMBIO TURNO -->
-        <button
-          class="change-btn"
-          onclick="openChangePopup()"
-        >
-          🔁
-        </button>
-
-
-
-        <!-- RICHIESTE -->
-        <button
-          class="notify-btn"
-          onclick="openRequestsPopup()"
-        >
-          🔔
-        </button>
-
-
-
-        <!-- AGGIUNGI -->
-        <button
-          class="add-btn"
-          onclick="openPopup()"
-        >
-          +
-        </button>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- GIORNI -->
-    <div class="weekdays">
-
-      <div>L</div>
-      <div>Ma</div>
-      <div>Me</div>
-      <div>G</div>
-      <div>V</div>
-
-      <div class="saturday">
-        S
-      </div>
-
-      <div class="sunday">
-        D
-      </div>
-
-    </div>
-
-
-
-    <!-- CALENDARIO -->
-    <div
-      class="calendar"
-      id="calendar"
-    ></div>
-
+  <!-- INVIO MENSILE -->
+  <div class="monthly-send">
+    <button class="monthly-send-btn" onclick="exportPDF()">
+      📤 Invia Mensile
+    </button>
   </div>
 
+  <!-- TOOLBAR -->
+  <div class="toolbar">
 
+    <select id="employeeFilter" onchange="renderCalendar()">
+      <option value="ALL">Tutti</option>
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
-  <!-- POPUP TURNI -->
-  <div class="popup" id="popup">
+    <div class="toolbar-actions">
 
-    <div class="popup-content">
+      <button class="change-btn" onclick="openChangePopup()">🔁</button>
 
-      <div class="popup-header">
+      <button class="notify-btn" onclick="openRequestsPopup()">🔔</button>
 
-        <h2>
-          Nuovo Inserimento
-        </h2>
-
-        <button
-          class="close-btn"
-          onclick="closePopup()"
-        >
-          ✕
-        </button>
-
-      </div>
-
-
-
-      <!-- DIPENDENTE -->
-      <label>
-        Dipendente
-      </label>
-
-      <select id="employee">
-        <option>
-          Dipendente D
-        </option>
-        
-        <option>
-          Dipendente C
-        </option>
-
-        <option>
-          Dipendente B
-        </option>
-
-        <option>
-          Dipendente A
-        </option>
-
-      </select>
-
-
-
-      <!-- DATA INIZIO -->
-      <label>
-        Data Inizio
-      </label>
-
-      <input
-        type="date"
-        id="startDate"
-      >
-
-
-
-      <!-- DATA FINE -->
-      <label>
-        Data Fine
-      </label>
-
-      <input
-        type="date"
-        id="endDate"
-      >
-
-
-
-      <!-- TURNO -->
-      <label>
-        Turno
-      </label>
-
-      <select id="shift">
-
-        <option></option>
-
-        <option>
-          REP
-        </option>
-
-        <option>
-          FREP
-        </option>
-
-        <option>
-          CFI
-        </option>
-
-        <option>
-          CFI/REP
-        </option>
-
-        <option>
-          LIC
-        </option>
-
-        <option>
-          REC
-        </option>
-
-      </select>
-
-
-
-      <!-- SALVA -->
-      <button
-        class="save-btn"
-        onclick="saveShift()"
-      >
-        Salva
-      </button>
-
-
-
-      <!-- ELIMINA -->
-      <button
-        class="delete-btn"
-        onclick="deleteShift()"
-      >
-        Elimina
-      </button>
+      <button class="add-btn" onclick="openPopup()">+</button>
 
     </div>
 
   </div>
 
+  <!-- GIORNI -->
+  <div class="weekdays">
+    <div>L</div><div>Ma</div><div>Me</div><div>G</div><div>V</div>
+    <div class="saturday">S</div>
+    <div class="sunday">D</div>
+  </div>
 
+  <!-- CALENDARIO -->
+  <div class="calendar" id="calendar"></div>
 
- <!-- POPUP CAMBIO TURNO -->
-<div class="popup" id="changePopup">
+</div>
 
+<!-- POPUP TURNI -->
+<div class="popup" id="popup">
   <div class="popup-content">
 
     <div class="popup-header">
-
-      <h2>
-        Richiesta Cambio
-      </h2>
-
-      <button
-        class="close-btn"
-        onclick="closeChangePopup()"
-      >
-        ✕
-      </button>
-
+      <h2>Nuovo Inserimento</h2>
+      <button class="close-btn" onclick="closePopup()">✕</button>
     </div>
 
-
-
-    <label>
-      Chi richiede
-    </label>
-
-    <select id="changeFrom" onchange="highlightChangeDays()">
-
-       <option>
-        Dipendente D
-      </option>
-      
-      <option>
-        Dipendente C
-      </option>
-
-      <option>
-        Dipendente B
-      </option>
-
-      <option>
-        Dipendente A
-      </option>
-
+    <label>Dipendente</label>
+    <select id="employee">
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
     </select>
 
+    <label>Data Inizio</label>
+    <input type="date" id="startDate">
 
+    <label>Data Fine</label>
+    <input type="date" id="endDate">
 
-    <label>
-      Cambio con
-    </label>
-
-  <select id="changeTo" onchange="highlightChangeDays()">
-
-       <option>
-        Dipendente D
-      </option>
-      
-      <option>
-        Dipendente C
-      </option>
-
-      <option>
-        Dipendente B
-      </option>
-
-      <option>
-       Dipendente A
-      </option>
-
+    <label>Turno</label>
+    <select id="shift">
+      <option></option>
+      <option>REP</option>
+      <option>FREP</option>
+      <option>CFI</option>
+      <option>CFI/REP</option>
+      <option>LIC</option>
+      <option>REC</option>
     </select>
 
+    <button class="save-btn" onclick="saveShift()">Salva</button>
+    <button class="delete-btn" onclick="deleteShift()">Elimina</button>
 
+  </div>
+</div>
 
-    <label>
-      Data
-    </label>
+<!-- POPUP CAMBIO TURNO -->
+<div class="popup" id="changePopup">
+  <div class="popup-content">
 
-    <input
-  type="date"
-  id="changeDate"
-  onchange="highlightChangeDays()"
->
+    <div class="popup-header">
+      <h2>Richiesta Cambio</h2>
+      <button class="close-btn" onclick="closeChangePopup()">✕</button>
+    </div>
 
+    <label>Chi richiede</label>
+    <select id="changeFrom" onchange="loadChangeDays()">
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
+    <label>Cambio con</label>
+    <select id="changeTo" onchange="loadChangeDays()">
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
-    <!-- 🆕 NUOVO CAMPO -->
-    <label>
-      Giorno da ricevere
-    </label>
+    <label>Giorno da dare</label>
+    <select id="changeDate"></select>
 
-    <input
-      type="date"
-      id="changeToDate"
-    onchange="highlightChangeDays()"
->
-      >
+    <label>Giorno da ricevere</label>
+    <select id="changeToDate"></select>
 
-
-
-    <label>
-      Turno
-    </label>
-
+    <label>Turno</label>
     <select id="changeShift">
-
-      <option>
-        REP
-      </option>
-
-      <option>
-        FREP
-      </option>
-
-      <option>
-        CFI
-      </option>
-
-      <option>
-        CFI/REP
-      </option>
-
-      <option>
-        LIC
-      </option>
-
-      <option>
-        REC
-      </option>
-
+      <option>REP</option>
+      <option>FREP</option>
+      <option>CFI</option>
+      <option>CFI/REP</option>
+      <option>LIC</option>
+      <option>REC</option>
     </select>
 
-
-
-    <button
-      class="save-btn"
-      onclick="sendChangeRequest()"
-    >
+    <button class="save-btn" onclick="sendChangeRequest()">
       Invia Richiesta
     </button>
 
   </div>
-
 </div>
 
+<!-- POPUP RICHIESTE -->
+<div class="popup" id="requestsPopup">
+  <div class="popup-content">
 
-  <!-- POPUP RICHIESTE -->
-  <div class="popup" id="requestsPopup">
-
-    <div class="popup-content">
-
-      <div class="popup-header">
-
-        <h2>
-          Richieste Cambio Turno
-        </h2>
-
-        <button
-          class="close-btn"
-          onclick="closeRequestsPopup()"
-        >
-          ✕
-        </button>
-
-      </div>
-
-
-
-      <!-- LISTA -->
-      <div id="requestsList"></div>
-
+    <div class="popup-header">
+      <h2>Richieste Cambio Turno</h2>
+      <button class="close-btn" onclick="closeRequestsPopup()">✕</button>
     </div>
 
+    <div id="requestsList"></div>
+
   </div>
+</div>
 
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-
-    <!-- LIBRERIE PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
-  <!-- FIREBASE -->
-  <script type="module">
-
+<!-- FIREBASE -->
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
   getFirestore,
