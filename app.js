@@ -306,7 +306,7 @@ function renderCalendar(){
 }
 
 // ======================
-// CARICA GIORNI CAMBIO
+// CARICA GIORNI CAMBIO (NUOVO SISTEMA)
 // ======================
 function loadChangeDays(){
 
@@ -330,17 +330,18 @@ function loadChangeDays(){
 
 
 
-  // giorni del richiedente
+  // FILTRA SOLO TURNI VALIDI
+  const validShifts = ["REP", "FREP", "CFI/REP"];
+
+
+
+  // ======================
+  // GIORNI DIPENDENTE FROM
+  // ======================
   const fromDays =
     savedEvents.filter(ev =>
-
       ev.employee === fromEmployee &&
-      (
-        ev.shift === "REP" ||
-        ev.shift === "FREP" ||
-        ev.shift === "CFI/REP"
-      )
-
+      validShifts.includes(ev.shift)
     );
 
 
@@ -351,8 +352,7 @@ function loadChangeDays(){
       document.createElement("option");
 
     option.value = ev.date;
-    option.textContent =
-      ev.date + " - " + ev.shift;
+    option.textContent = `${ev.date} - ${ev.shift}`;
 
     changeDate.appendChild(option);
 
@@ -360,17 +360,13 @@ function loadChangeDays(){
 
 
 
-  // giorni da ricevere
+  // ======================
+  // GIORNI DIPENDENTE TO
+  // ======================
   const toDays =
     savedEvents.filter(ev =>
-
       ev.employee === toEmployee &&
-      (
-        ev.shift === "REP" ||
-        ev.shift === "FREP" ||
-        ev.shift === "CFI/REP"
-      )
-
+      validShifts.includes(ev.shift)
     );
 
 
@@ -381,8 +377,7 @@ function loadChangeDays(){
       document.createElement("option");
 
     option.value = ev.date;
-    option.textContent =
-      ev.date + " - " + ev.shift;
+    option.textContent = `${ev.date} - ${ev.shift}`;
 
     changeToDate.appendChild(option);
 
