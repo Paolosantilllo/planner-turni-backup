@@ -1604,3 +1604,4 @@ window.open(
   pdfUrl,
   "_blank"
 );
+}
