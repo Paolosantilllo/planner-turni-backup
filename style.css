@@ -841,3 +841,20 @@ body{
   box-shadow:0 8px 25px rgba(0,0,0,0.25);
 
 }
+/* ======================
+   GIORNI MANCANTI
+====================== */
+
+.missing-rep{
+
+  background:#b266ff !important;
+
+  border:3px solid #7b2fff;
+
+}
+
+.missing-rep .day-number{
+
+  color:white !important;
+
+}
