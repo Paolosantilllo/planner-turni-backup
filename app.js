@@ -678,43 +678,11 @@ async function saveShift(){
 
 
 
-   // ======================
-// UN SOLO REP/CFI-REP AL GIORNO
-// ======================
-if(
-  shift === "REP" ||
-  shift === "CFI/REP"
-){
+    // ======================
+    // BLOCCO REP
+    // ======================
+    if(shift === "REP"){
 
-  const repExists =
-    savedEvents.some(ev =>
-
-      ev.date === date &&
-
-      (
-        ev.shift === "REP" ||
-        ev.shift === "CFI/REP"
-      ) &&
-
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
-
-    );
-
-
-
-  if(repExists){
-
-    alert(
-      "Esiste già un REP o CFI/REP in questo giorno"
-    );
-
-    return;
-  }
-}
      if(isFestive){
 
         alert(
@@ -845,7 +813,7 @@ if(
       return;
     }
 
-    
+
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
@@ -1147,7 +1115,7 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-    
+
     // ======================
   // RESET COLORI VIOLA
   // ======================
@@ -1479,49 +1447,128 @@ async function generatePDF(){
 
 
       // COLORI COME FOTO
-            // COLORI
-            // ======================
-      // CONTROLLO MANCANZE
-      // ======================
+      if(ev){
 
-      const currentDay =
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          d
+        // REP
+        if(ev.shift === "REP"){
+
+          pdf.setFillColor(
+            231,
+            193,
+            181
+          );
+
+        }
+
+        // FREP
+        else if(ev.shift === "FREP"){
+
+          pdf.setFillColor(
+            216,
+            176,
+            163
+          );
+
+        }
+
+        // CFI
+        else if(
+          ev.shift === "CFI"
+        ){
+
+          pdf.setFillColor(
+            159,
+            190,
+            114
+          );
+
+        }
+
+        // CFI/REP
+        else if(
+          ev.shift === "CFI/REP"
+        ){
+
+          pdf.setFillColor(
+            183,
+            207,
+            138
+          );
+
+        }
+
+        // LIC / REC
+        else if(
+          ev.shift === "LIC" ||
+          ev.shift === "REC"
+        ){
+
+          pdf.setFillColor(
+            232,
+            199,
+            107
+          );
+
+        }
+
+        else{
+
+          pdf.setFillColor(
+            240,
+            240,
+            240
+          );
+        }
+
+      }else{
+
+        pdf.setFillColor(
+          255,
+          255,
+          255
         );
+      }
 
 
 
-      const isSunday =
-        currentDay.getDay() === 0;
+      // CELLA
+      pdf.rect(
+        x,
+        y,
+        cellW,
+        cellH,
+        "FD"
+      );
 
 
 
-      const holidays = [
-        "1-1",
-        "6-1",
-        "25-4",
-        "1-5",
-        "2-6",
-        "15-8",
-        "1-11",
-        "8-12",
-        "25-12",
-        "26-12"
-      ];
+      // TESTO
+      if(ev){
 
+        pdf.setFontSize(5);
 
-
-      const isHoliday =
-        holidays.includes(
-          `${d}-${currentDate.getMonth()+1}`
+        pdf.text(
+          ev.shift,
+          x + 0.8,
+          y + 6
         );
+      }
+    }
+  });
 
 
 
-      const isFestive =
-        isSunday || isHoliday;
+  // DOWNLOAD
+  pdf.save(
+
+    `Reperibilita_${
+      monthNames[currentDate.getMonth()]
+    }_${
+      currentDate.getFullYear()
+    }.pdf`
+
+  );
+}
 
 
 
