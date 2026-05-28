@@ -1386,8 +1386,8 @@ for(let d=1; d<=daysInMonth; d++){
   // RIGHE DIPENDENTI
   employees.forEach((emp,row)=>{
 
-    const y =
-      startY + cellH + (row*cellH);
+ const y =
+  startY + (cellH * 2) + (row*cellH);
 
 
 
