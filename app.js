@@ -1115,6 +1115,136 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
+    // ======================
+  // CONTROLLO COPERTURA
+  // ======================
+
+  const year =
+    currentDate.getFullYear();
+
+  const month =
+    currentDate.getMonth();
+
+  const daysInMonth =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+
+
+  // FESTIVI
+  const holidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
+
+
+
+  let missingDays = [];
+
+
+
+  for(let d=1; d<=daysInMonth; d++){
+
+    const date =
+      `${year}-${
+        String(month + 1).padStart(2,"0")
+      }-${
+        String(d).padStart(2,"0")
+      }`;
+
+
+
+    const current =
+      new Date(year, month, d);
+
+
+
+    const isSunday =
+      current.getDay() === 0;
+
+
+
+    const isHoliday =
+      holidays.includes(
+        `${d}-${month + 1}`
+      );
+
+
+
+    const isFestive =
+      isSunday || isHoliday;
+
+
+
+    // CONTROLLO REP
+    const hasREP =
+      savedEvents.some(ev =>
+
+        ev.date === date &&
+        ev.shift === "REP"
+
+      );
+
+
+
+    // CONTROLLO FREP
+    const hasFREP =
+      savedEvents.some(ev =>
+
+        ev.date === date &&
+        ev.shift === "FREP"
+
+      );
+
+
+
+    // FERIALI -> REP
+    if(!isFestive && !hasREP){
+
+      missingDays.push(
+        `${d} → manca REP`
+      );
+    }
+
+
+
+    // FESTIVI -> FREP
+    if(isFestive && !hasFREP){
+
+      missingDays.push(
+        `${d} → manca FREP`
+      );
+    }
+  }
+
+
+
+  // BLOCCO INVIO
+  if(missingDays.length > 0){
+
+    alert(
+
+      "Impossibile inviare mensile.\n\n" +
+
+      "Giorni mancanti:\n\n" +
+
+      missingDays.join("\n")
+
+    );
+
+    return;
+  }
   const { jsPDF } = window.jspdf;
 
   const pdf =
