@@ -1593,18 +1593,14 @@ const fileName =
 
 
 
-// SCARICA PDF
-pdf.save(fileName);
+// APRI PDF IN ANTEPRIMA
+const pdfBlob =
+  pdf.output("blob");
 
+const pdfUrl =
+  URL.createObjectURL(pdfBlob);
 
-
-// APRI MAIL
-setTimeout(()=>{
-
-  window.location.href =
-    "mailto:paolosantillo@yahoo.it" +
-    "?subject=Mensile Reperibilita" +
-    "&body=In allegato il mensile reperibilita.";
-
-},1000);
-}
+window.open(
+  pdfUrl,
+  "_blank"
+);
