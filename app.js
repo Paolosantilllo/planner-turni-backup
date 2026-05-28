@@ -1262,7 +1262,7 @@ async function generatePDF(){
 
   const nameW = 30;
   const cellW = 7;
-  const cellH = 10;
+  const cellH = 8;
 
 
 
@@ -1311,7 +1311,77 @@ async function generatePDF(){
     );
   }
 
+// ======================
+// GIORNI SETTIMANA
+// ======================
 
+const weekDays = [
+  "D","L","Ma","Me","G","V","S"
+];
+
+for(let d=1; d<=daysInMonth; d++){
+
+  const x =
+    startX + nameW + ((d-1)*cellW);
+
+  const current =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      d
+    );
+
+  const dayName =
+    weekDays[current.getDay()];
+
+  // DOMENICA ROSSA
+  if(dayName === "D"){
+
+    pdf.setFillColor(
+      244,
+      67,
+      54
+    );
+
+  }
+
+  // SABATO ARANCIONE
+  else if(dayName === "S"){
+
+    pdf.setFillColor(
+      255,
+      152,
+      0
+    );
+
+  }
+
+  // ALTRI GIORNI
+  else{
+
+    pdf.setFillColor(
+      245,
+      245,
+      245
+    );
+  }
+
+  pdf.rect(
+    x,
+    startY + cellH,
+    cellW,
+    cellH,
+    "FD"
+  );
+
+  pdf.setFontSize(5);
+
+  pdf.text(
+    dayName,
+    x + 1.5,
+    startY + cellH + 5
+  );
+}
 
   // RIGHE DIPENDENTI
   employees.forEach((emp,row)=>{
