@@ -1117,8 +1117,141 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-  const { jsPDF } = window.jspdf;
+  // ======================
+  // RESET COLORI VIOLA
+  // ======================
+  document
+    .querySelectorAll(".day")
+    .forEach(day => {
 
+      day.classList.remove(
+        "missing-rep"
+      );
+
+    });
+
+
+
+  // ======================
+  // CONTROLLO COPERTURA
+  // ======================
+
+  const year =
+    currentDate.getFullYear();
+
+  const month =
+    currentDate.getMonth();
+
+  const daysCheck =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+
+
+  // FESTIVI
+  const holidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
+
+
+
+  let missingMessages = [];
+
+
+
+  // TUTTE LE CELLE
+  const dayElements =
+    document.querySelectorAll(".day");
+
+
+
+  for(let d=1; d<=daysCheck; d++){
+
+    const date =
+      `${year}-${
+        String(month + 1).padStart(2,"0")
+      }-${
+        String(d).padStart(2,"0")
+      }`;
+
+
+
+    // CONTROLLO COPERTURA
+    const hasCoverage =
+      savedEvents.some(ev =>
+
+        ev.date === date &&
+
+        (
+          ev.shift === "REP" ||
+          ev.shift === "FREP" ||
+          ev.shift === "CFI/REP"
+        )
+
+      );
+
+
+
+    // GIORNO SCOPERTO
+    if(!hasCoverage){
+
+      missingMessages.push(
+        `${d} → nessuna reperibilità`
+      );
+
+
+
+      const dayBox =
+        dayElements[d - 1];
+
+      if(dayBox){
+
+        dayBox.classList.add(
+          "missing-rep"
+        );
+      }
+    }
+  }
+
+
+
+  // AVVISO
+  if(missingMessages.length > 0){
+
+    const proceed = confirm(
+
+      "ATTENZIONE\n\n" +
+
+      missingMessages.join("\n") +
+
+      "\n\nVuoi inviare comunque il mensile?"
+
+    );
+
+
+
+    // ANNULLA
+    if(!proceed){
+
+      return;
+    }
+  }
+
+
+
+  const { jsPDF } = window.jspdf;
   const pdf =
     new jsPDF(
       "landscape",
