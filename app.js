@@ -1534,7 +1534,7 @@ pdf.save(fileName);
 setTimeout(()=>{
 
   window.location.href =
-    "mailto:tuaemail@azienda.it" +
+    "mailto:paolosantillo@yahoo.it" +
     "?subject=Mensile Reperibilita" +
     "&body=In allegato il mensile reperibilita.";
 
