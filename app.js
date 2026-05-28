@@ -1117,18 +1117,7 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-  // ======================
-  // RESET COLORI VIOLA
-  // ======================
-  document
-    .querySelectorAll(".day")
-    .forEach(day => {
-
-      day.classList.remove(
-        "missing-rep"
-      );
-
-    });
+  
 
 
 
@@ -1172,8 +1161,7 @@ async function generatePDF(){
 
 
   // TUTTE LE CELLE
-  const dayElements =
-    document.querySelectorAll(".day");
+  
 
 
 
@@ -1209,19 +1197,7 @@ async function generatePDF(){
 
       missingMessages.push(
         `${d} → nessuna reperibilità`
-      );
-
-
-
-      const dayBox =
-        dayElements[d - 1];
-
-      if(dayBox){
-
-        dayBox.classList.add(
-          "missing-rep"
-        );
-      }
+      );  
     }
   }
 
