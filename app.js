@@ -678,11 +678,43 @@ async function saveShift(){
 
 
 
-    // ======================
-    // BLOCCO REP
-    // ======================
-    if(shift === "REP"){
+   // ======================
+// UN SOLO REP/CFI-REP AL GIORNO
+// ======================
+if(
+  shift === "REP" ||
+  shift === "CFI/REP"
+){
 
+  const repExists =
+    savedEvents.some(ev =>
+
+      ev.date === date &&
+
+      (
+        ev.shift === "REP" ||
+        ev.shift === "CFI/REP"
+      ) &&
+
+      ev.firebaseId !== (
+        editingIndex !== null
+          ? savedEvents[editingIndex].firebaseId
+          : null
+      )
+
+    );
+
+
+
+  if(repExists){
+
+    alert(
+      "Esiste già un REP o CFI/REP in questo giorno"
+    );
+
+    return;
+  }
+}
      if(isFestive){
 
         alert(
