@@ -1515,15 +1515,28 @@ else if(ev){
   });
 
 
+// NOME FILE
+const fileName =
+  `Reperibilita_${
+    monthNames[currentDate.getMonth()]
+  }_${
+    currentDate.getFullYear()
+  }.pdf`;
 
-  // DOWNLOAD
-  pdf.save(
 
-    `Reperibilita_${
-      monthNames[currentDate.getMonth()]
-    }_${
-      currentDate.getFullYear()
-    }.pdf`
 
-  );
+// SCARICA PDF
+pdf.save(fileName);
+
+
+
+// APRI MAIL
+setTimeout(()=>{
+
+  window.location.href =
+    "mailto:tuaemail@azienda.it" +
+    "?subject=Mensile Reperibilita" +
+    "&body=In allegato il mensile reperibilita.";
+
+},1000);
 }
