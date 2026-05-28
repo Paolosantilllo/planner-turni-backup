@@ -1238,7 +1238,7 @@ async function generatePDF(){
 
 
   // TITOLO
-  pdf.setFontSize(16);
+  pdf.setFontSize(12);
 
   pdf.text(
 
@@ -1258,11 +1258,11 @@ async function generatePDF(){
 
   // DIMENSIONI
   const startX = 15;
-  const startY = 28;
+  const startY = 20;
 
   const nameW = 30;
-  const cellW = 7;
-  const cellH = 8;
+  const cellW = 5;
+  const cellH = 4;
 
 
 
@@ -1302,7 +1302,7 @@ async function generatePDF(){
       "FD"
     );
 
-    pdf.setFontSize(7);
+    pdf.setFontSize(4);
 
     pdf.text(
       String(d),
