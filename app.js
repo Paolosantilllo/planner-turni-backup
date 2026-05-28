@@ -1242,10 +1242,8 @@ async function generatePDF(){
 
   pdf.text(
 
-    `Reperibilità Specialisti PLF - ${
+    `Reperibilità specialisti PLF del mese di ${
       monthNames[currentDate.getMonth()]
-    } ${
-      currentDate.getFullYear()
     }`,
 
     148,
