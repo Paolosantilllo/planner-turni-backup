@@ -682,7 +682,43 @@ async function saveShift(){
     // BLOCCO REP
     // ======================
     if(shift === "REP"){
+   // ======================
+// UN SOLO REP/CFI-REP AL GIORNO
+// ======================
+if(
+  shift === "REP" ||
+  shift === "CFI/REP"
+){
 
+  const repExists =
+    savedEvents.some(ev =>
+
+      ev.date === date &&
+
+      (
+        ev.shift === "REP" ||
+        ev.shift === "CFI/REP"
+      ) &&
+
+      ev.firebaseId !== (
+        editingIndex !== null
+          ? savedEvents[editingIndex].firebaseId
+          : null
+      )
+
+    );
+
+
+
+  if(repExists){
+
+    alert(
+      "Esiste già un REP o CFI/REP in questo giorno"
+    );
+
+    return;
+  }
+}
      if(isFestive){
 
         alert(
@@ -1447,7 +1483,104 @@ async function generatePDF(){
 
 
       // COLORI COME FOTO
-      if(ev){
+            // COLORI
+            // ======================
+      // CONTROLLO MANCANZE
+      // ======================
+
+      const currentDay =
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          d
+        );
+
+
+
+      const isSunday =
+        currentDay.getDay() === 0;
+
+
+
+      const holidays = [
+        "1-1",
+        "6-1",
+        "25-4",
+        "1-5",
+        "2-6",
+        "15-8",
+        "1-11",
+        "8-12",
+        "25-12",
+        "26-12"
+      ];
+
+
+
+      const isHoliday =
+        holidays.includes(
+          `${d}-${currentDate.getMonth()+1}`
+        );
+
+
+
+      const isFestive =
+        isSunday || isHoliday;
+
+
+
+      // ESISTE REP?
+      const hasREP =
+        savedEvents.some(e =>
+
+          e.date === date &&
+          e.shift === "REP"
+
+        );
+
+
+
+      // ESISTE FREP?
+      const hasFREP =
+        savedEvents.some(e =>
+
+          e.date === date &&
+          e.shift === "FREP"
+
+        );
+
+
+
+      let missingCoverage = false;
+
+
+
+      // FERIALE SENZA REP
+      if(!isFestive && !hasREP){
+
+        missingCoverage = true;
+      }
+
+
+
+      // FESTIVO SENZA FREP
+      if(isFestive && !hasFREP){
+
+        missingCoverage = true;
+      }
+
+      if(missingCoverage){
+
+        // VIOLA ERRORE
+        pdf.setFillColor(
+          178,
+          102,
+          255
+        );
+
+      }
+
+      else if(ev){
 
         // REP
         if(ev.shift === "REP"){
