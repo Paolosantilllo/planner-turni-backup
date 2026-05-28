@@ -1110,3 +1110,278 @@ window.addEventListener("load",()=>{
   },500);
 
 });
+// ======================
+// GENERA PDF
+// ======================
+async function generatePDF(){
+
+  const { jsPDF } = window.jspdf;
+
+  const pdf =
+    new jsPDF(
+      "landscape",
+      "mm",
+      "a4"
+    );
+
+
+
+  // TITOLO
+  pdf.setFontSize(16);
+
+  pdf.text(
+
+    `Reperibilità Specialisti PLF - ${
+      monthNames[currentDate.getMonth()]
+    } ${
+      currentDate.getFullYear()
+    }`,
+
+    148,
+
+    15,
+
+    { align:"center" }
+
+  );
+
+
+
+  // DIMENSIONI
+  const startX = 15;
+  const startY = 28;
+
+  const nameW = 30;
+  const cellW = 7;
+  const cellH = 10;
+
+
+
+  const employees = [
+
+    "Dipendente D",
+    "Dipendente C",
+    "Dipendente B",
+    "Dipendente A"
+
+  ];
+
+
+
+  const daysInMonth =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth()+1,
+      0
+    ).getDate();
+
+
+
+  // HEADER GIORNI
+  for(let d=1; d<=daysInMonth; d++){
+
+    const x =
+      startX + nameW + ((d-1)*cellW);
+
+    pdf.setFillColor(235,235,235);
+
+    pdf.rect(
+      x,
+      startY,
+      cellW,
+      cellH,
+      "FD"
+    );
+
+    pdf.setFontSize(7);
+
+    pdf.text(
+      String(d),
+      x + 2,
+      startY + 6
+    );
+  }
+
+
+
+  // RIGHE DIPENDENTI
+  employees.forEach((emp,row)=>{
+
+    const y =
+      startY + cellH + (row*cellH);
+
+
+
+    // NOME
+    pdf.setFillColor(255,255,255);
+
+    pdf.rect(
+      startX,
+      y,
+      nameW,
+      cellH,
+      "FD"
+    );
+
+    pdf.setFontSize(7);
+
+    pdf.text(
+      emp,
+      startX + 2,
+      y + 6
+    );
+
+
+
+    // GIORNI
+    for(let d=1; d<=daysInMonth; d++){
+
+      const x =
+        startX + nameW + ((d-1)*cellW);
+
+
+
+      const date =
+        `${currentDate.getFullYear()}-${
+          String(
+            currentDate.getMonth()+1
+          ).padStart(2,"0")
+        }-${
+          String(d).padStart(2,"0")
+        }`;
+
+
+
+      const ev =
+        savedEvents.find(e =>
+
+          e.employee === emp &&
+          e.date === date
+
+        );
+
+
+
+      // COLORI COME FOTO
+      if(ev){
+
+        // REP
+        if(ev.shift === "REP"){
+
+          pdf.setFillColor(
+            231,
+            193,
+            181
+          );
+
+        }
+
+        // FREP
+        else if(ev.shift === "FREP"){
+
+          pdf.setFillColor(
+            216,
+            176,
+            163
+          );
+
+        }
+
+        // CFI
+        else if(
+          ev.shift === "CFI"
+        ){
+
+          pdf.setFillColor(
+            159,
+            190,
+            114
+          );
+
+        }
+
+        // CFI/REP
+        else if(
+          ev.shift === "CFI/REP"
+        ){
+
+          pdf.setFillColor(
+            183,
+            207,
+            138
+          );
+
+        }
+
+        // LIC / REC
+        else if(
+          ev.shift === "LIC" ||
+          ev.shift === "REC"
+        ){
+
+          pdf.setFillColor(
+            232,
+            199,
+            107
+          );
+
+        }
+
+        else{
+
+          pdf.setFillColor(
+            240,
+            240,
+            240
+          );
+        }
+
+      }else{
+
+        pdf.setFillColor(
+          255,
+          255,
+          255
+        );
+      }
+
+
+
+      // CELLA
+      pdf.rect(
+        x,
+        y,
+        cellW,
+        cellH,
+        "FD"
+      );
+
+
+
+      // TESTO
+      if(ev){
+
+        pdf.setFontSize(5);
+
+        pdf.text(
+          ev.shift,
+          x + 0.8,
+          y + 6
+        );
+      }
+    }
+  });
+
+
+
+  // DOWNLOAD
+  pdf.save(
+
+    `Reperibilita_${
+      monthNames[currentDate.getMonth()]
+    }_${
+      currentDate.getFullYear()
+    }.pdf`
+
+  );
+}
