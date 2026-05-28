@@ -1373,8 +1373,118 @@ async function generatePDF(){
 
 
 
-      // COLORI COME FOTO
-      if(ev){
+     // ======================
+// CONTROLLO COPERTURA
+// ======================
+
+const hasCoverage =
+  savedEvents.some(e =>
+
+    e.date === date &&
+
+    (
+      e.shift === "REP" ||
+      e.shift === "FREP" ||
+      e.shift === "CFI/REP"
+    )
+
+  );
+
+
+
+// GIORNO SCOPERTO
+if(!hasCoverage){
+
+  // VIOLA
+  pdf.setFillColor(
+    178,
+    102,
+    255
+  );
+
+}
+
+else if(ev){
+
+  // REP
+  if(ev.shift === "REP"){
+
+    pdf.setFillColor(
+      231,
+      193,
+      181
+    );
+
+  }
+
+  // FREP
+  else if(ev.shift === "FREP"){
+
+    pdf.setFillColor(
+      216,
+      176,
+      163
+    );
+
+  }
+
+  // CFI
+  else if(
+    ev.shift === "CFI"
+  ){
+
+    pdf.setFillColor(
+      159,
+      190,
+      114
+    );
+
+  }
+
+  // CFI/REP
+  else if(
+    ev.shift === "CFI/REP"
+  ){
+
+    pdf.setFillColor(
+      183,
+      207,
+      138
+    );
+
+  }
+
+  // LIC / REC
+  else if(
+    ev.shift === "LIC" ||
+    ev.shift === "REC"
+  ){
+
+    pdf.setFillColor(
+      232,
+      199,
+      107
+    );
+
+  }
+
+  else{
+
+    pdf.setFillColor(
+      240,
+      240,
+      240
+    );
+  }
+
+}else{
+
+  pdf.setFillColor(
+    255,
+    255,
+    255
+  );
+}
 
         // REP
         if(ev.shift === "REP"){
