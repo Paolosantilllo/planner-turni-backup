@@ -680,43 +680,11 @@ async function saveShift(){
 
 
 
-   // ======================
-// UN SOLO REP/CFI-REP AL GIORNO
-// ======================
-if(
-  shift === "REP" ||
-  shift === "CFI/REP"
-){
+    // ======================
+    // BLOCCO REP
+    // ======================
+    if(shift === "REP"){
 
-  const repExists =
-    savedEvents.some(ev =>
-
-      ev.date === date &&
-
-      (
-        ev.shift === "REP" ||
-        ev.shift === "CFI/REP"
-      ) &&
-
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
-
-    );
-
-
-
-  if(repExists){
-
-    alert(
-      "Esiste già un REP o CFI/REP in questo giorno"
-    );
-
-    return;
-  }
-}
      if(isFestive){
 
         alert(
@@ -847,7 +815,7 @@ if(
       return;
     }
 
-    
+
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
@@ -1149,190 +1117,6 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-    
-    // ======================
-  // RESET COLORI VIOLA
-  // ======================
-
-  document
-    .querySelectorAll(".day")
-    .forEach(day => {
-
-      day.classList.remove(
-        "missing-rep"
-      );
-
-    });
-
-
-
-  // ======================
-  // CONTROLLO COPERTURA
-  // ======================
-
-  const year =
-    currentDate.getFullYear();
-
-  const month =
-    currentDate.getMonth();
-
-  const daysCheck =
-    new Date(
-      year,
-      month + 1,
-      0
-    ).getDate();
-
-
-
-  // FESTIVI
-  const holidays = [
-    "1-1",
-    "6-1",
-    "25-4",
-    "1-5",
-    "2-6",
-    "15-8",
-    "1-11",
-    "8-12",
-    "25-12",
-    "26-12"
-  ];
-
-
-
-  let missingMessages = [];
-
-
-
-  // TUTTE LE CELLE
-  const dayElements =
-    document.querySelectorAll(".day");
-
-
-
-  for(let d=1; d<=daysCheck; d++){
-
-    const date =
-      `${year}-${
-        String(month + 1).padStart(2,"0")
-      }-${
-        String(d).padStart(2,"0")
-      }`;
-
-
-
-    const current =
-      new Date(year, month, d);
-
-
-
-    const isSunday =
-      current.getDay() === 0;
-
-
-
-    const isHoliday =
-      holidays.includes(
-        `${d}-${month + 1}`
-      );
-
-
-
-    const isFestive =
-      isSunday || isHoliday;
-
-
-
-    const hasREP =
-      savedEvents.some(ev =>
-
-        ev.date === date &&
-        ev.shift === "REP"
-
-      );
-
-
-
-    const hasFREP =
-      savedEvents.some(ev =>
-
-        ev.date === date &&
-        ev.shift === "FREP"
-
-      );
-
-
-
-    let missing = false;
-
-
-
-    // FERIALI
-    if(!isFestive && !hasREP){
-
-      missingMessages.push(
-        `${d} → manca REP`
-      );
-
-      missing = true;
-    }
-
-
-
-    // FESTIVI
-    if(isFestive && !hasFREP){
-
-      missingMessages.push(
-        `${d} → manca FREP`
-      );
-
-      missing = true;
-    }
-
-
-
-    // COLORA VIOLA
-    if(missing){
-
-      const dayBox =
-        dayElements[d - 1];
-
-      if(dayBox){
-
-        dayBox.classList.add(
-          "missing-rep"
-        );
-      }
-    }
-  }
-
-
-
-  // AVVISO
-  if(missingMessages.length > 0){
-
-    const proceed = confirm(
-
-      "ATTENZIONE\n\n" +
-
-      missingMessages.join("\n") +
-
-      "\n\nVuoi inviare comunque il mensile?"
-
-    );
-
-
-
-    // ANNULLA
-    if(!proceed){
-
-      return;
-    }
-  }
-
-
-
   const { jsPDF } = window.jspdf;
 
   const pdf =
@@ -1481,104 +1265,7 @@ async function generatePDF(){
 
 
       // COLORI COME FOTO
-            // COLORI
-            // ======================
-      // CONTROLLO MANCANZE
-      // ======================
-
-      const currentDay =
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          d
-        );
-
-
-
-      const isSunday =
-        currentDay.getDay() === 0;
-
-
-
-      const holidays = [
-        "1-1",
-        "6-1",
-        "25-4",
-        "1-5",
-        "2-6",
-        "15-8",
-        "1-11",
-        "8-12",
-        "25-12",
-        "26-12"
-      ];
-
-
-
-      const isHoliday =
-        holidays.includes(
-          `${d}-${currentDate.getMonth()+1}`
-        );
-
-
-
-      const isFestive =
-        isSunday || isHoliday;
-
-
-
-      // ESISTE REP?
-      const hasREP =
-        savedEvents.some(e =>
-
-          e.date === date &&
-          e.shift === "REP"
-
-        );
-
-
-
-      // ESISTE FREP?
-      const hasFREP =
-        savedEvents.some(e =>
-
-          e.date === date &&
-          e.shift === "FREP"
-
-        );
-
-
-
-      let missingCoverage = false;
-
-
-
-      // FERIALE SENZA REP
-      if(!isFestive && !hasREP){
-
-        missingCoverage = true;
-      }
-
-
-
-      // FESTIVO SENZA FREP
-      if(isFestive && !hasFREP){
-
-        missingCoverage = true;
-      }
-
-      if(missingCoverage){
-
-        // VIOLA ERRORE
-        pdf.setFillColor(
-          178,
-          102,
-          255
-        );
-
-      }
-
-      else if(ev){
+      if(ev){
 
         // REP
         if(ev.shift === "REP"){
@@ -1700,8 +1387,3 @@ async function generatePDF(){
 
   );
 }
-
-
-
-      
-
