@@ -1262,7 +1262,7 @@ async function generatePDF(){
 
   const nameW = 30;
   const cellW = 5;
-  const cellH = 4;
+  const cellH = 8;
 
 
 
@@ -1376,18 +1376,16 @@ for(let d=1; d<=daysInMonth; d++){
 
   pdf.setFontSize(5);
 
-  pdf.text(
-    dayName,
-    x + 1.5,
-    startY + cellH + 5
-  );
-}
+  pdf.setFontSize(6);
+pdf.setTextColor(0, 0, 0);
+pdf.text(dayName, x + 1.2, startY + cellH + 6);
 
   // RIGHE DIPENDENTI
   employees.forEach((emp,row)=>{
 
  const y =
-  startY + (cellH * 2) + (row*cellH);
+const y =
+  startY + 25 + (row * cellH * 1.5);
 
 
 
@@ -1402,14 +1400,9 @@ for(let d=1; d<=daysInMonth; d++){
       "FD"
     );
 
-    pdf.setFontSize(7);
-
-    pdf.text(
-      emp,
-      startX + 2,
-      y + 6
-    );
-
+    pdf.setFontSize(6);
+pdf.setTextColor(0, 0, 0);
+pdf.text(dayName, x + 1.2, startY + cellH + 6);
 
 
     // GIORNI
