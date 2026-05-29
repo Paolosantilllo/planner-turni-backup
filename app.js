@@ -1359,7 +1359,13 @@ pdf.rect(
   "FD"
 );
 
-
+// LINEA DIVISORIA
+pdf.line(
+  x,
+  startY + 3,
+  x + cellW,
+  startY + 3
+);
 
 // TESTO NERO
 pdf.setTextColor(0,0,0);
