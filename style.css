@@ -862,8 +862,14 @@ body{
 .calendar * {
   color: #111 !important;
 }
+
 @media print {
   .day {
     box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  .event {
+    color: #111 !important;
   }
 }
