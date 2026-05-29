@@ -1263,7 +1263,8 @@ async function generatePDF(){
 
   const nameW = 30;
   const cellW = 7;
-  const cellH = 10;
+const headerH = 6;
+const cellH = 10;
 
 
 
@@ -1288,29 +1289,77 @@ async function generatePDF(){
 
 
   // HEADER GIORNI
-  for(let d=1; d<=daysInMonth; d++){
+for(let d=1; d<=daysInMonth; d++){
 
-    const x =
-      startX + nameW + ((d-1)*cellW);
+  const x =
+    startX + nameW + ((d-1)*cellW);
 
-    pdf.setFillColor(235,235,235);
-
-    pdf.rect(
-      x,
-      startY,
-      cellW,
-      cellH,
-      "FD"
+  const current =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      d
     );
 
-    pdf.setFontSize(7);
+  const dayWeek =
+    current.getDay();
 
-    pdf.text(
-      String(d),
-      x + 2,
-      startY + 6
-    );
+  let dayLetter = "";
+
+  // L M M G V S D
+  if(dayWeek === 1) dayLetter = "L";
+  if(dayWeek === 2) dayLetter = "M";
+  if(dayWeek === 3) dayLetter = "M";
+  if(dayWeek === 4) dayLetter = "G";
+  if(dayWeek === 5) dayLetter = "V";
+  if(dayWeek === 6) dayLetter = "S";
+  if(dayWeek === 0) dayLetter = "D";
+
+  pdf.setFillColor(235,235,235);
+
+  pdf.rect(
+    x,
+    startY,
+    cellW,
+    headerH,
+    "FD"
+  );
+
+  // COLORE LETTERA
+  if(dayWeek === 6){
+
+    // SABATO
+    pdf.setTextColor(255,140,0);
+
+  }else if(dayWeek === 0){
+
+    // DOMENICA
+    pdf.setTextColor(220,0,0);
+
+  }else{
+
+    pdf.setTextColor(0,0,0);
   }
+
+  pdf.setFontSize(5);
+
+  pdf.text(
+    dayLetter,
+    x + 2.2,
+    startY + 2.5
+  );
+
+  // NUMERO
+  pdf.setTextColor(0,0,0);
+
+  pdf.setFontSize(7);
+
+  pdf.text(
+    String(d),
+    x + 1.8,
+    startY + 5.3
+  );
+}
 
 
 
