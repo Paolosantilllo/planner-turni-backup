@@ -1241,7 +1241,6 @@ async function generatePDF(){
 
   pdf.text(
 
-@@ -1258,353 +1258,353 @@
 
   // DIMENSIONI
   const startX = 15;
