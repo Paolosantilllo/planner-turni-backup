@@ -1,5 +1,5 @@
 
-onst calendar = document.getElementById("calendar");
+const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
 
@@ -683,149 +683,840 @@ async function saveShift(){
     // BLOCCO REP
     // ======================
     if(shift === "REP"){
-   // ======================
-// UN SOLO REP/CFI-REP AL GIORNO
-// ======================
-if(
-  shift === "REP" ||
-  shift === "CFI/REP"
-){
 
-  const repExists =
-    savedEvents.some(ev =>
-
-      ev.date === date &&
-
-      (
-        ev.shift === "REP" ||
-        ev.shift === "CFI/REP"
-      ) &&
-
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
-
-    );
-
-
-
-  if(repExists){
-
-    alert(
-      "Esiste già un REP o CFI/REP in questo giorno"
-    );
-
-    return;
-  }
-}
      if(isFestive){
 
         alert(
-@@ -1447,7 +1483,104 @@
+          "REP non consentito la domenica"
+        );
+
+        return;
+      }
+
+
+
+      const repCount =
+        savedEvents.filter(ev => {
+
+          const parts =
+            ev.date.split("-");
+
+          const evMonth =
+            Number(parts[1]) - 1;
+
+          const evYear =
+            Number(parts[0]);
+
+
+
+          return (
+
+            ev.employee === employee &&
+            ev.shift === "REP" &&
+
+            evMonth === current.getMonth() &&
+            evYear === current.getFullYear()
+
+          );
+
+        }).length;
+
+
+
+      if(repCount >= 6){
+
+        alert(
+          "Massimo 6 REP al mese"
+        );
+
+        return;
+      }
+    }
+
+
+
+    // ======================
+    // BLOCCO FREP
+    // ======================
+    if(shift === "FREP"){
+
+      if(!isFestive){
+
+        alert(
+          "FREP solo domenica e festivi"
+        );
+
+        return;
+      }
+
+
+
+      const frepCount =
+        savedEvents.filter(ev => {
+
+          const parts =
+            ev.date.split("-");
+
+          const evMonth =
+            Number(parts[1]) - 1;
+
+          const evYear =
+            Number(parts[0]);
+
+
+
+          return (
+
+            ev.employee === employee &&
+            ev.shift === "FREP" &&
+
+            evMonth === current.getMonth() &&
+            evYear === current.getFullYear()
+
+          );
+
+        }).length;
+
+
+
+      if(frepCount >= 2){
+
+        alert(
+          "Massimo 2 FREP al mese"
+        );
+
+        return;
+      }
+    }
+    // ======================
+    // UN SOLO TURNO AL GIORNO
+    // ======================
+    const alreadyExists =
+  savedEvents.some(ev =>
+
+    ev.employee === employee &&
+    ev.date === date &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
+
+  );
+
+
+    if(alreadyExists){
+
+      alert(
+        "Questo dipendente ha già un turno in questo giorno"
+      );
+
+      return;
+    }
+
+
+    // ======================
+    // UN SOLO REP AL GIORNO
+    // ======================
+    if(shift === "REP"){
+
+      const repExists =
+  savedEvents.some(ev =>
+
+    ev.date === date &&
+    ev.shift === "REP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
+
+  );
+
+
+
+      if(repExists){
+
+        alert(
+          "Esiste già un REP in questo giorno"
+        );
+
+        return;
+      }
+    }
+
+
+
+    // ======================
+    // UN SOLO FREP AL GIORNO
+    // ======================
+    if(shift === "FREP"){
+
+      const frepExists =
+  savedEvents.some(ev =>
+
+    ev.date === date &&
+    ev.shift === "FREP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
+
+  );
+
+
+
+      if(frepExists){
+
+        alert(
+          "Esiste già un FREP in questo giorno"
+        );
+
+        return;
+      }
+    }
+
+   // ======================
+// SALVA / MODIFICA
+// ======================
+if(editingIndex !== null){
+
+  const oldEvent =
+    savedEvents[editingIndex];
+
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      oldEvent.firebaseId
+    ),
+
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}else{
+
+  await window.firebaseFirestore.addDoc(
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "events"
+    ),
+
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}
+
+
+    current.setDate(
+      current.getDate()+1
+    );
+  }
+
+
+
+  closePopup();
+}
+
+
+
+// ======================
+// DELETE SHIFT
+// ======================
+async function deleteShift(){
+
+  if(editingIndex === null)
+    return;
+
+
+
+  const ev =
+    savedEvents[editingIndex];
+
+
+
+  if(ev.firebaseId){
+
+    await window.firebaseFirestore.deleteDoc(
+
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        ev.firebaseId
+      )
+
+    );
+  }
+
+
+
+  closePopup();
+}
+
+
+
+// ======================
+// CAMBIO TURNO
+// ======================
+async function sendChangeRequest(){
+
+  const fromEmployee =
+    document.getElementById(
+      "changeFrom"
+    ).value;
+
+
+
+  const toEmployee =
+    document.getElementById(
+      "changeTo"
+    ).value;
+
+
+
+  const fromDate =
+    window._changeData.getFromDate();
+
+
+
+  const toDate =
+    window._changeData.getToDate();
+
+
+
+  const shift =
+    document.getElementById(
+      "changeShift"
+    ).value;
+
+
+
+  const eventA =
+    savedEvents.find(e =>
+
+      e.employee === fromEmployee &&
+      e.date === fromDate &&
+      e.shift === shift
+
+    );
+
+
+
+  const eventB =
+    savedEvents.find(e =>
+
+      e.employee === toEmployee &&
+      e.date === toDate &&
+      e.shift === shift
+
+    );
+
+
+
+  if(!eventA || !eventB){
+
+    alert("Turni non trovati");
+
+    return;
+  }
+
+
+
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      eventA.firebaseId
+    ),
+
+    {
+      employee: toEmployee
+    }
+
+  );
+
+
+
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      eventB.firebaseId
+    ),
+
+    {
+      employee: fromEmployee
+    }
+
+  );
+
+
+
+  alert("Cambio effettuato");
+
+  closeChangePopup();
+}
+
+
+
+// ======================
+// NAV
+// ======================
+function nextMonth(){
+
+  currentDate.setMonth(
+    currentDate.getMonth()+1
+  );
+
+  renderCalendar();
+}
+
+function prevMonth(){
+
+  currentDate.setMonth(
+    currentDate.getMonth()-1
+  );
+
+  renderCalendar();
+}
+
+
+
+// ======================
+// INIT
+// ======================
+window.addEventListener("load",()=>{
+
+  setTimeout(()=>{
+
+    loadEventsFromFirebase();
+
+    renderCalendar();
+
+  },500);
+
+});
+// ======================
+// GENERA PDF
+// ======================
+async function generatePDF(){
+
+  const { jsPDF } = window.jspdf;
+  // ======================
+  // RESET COLORI VIOLA
+  // ======================
+  document
+    .querySelectorAll(".day")
+    .forEach(day => {
+
+      day.classList.remove(
+        "missing-rep"
+      );
+
+    });
+
+
+
+  // ======================
+  // CONTROLLO COPERTURA
+  // ======================
+
+  const year =
+    currentDate.getFullYear();
+
+  const month =
+    currentDate.getMonth();
+
+  const daysCheck =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+
+
+  // FESTIVI
+  const holidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
+
+
+
+  let missingMessages = [];
+
+
+
+  // TUTTE LE CELLE
+  const dayElements =
+    document.querySelectorAll(".day");
+
+
+
+  for(let d=1; d<=daysCheck; d++){
+
+    const date =
+      `${year}-${
+        String(month + 1).padStart(2,"0")
+      }-${
+        String(d).padStart(2,"0")
+      }`;
+
+
+
+    // CONTROLLO COPERTURA
+    const hasCoverage =
+      savedEvents.some(ev =>
+
+        ev.date === date &&
+
+        (
+          ev.shift === "REP" ||
+          ev.shift === "FREP" ||
+          ev.shift === "CFI/REP"
+        )
+
+      );
+
+
+
+    // GIORNO SCOPERTO
+    if(!hasCoverage){
+
+      missingMessages.push(
+        `${d} → nessuna reperibilità`
+      );
+
+
+
+      const dayBox =
+        dayElements[d - 1];
+
+      if(dayBox){
+
+        dayBox.classList.add(
+          "missing-rep"
+        );
+      }
+    }
+  }
+
+
+
+  // AVVISO
+  if(missingMessages.length > 0){
+
+    const proceed = confirm(
+
+      "ATTENZIONE\n\n" +
+
+      missingMessages.join("\n") +
+
+      "\n\nVuoi inviare comunque il mensile?"
+
+    );
+
+
+
+    // ANNULLA
+    if(!proceed){
+
+      return;
+    }
+  }
+
+
+
+  const { jsPDF } = window.jspdf;
+  const pdf =
+    new jsPDF(
+      "landscape",
+      "mm",
+      "a4"
+    );
+
+
+
+  // TITOLO
+  pdf.setFontSize(16);
+
+  pdf.text(
+
+    `Reperibilità Specialisti PLF - ${
+      monthNames[currentDate.getMonth()]
+    } ${
+      currentDate.getFullYear()
+    }`,
+
+    148,
+
+    15,
+
+    { align:"center" }
+
+  );
+
+
+
+  // DIMENSIONI
+  const startX = 15;
+  const startY = 28;
+
+  const nameW = 30;
+  const cellW = 7;
+  const cellH = 10;
+
+
+
+  const employees = [
+
+    "Dipendente D",
+    "Dipendente C",
+    "Dipendente B",
+    "Dipendente A"
+
+  ];
+
+
+
+  const daysInMonth =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth()+1,
+      0
+    ).getDate();
+
+
+
+  // HEADER GIORNI
+  for(let d=1; d<=daysInMonth; d++){
+
+    const x =
+      startX + nameW + ((d-1)*cellW);
+
+    pdf.setFillColor(235,235,235);
+
+    pdf.rect(
+      x,
+      startY,
+      cellW,
+      cellH,
+      "FD"
+    );
+
+    pdf.setFontSize(7);
+
+    pdf.text(
+      String(d),
+      x + 2,
+      startY + 6
+    );
+  }
+
+
+
+  // RIGHE DIPENDENTI
+  employees.forEach((emp,row)=>{
+
+    const y =
+      startY + cellH + (row*cellH);
+
+
+
+    // NOME
+    pdf.setFillColor(255,255,255);
+
+    pdf.rect(
+      startX,
+      y,
+      nameW,
+      cellH,
+      "FD"
+    );
+
+    pdf.setFontSize(7);
+
+    pdf.text(
+      emp,
+      startX + 2,
+      y + 6
+    );
+
+
+
+    // GIORNI
+    for(let d=1; d<=daysInMonth; d++){
+
+      const x =
+        startX + nameW + ((d-1)*cellW);
+
+
+
+      const date =
+        `${currentDate.getFullYear()}-${
+          String(
+            currentDate.getMonth()+1
+          ).padStart(2,"0")
+        }-${
+          String(d).padStart(2,"0")
+        }`;
+
+
+
+      const ev =
+        savedEvents.find(e =>
+
+          e.employee === emp &&
+          e.date === date
+
+        );
+
 
 
       // COLORI COME FOTO
       if(ev){
-            // COLORI
-            // ======================
-      // CONTROLLO MANCANZE
-      // ======================
-
-      const currentDay =
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          d
-        );
-
-
-
-      const isSunday =
-        currentDay.getDay() === 0;
-
-
-
-      const holidays = [
-        "1-1",
-        "6-1",
-        "25-4",
-        "1-5",
-        "2-6",
-        "15-8",
-        "1-11",
-        "8-12",
-        "25-12",
-        "26-12"
-      ];
-
-
-
-      const isHoliday =
-        holidays.includes(
-          `${d}-${currentDate.getMonth()+1}`
-        );
-
-
-
-      const isFestive =
-        isSunday || isHoliday;
-
-
-
-      // ESISTE REP?
-      const hasREP =
-        savedEvents.some(e =>
-
-          e.date === date &&
-          e.shift === "REP"
-
-        );
-
-
-
-      // ESISTE FREP?
-      const hasFREP =
-        savedEvents.some(e =>
-
-          e.date === date &&
-          e.shift === "FREP"
-
-        );
-
-
-
-      let missingCoverage = false;
-
-
-
-      // FERIALE SENZA REP
-      if(!isFestive && !hasREP){
-
-        missingCoverage = true;
-      }
-
-
-
-      // FESTIVO SENZA FREP
-      if(isFestive && !hasFREP){
-
-        missingCoverage = true;
-      }
-
-      if(missingCoverage){
-
-        // VIOLA ERRORE
-        pdf.setFillColor(
-          178,
-          102,
-          255
-        );
-
-      }
-
-      else if(ev){
 
         // REP
         if(ev.shift === "REP"){
+
+          pdf.setFillColor(
+            231,
+            193,
+            181
+          );
+
+        }
+
+        // FREP
+        else if(ev.shift === "FREP"){
+
+          pdf.setFillColor(
+            216,
+            176,
+            163
+          );
+
+        }
+
+        // CFI
+        else if(
+          ev.shift === "CFI"
+        ){
+
+          pdf.setFillColor(
+            159,
+            190,
+            114
+          );
+
+        }
+
+        // CFI/REP
+        else if(
+          ev.shift === "CFI/REP"
+        ){
+
+          pdf.setFillColor(
+            183,
+            207,
+            138
+          );
+
+        }
+
+        // LIC / REC
+        else if(
+          ev.shift === "LIC" ||
+          ev.shift === "REC"
+        ){
+
+          pdf.setFillColor(
+            232,
+            199,
+            107
+          );
+
+        }
+
+        else{
+
+          pdf.setFillColor(
+            240,
+            240,
+            240
+          );
+        }
+
+      }else{
+
+        pdf.setFillColor(
+          255,
+          255,
+          255
+        );
+      }
+
+
+
+      // CELLA
+      pdf.rect(
+        x,
+        y,
+        cellW,
+        cellH,
+        "FD"
+      );
+
+
+
+      // TESTO
+      if(ev){
+
+        pdf.setFontSize(5);
+
+        pdf.text(
+          ev.shift,
+          x + 0.8,
+          y + 6
+        );
+      }
+    }
+  });
+
+
+
+  // DOWNLOAD
+  pdf.save(
+
+    `Reperibilita_${
+      monthNames[currentDate.getMonth()]
+    }_${
+      currentDate.getFullYear()
+    }.pdf`
+
+  );
+}
