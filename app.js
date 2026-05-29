@@ -1454,17 +1454,7 @@ async function generatePDF(){
     for(let d=1; d<=daysInMonth; d++){
 
 
-  // DOWNLOAD
-  pdf.save(
 
-    `Reperibilita_${
-      monthNames[currentDate.getMonth()]
-    }_${
-      currentDate.getFullYear()
-    }.pdf`
-
-  );
-}
 
 
 
