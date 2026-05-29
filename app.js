@@ -1454,7 +1454,57 @@ async function generatePDF(){
     for(let d=1; d<=daysInMonth; d++){
 
 
+      const x =
+        startX + nameW + ((d-1)*cellW);
 
+      const date =
+        `${currentDate.getFullYear()}-${
+          String(currentDate.getMonth()+1).padStart(2,"0")
+        }-${
+          String(d).padStart(2,"0")
+        }`;
+
+      const current =
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          d
+        );
+
+      const isSunday =
+        current.getDay() === 0;
+
+      const isHoliday =
+        holidays.includes(
+          `${d}-${currentDate.getMonth()+1}`
+        );
+
+      const isFestive =
+        isSunday || isHoliday;
+
+      const hasREP =
+        savedEvents.some(ev =>
+
+          ev.date === date &&
+          ev.shift === "REP"
+
+        );
+
+      const hasFREP =
+        savedEvents.some(ev =>
+
+          ev.date === date &&
+          ev.shift === "FREP"
+
+        );
+
+      const ev =
+        savedEvents.find(ev =>
+
+          ev.employee === emp &&
+          ev.date === date
+
+        );
 
 
 
