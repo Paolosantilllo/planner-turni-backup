@@ -1384,8 +1384,7 @@ pdf.text(dayName, x + 1.2, startY + cellH + 6);
   employees.forEach((emp,row)=>{
 
  const y =
-const y =
-  startY + 25 + (row * cellH * 1.5);
+  startY + 25 + (row * cellH * 8);
 
 
 
