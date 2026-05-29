@@ -705,8 +705,6 @@ if(
 
     );
 
-
-
   if(repExists){
 
     alert(
@@ -715,15 +713,16 @@ if(
 
     return;
   }
+
+  if(isFestive){
+
+    alert(
+      "REP non consentito la domenica o festivi"
+    );
+
+    return;
+  }
 }
-     if(isFestive){
-
-        alert(
-          "REP non consentito la domenica"
-        );
-
-        return;
-      }
 
 
 
