@@ -1349,16 +1349,17 @@ for(let d=1; d<=daysInMonth; d++){
     startY + 2.5
   );
 
-  // NUMERO
-  pdf.setTextColor(0,0,0);
+// NUMERO
+pdf.setFontSize(7);
 
-  pdf.setFontSize(7);
+pdf.text(
+  String(d),
+  x + 1.8,
+  startY + 5.3
+);
 
-  pdf.text(
-    String(d),
-    x + 1.8,
-    startY + 5.3
-  );
+// RESET COLORE
+pdf.setTextColor(0,0,0);
 }
 
 
