@@ -1,5 +1,6 @@
 
 
+
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
@@ -1117,7 +1118,7 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-  
+
 
 
 
@@ -1161,7 +1162,7 @@ async function generatePDF(){
 
 
   // TUTTE LE CELLE
-  
+
 
 
 
@@ -1262,7 +1263,7 @@ async function generatePDF(){
 
   const nameW = 30;
   const cellW = 5;
-  const cellH = 8;
+  const cellH = 4;
 
 
 
@@ -1376,15 +1377,18 @@ for(let d=1; d<=daysInMonth; d++){
 
   pdf.setFontSize(5);
 
-  pdf.setFontSize(6);
-pdf.setTextColor(0, 0, 0);
-pdf.text(dayName, x + 1.2, startY + cellH + 6);
+  pdf.text(
+    dayName,
+    x + 1.5,
+    startY + cellH + 5
+  );
+}
 
   // RIGHE DIPENDENTI
   employees.forEach((emp,row)=>{
 
  const y =
-  startY + 25 + (row * cellH * 8);
+  startY + (cellH * 2) + (row*cellH);
 
 
 
@@ -1399,9 +1403,14 @@ pdf.text(dayName, x + 1.2, startY + cellH + 6);
       "FD"
     );
 
-    pdf.setFontSize(6);
-pdf.setTextColor(0, 0, 0);
-pdf.text(dayName, x + 1.2, startY + cellH + 6);
+    pdf.setFontSize(7);
+
+    pdf.text(
+      emp,
+      startX + 2,
+      y + 6
+    );
+
 
 
     // GIORNI
@@ -1466,7 +1475,7 @@ if(!hasCoverage){
 
 else if(ev){
 
- 
+
         // REP
         if(ev.shift === "REP"){
 
