@@ -1304,18 +1304,17 @@ for(let d=1; d<=daysInMonth; d++){
   const dayWeek =
     current.getDay();
 
-  let dayLetter = "";
+let dayLetter = "";
 
-  // L M M G V S D
-  if(dayWeek === 1) dayLetter = "L";
-  if(dayWeek === 2) dayLetter = "M";
-  if(dayWeek === 3) dayLetter = "M";
-  if(dayWeek === 4) dayLetter = "G";
-  if(dayWeek === 5) dayLetter = "V";
-  if(dayWeek === 6) dayLetter = "S";
-  if(dayWeek === 0) dayLetter = "D";
-
-  pdf.setFillColor(235,235,235);
+// LUN-MAR-MER-GIO-VEN-SAB-DOM
+if(dayWeek === 1) dayLetter = "L";
+if(dayWeek === 2) dayLetter = "Ma";
+if(dayWeek === 3) dayLetter = "Me";
+if(dayWeek === 4) dayLetter = "G";
+if(dayWeek === 5) dayLetter = "V";
+if(dayWeek === 6) dayLetter = "S";
+if(dayWeek === 0) dayLetter = "D";
+ 
 
   pdf.rect(
     x,
