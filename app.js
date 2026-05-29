@@ -244,3 +244,63 @@ window.addEventListener("load", () => {
   loadEventsFromFirebase();
   renderCalendar();
 });
+// ======================
+// POPUP
+// ======================
+function openPopup() {
+  popup.style.display = "flex";
+}
+
+function closePopup() {
+  popup.style.display = "none";
+}
+
+// ======================
+// SHARE MAIL
+// ======================
+async function shareByEmail() {
+
+  let text = "CALENDARIO TURNI\n\n";
+
+  savedEvents.forEach(ev => {
+    text += `${ev.date} - ${ev.employee} - ${ev.shift}\n`;
+  });
+
+  const subject = encodeURIComponent("Calendario Turni");
+  const body = encodeURIComponent(text);
+
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+// ======================
+// CHANGE SHIFT
+// ======================
+function requestShiftChange() {
+
+  const employee = document.getElementById("employee").value;
+  const start = document.getElementById("startDate").value;
+
+  if (!employee || !start) {
+    alert("Seleziona turno");
+    return;
+  }
+
+  alert(
+    `Richiesta cambio turno inviata:\n${employee}\n${start}`
+  );
+}
+
+// ======================
+// BUTTON +
+// ======================
+document.getElementById("addButton").addEventListener("click", () => {
+
+  editingEvent = null;
+
+  document.getElementById("employee").value = "";
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+  document.getElementById("shift").value = "";
+
+  openPopup();
+});
