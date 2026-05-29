@@ -679,50 +679,19 @@ async function saveShift(){
 
 
 
-   // ======================
-// UN SOLO REP/CFI-REP AL GIORNO
-// ======================
-if(
-  shift === "REP" ||
-  shift === "CFI/REP"
-){
+    // ======================
+    // BLOCCO REP
+    // ======================
+    if(shift === "REP"){
 
-  const repExists =
-    savedEvents.some(ev =>
+     if(isFestive){
 
-      ev.date === date &&
+        alert(
+          "REP non consentito la domenica"
+        );
 
-      (
-        ev.shift === "REP" ||
-        ev.shift === "CFI/REP"
-      ) &&
-
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
-
-    );
-
-  if(repExists){
-
-    alert(
-      "Esiste già un REP o CFI/REP in questo giorno"
-    );
-
-    return;
-  }
-
-  if(isFestive){
-
-    alert(
-      "REP non consentito la domenica o festivi"
-    );
-
-    return;
-  }
-}
+        return;
+      }
 
 
 
@@ -845,7 +814,7 @@ if(
       return;
     }
 
-    
+
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
@@ -1147,20 +1116,7 @@ window.addEventListener("load",()=>{
 // ======================
 async function generatePDF(){
 
-    
-    // ======================
-  // RESET COLORI VIOLA
-  // ======================
 
-  document
-    .querySelectorAll(".day")
-    .forEach(day => {
-
-      day.classList.remove(
-        "missing-rep"
-      );
-
-    });
 
 
 
@@ -1204,8 +1160,7 @@ async function generatePDF(){
 
 
   // TUTTE LE CELLE
-  const dayElements =
-    document.querySelectorAll(".day");
+
 
 
 
@@ -1220,88 +1175,28 @@ async function generatePDF(){
 
 
 
-    const current =
-      new Date(year, month, d);
-
-
-
-    const isSunday =
-      current.getDay() === 0;
-
-
-
-    const isHoliday =
-      holidays.includes(
-        `${d}-${month + 1}`
-      );
-
-
-
-    const isFestive =
-      isSunday || isHoliday;
-
-
-
-    const hasREP =
+    // CONTROLLO COPERTURA
+    const hasCoverage =
       savedEvents.some(ev =>
 
         ev.date === date &&
-        ev.shift === "REP"
+
+        (
+          ev.shift === "REP" ||
+          ev.shift === "FREP" ||
+          ev.shift === "CFI/REP"
+        )
 
       );
 
 
 
-    const hasFREP =
-      savedEvents.some(ev =>
-
-        ev.date === date &&
-        ev.shift === "FREP"
-
-      );
-
-
-
-    let missing = false;
-
-
-
-    // FERIALI
-    if(!isFestive && !hasREP){
+    // GIORNO SCOPERTO
+    if(!hasCoverage){
 
       missingMessages.push(
-        `${d} → manca REP`
-      );
-
-      missing = true;
-    }
-
-
-
-    // FESTIVI
-    if(isFestive && !hasFREP){
-
-      missingMessages.push(
-        `${d} → manca FREP`
-      );
-
-      missing = true;
-    }
-
-
-
-    // COLORA VIOLA
-    if(missing){
-
-      const dayBox =
-        dayElements[d - 1];
-
-      if(dayBox){
-
-        dayBox.classList.add(
-          "missing-rep"
-        );
-      }
+        `${d} → nessuna reperibilità`
+      );  
     }
   }
 
@@ -1332,7 +1227,6 @@ async function generatePDF(){
 
 
   const { jsPDF } = window.jspdf;
-
   const pdf =
     new jsPDF(
       "landscape",
@@ -1452,91 +1346,146 @@ async function generatePDF(){
     // GIORNI
     for(let d=1; d<=daysInMonth; d++){
 
-
       const x =
         startX + nameW + ((d-1)*cellW);
 
+
+
       const date =
         `${currentDate.getFullYear()}-${
-          String(currentDate.getMonth()+1).padStart(2,"0")
+          String(
+            currentDate.getMonth()+1
+          ).padStart(2,"0")
         }-${
           String(d).padStart(2,"0")
         }`;
 
-      const current =
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          d
-        );
 
-      const isSunday =
-        current.getDay() === 0;
-
-      const isHoliday =
-        holidays.includes(
-          `${d}-${currentDate.getMonth()+1}`
-        );
-
-      const isFestive =
-        isSunday || isHoliday;
-
-      const hasREP =
-        savedEvents.some(ev =>
-
-          ev.date === date &&
-          ev.shift === "REP"
-
-        );
-
-      const hasFREP =
-        savedEvents.some(ev =>
-
-          ev.date === date &&
-          ev.shift === "FREP"
-
-        );
 
       const ev =
-        savedEvents.find(ev =>
+        savedEvents.find(e =>
 
-          ev.employee === emp &&
-          ev.date === date
+          e.employee === emp &&
+          e.date === date
 
         );
 
 
 
-      let missingCoverage = false;
+      // COLORI COME FOTO
+      if(ev){
+     // ======================
+// CONTROLLO COPERTURA
+// ======================
+
+const hasCoverage =
+  savedEvents.some(e =>
+
+    e.date === date &&
+
+    (
+      e.shift === "REP" ||
+      e.shift === "FREP" ||
+      e.shift === "CFI/REP"
+    )
+
+  );
 
 
 
-      // FERIALE SENZA REP
-      if(!isFestive && !hasREP){
+// GIORNO SCOPERTO
+if(!hasCoverage){
 
-        missingCoverage = true;
-      }
+  // VIOLA
+  pdf.setFillColor(
+    178,
+    102,
+    255
+  );
 
+}
 
+else if(ev){
 
-      // FESTIVO SENZA FREP
-      if(isFestive && !hasFREP){
+  // REP
+  if(ev.shift === "REP"){
 
-        missingCoverage = true;
-      }
-      
-      if(missingCoverage){
+    pdf.setFillColor(
+      231,
+      193,
+      181
+    );
 
-        // VIOLA ERRORE
-        pdf.setFillColor(
-          178,
-          102,
-          255
-        );
+  }
 
-      }
+  // FREP
+  else if(ev.shift === "FREP"){
 
-      else if(ev){
+    pdf.setFillColor(
+      216,
+      176,
+      163
+    );
+
+  }
+
+  // CFI
+  else if(
+    ev.shift === "CFI"
+  ){
+
+    pdf.setFillColor(
+      159,
+      190,
+      114
+    );
+
+  }
+
+  // CFI/REP
+  else if(
+    ev.shift === "CFI/REP"
+  ){
+
+    pdf.setFillColor(
+      183,
+      207,
+      138
+    );
+
+  }
+
+  // LIC / REC
+  else if(
+    ev.shift === "LIC" ||
+    ev.shift === "REC"
+  ){
+
+    pdf.setFillColor(
+      232,
+      199,
+      107
+    );
+
+  }
+
+  else{
+
+    pdf.setFillColor(
+      240,
+      240,
+      240
+    );
+  }
+
+}else{
+
+  pdf.setFillColor(
+    255,
+    255,
+    255
+  );
+}
 
         // REP
         if(ev.shift === "REP"){
