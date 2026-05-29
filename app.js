@@ -1372,8 +1372,6 @@ async function generatePDF(){
 
 
 
-      // COLORI COME FOTO
-      if(ev){
      // ======================
 // CONTROLLO COPERTURA
 // ======================
@@ -1430,9 +1428,7 @@ else if(ev){
   }
 
   // CFI
-  else if(
-    ev.shift === "CFI"
-  ){
+  else if(ev.shift === "CFI"){
 
     pdf.setFillColor(
       159,
@@ -1443,9 +1439,7 @@ else if(ev){
   }
 
   // CFI/REP
-  else if(
-    ev.shift === "CFI/REP"
-  ){
+  else if(ev.shift === "CFI/REP"){
 
     pdf.setFillColor(
       183,
@@ -1486,7 +1480,6 @@ else if(ev){
     255
   );
 }
-
         // REP
         if(ev.shift === "REP"){
 
