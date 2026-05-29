@@ -204,12 +204,11 @@ async function saveShift() {
         window.firebaseFirestore.collection(window.db, "events"),
         payload
       );
-    }
-  }
+    }  }
 
+  renderCalendar();
   closePopup();
 }
-
 // ======================
 // DELETE
 // ======================
