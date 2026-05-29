@@ -1316,49 +1316,75 @@ if(dayWeek === 6) dayLetter = "S";
 if(dayWeek === 0) dayLetter = "D";
  
 
-  pdf.rect(
-    x,
-    startY,
-    cellW,
-    headerH,
-    "FD"
+  // ======================
+// COLORE HEADER GIORNI
+// ======================
+
+// SABATO
+if(dayWeek === 6){
+
+  pdf.setFillColor(
+    247,
+    178,
+    103
   );
 
-  // COLORE LETTERA
-  if(dayWeek === 6){
+// DOMENICA
+}else if(dayWeek === 0){
 
-    // SABATO
-    pdf.setTextColor(255,140,0);
-
-  }else if(dayWeek === 0){
-
-    // DOMENICA
-    pdf.setTextColor(220,0,0);
-
-  }else{
-
-    pdf.setTextColor(0,0,0);
-  }
-
-  pdf.setFontSize(5);
-
-  pdf.text(
-    dayLetter,
-    x + 2.2,
-    startY + 2.5
+  pdf.setFillColor(
+    255,
+    107,
+    107
   );
 
-// NUMERO
+// GIORNI NORMALI
+}else{
+
+  pdf.setFillColor(
+    255,
+    255,
+    255
+  );
+}
+
+
+
+// CELLA HEADER
+pdf.rect(
+  x,
+  startY,
+  cellW,
+  headerH,
+  "FD"
+);
+
+
+
+// TESTO NERO
+pdf.setTextColor(0,0,0);
+
+
+
+// LETTERA GIORNO
+pdf.setFontSize(5);
+
+pdf.text(
+  dayLetter,
+  x + 2,
+  startY + 2.2
+);
+
+
+
+// NUMERO GIORNO
 pdf.setFontSize(7);
 
 pdf.text(
   String(d),
-  x + 1.8,
-  startY + 5.3
+  x + 1.6,
+  startY + 5.2
 );
-
-// RESET COLORE
-pdf.setTextColor(0,0,0);
 }
 
 
