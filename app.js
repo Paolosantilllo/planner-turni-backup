@@ -42,7 +42,6 @@ function loadEventsFromFirebase(){
   if(!window.firebaseFirestore || !window.db) return;
 
   window.firebaseFirestore.onSnapshot(
-
     window.firebaseFirestore.collection(
       window.db,
       "events"
@@ -65,15 +64,11 @@ function loadEventsFromFirebase(){
 
       });
 
-      if (document.readyState === "complete") {
-  renderCalendar();
-} else {
-  window.addEventListener("load", renderCalendar);
-}
+      // 🔥 SEMPRE qui
+      renderCalendar();
+    }
   );
 }
-
-
 
 // ======================
 // CALENDAR
