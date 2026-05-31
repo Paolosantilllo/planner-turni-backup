@@ -20,8 +20,11 @@ let CURRENT_USER = null;
 /* ======================
    FIREBASE AUTH LISTENER
 ====================== */
+
 const auth = getAuth(app);
 window.auth = auth;
+
+let CURRENT_USER = null; // (meglio qui vicino all’auth)
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -29,6 +32,8 @@ onAuthStateChanged(auth, (user) => {
   } else {
     CURRENT_USER = null;
   }
+
+  console.log("User:", CURRENT_USER);
 });
 
 
