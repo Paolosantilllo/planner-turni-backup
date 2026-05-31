@@ -64,11 +64,18 @@ function loadEventsFromFirebase(){
 
       });
 
-      // 🔥 SEMPRE qui
       renderCalendar();
     }
   );
 }
+
+
+// ======================
+// INIT APP (QUI VA)
+// ======================
+window.addEventListener("load", () => {
+  loadEventsFromFirebase();
+});
 
 // ======================
 // CALENDAR
