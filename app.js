@@ -176,8 +176,11 @@ if(isSunday || isHoliday){
 
 
     // EVENTI
-    const selectedEmployee =
-      document.getElementById("employeeFilter").value;
+    const employeeFilterEl =
+  document.getElementById("employeeFilter");
+
+const selectedEmployee =
+  employeeFilterEl ? employeeFilterEl.value : "ALL";
 
 
 
