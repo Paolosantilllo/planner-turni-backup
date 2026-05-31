@@ -12,11 +12,7 @@ const monthNames = [
 let savedEvents = [];
 let editingIndex = null;
 
-const CURRENT_USER = {
-  name: "SANTILLO",
-  role: "admin"
-};
-
+let CURRENT_USER = null;
 
 
 // ======================
