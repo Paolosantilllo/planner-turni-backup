@@ -65,8 +65,11 @@ function loadEventsFromFirebase(){
 
       });
 
-      renderCalendar();
-    }
+      if (document.readyState === "complete") {
+  renderCalendar();
+} else {
+  window.addEventListener("load", renderCalendar);
+}
   );
 }
 
