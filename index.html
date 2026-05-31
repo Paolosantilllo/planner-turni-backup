@@ -6,16 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Planner Turni</title>
 
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f2f2f7">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Planner Turni">
-
-  <link rel="icon" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="app">
@@ -289,13 +284,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-import {
   getFirestore,
   collection,
   addDoc,
@@ -306,20 +294,24 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+
   authDomain: "calendario-rep.firebaseapp.com",
+
   projectId: "calendario-rep",
+
   storageBucket: "calendario-rep.firebasestorage.app",
+
   messagingSenderId: "1067128179274",
+
   appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
 
 const app = initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
-window.auth = auth;
-
 const db = getFirestore(app);
+
 window.db = db;
 
 window.firebaseFirestore = {
@@ -331,56 +323,9 @@ window.firebaseFirestore = {
   doc
 };
 
-/* =========================
-   LOGIN FUNCTIONS
-========================= */
-
-window.doLogin = async function () {
-  const email = document.getElementById("email")?.value;
-  const password = document.getElementById("password")?.value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (e) {
-    alert("Login fallito");
-  }
-};
-
-window.logout = async function () {
-  await signOut(auth);
-};
-
-/* =========================
-   LOGIN STATE CONTROL (STABILE)
-========================= */
-
-const appDiv = document.querySelector(".app");
-const loginBox = document.getElementById("loginBox");
-
-/* evita crash iniziale Safari */
-if (appDiv) appDiv.style.display = "none";
-
-onAuthStateChanged(auth, (user) => {
-  if (!appDiv) return;
-
-  if (user) {
-    appDiv.style.display = "block";
-    if (loginBox) loginBox.style.display = "none";
-  } else {
-    appDiv.style.display = "none";
-    if (loginBox) loginBox.style.display = "flex";
-  }
-});
-
 </script>
 
 <script src="app.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
-}
-</script>
 
 </body>
 </html>
