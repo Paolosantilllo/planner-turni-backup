@@ -17,42 +17,33 @@ let editingIndex = null;
 ====================== */
 let CURRENT_USER = null;
 
-/* ======================
-   FIREBASE AUTH LISTENER
-====================== */
 
+/* ======================
+   FIREBASE AUTH
+====================== */
 const auth = getAuth(app);
+window.auth = auth;
 
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    CURRENT_USER = user.email;
-  } else {
-    CURRENT_USER = null;
-  }
-
+  CURRENT_USER = user ? user.email : null;
   console.log("User:", CURRENT_USER);
 });
 
 
-// ======================
-// FIREBASE LOAD
-// ======================
-function loadEventsFromFirebase(){
+/* ======================
+   FIREBASE LOAD
+====================== */
+function loadEventsFromFirebase() {
 
-  if(!window.firebaseFirestore || !window.db) return;
+  if (!window.firebaseFirestore || !window.db) return;
 
   window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(
-      window.db,
-      "events"
-    ),
-
-    (snapshot)=>{
+    window.firebaseFirestore.collection(window.db, "events"),
+    (snapshot) => {
 
       savedEvents = [];
 
       snapshot.forEach(docSnap => {
-
         const data = docSnap.data();
 
         savedEvents.push({
@@ -61,22 +52,22 @@ function loadEventsFromFirebase(){
           date: data.date,
           shift: data.shift
         });
-
       });
 
+      // 🔥 IMPORTANTE: aggiorna SOLO qui
       renderCalendar();
     }
   );
 }
 
 
-// ======================
-// INIT APP (QUI VA)
-// ======================
+/* ======================
+   INIT APP
+====================== */
 window.addEventListener("load", () => {
   loadEventsFromFirebase();
+  renderCalendar(); // calendario visibile subito
 });
-
 // ======================
 // CALENDAR
 // ======================
