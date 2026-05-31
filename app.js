@@ -921,14 +921,11 @@ if(editingIndex !== null){
 }
 
 
-    current.setDate(
-      current.getDate()+1
-    );
-  }
+    closePopup();
 
-
-
-  closePopup();
+current.setDate(
+  current.getDate()+1
+);
 }
 
 
@@ -1102,13 +1099,9 @@ function prevMonth(){
 // ======================
 window.addEventListener("load",()=>{
 
-  setTimeout(()=>{
+  loadEventsFromFirebase();
 
-    loadEventsFromFirebase();
-
-    renderCalendar();
-
-  },500);
+  renderCalendar();
 
 });
 // ======================
