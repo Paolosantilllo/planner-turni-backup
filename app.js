@@ -63,8 +63,10 @@ function loadEventsFromFirebase(){
 // ======================
 function renderCalendar(){
 
-  calendar.innerHTML = "";
+  if (!calendar) return;
+  if (!monthTitle) return;
 
+  calendar.innerHTML = "";
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
