@@ -1114,16 +1114,8 @@ function prevMonth(){
 // ======================
 // INIT
 // ======================
-window.addEventListener("load",()=>{
-
-  setTimeout(()=>{
-
-    loadEventsFromFirebase();
-
-    renderCalendar();
-
-  },500);
-
+window.addEventListener("load", () => {
+  loadEventsFromFirebase();
 });
 // ======================
 // GENERA PDF
