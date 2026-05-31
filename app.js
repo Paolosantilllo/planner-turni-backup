@@ -22,9 +22,6 @@ let CURRENT_USER = null;
 ====================== */
 
 const auth = getAuth(app);
-window.auth = auth;
-
-let CURRENT_USER = null; // (meglio qui vicino all’auth)
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
