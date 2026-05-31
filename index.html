@@ -306,17 +306,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
-
   authDomain: "calendario-rep.firebaseapp.com",
-
   projectId: "calendario-rep",
-
   storageBucket: "calendario-rep.firebasestorage.app",
-
   messagingSenderId: "1067128179274",
-
   appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
 
@@ -325,8 +319,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 window.auth = auth;
 
-const auth = getAuth(app);
-window.auth = auth;
+const db = getFirestore(app);
+window.db = db;
 
 window.firebaseFirestore = {
   collection,
@@ -336,6 +330,41 @@ window.firebaseFirestore = {
   onSnapshot,
   doc
 };
+
+/* =========================
+   LOGIN FUNCTIONS
+========================= */
+
+window.doLogin = async function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    alert("Login fallito");
+  }
+};
+
+window.logout = async function () {
+  await signOut(auth);
+};
+
+/* =========================
+   LOGIN STATE CONTROL
+========================= */
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.querySelector(".app").style.display = "block";
+    const loginBox = document.getElementById("loginBox");
+    if (loginBox) loginBox.style.display = "none";
+  } else {
+    document.querySelector(".app").style.display = "none";
+    const loginBox = document.getElementById("loginBox");
+    if (loginBox) loginBox.style.display = "flex";
+  }
+});
 
 </script>
 
