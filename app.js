@@ -1,4 +1,3 @@
-
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
@@ -63,10 +62,8 @@ function loadEventsFromFirebase(){
 // ======================
 function renderCalendar(){
 
-  if (!calendar) return;
-  if (!monthTitle) return;
-
   calendar.innerHTML = "";
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -178,11 +175,8 @@ if(isSunday || isHoliday){
 
 
     // EVENTI
-    const employeeFilterEl =
-  document.getElementById("employeeFilter");
-
-const selectedEmployee =
-  employeeFilterEl ? employeeFilterEl.value : "ALL";
+    const selectedEmployee =
+      document.getElementById("employeeFilter").value;
 
 
 
@@ -926,11 +920,14 @@ if(editingIndex !== null){
 }
 
 
-    closePopup();
+    current.setDate(
+      current.getDate()+1
+    );
+  }
 
-current.setDate(
-  current.getDate()+1
-);
+
+
+  closePopup();
 }
 
 
@@ -1104,9 +1101,13 @@ function prevMonth(){
 // ======================
 window.addEventListener("load",()=>{
 
-  loadEventsFromFirebase();
+  setTimeout(()=>{
 
-  renderCalendar();
+    loadEventsFromFirebase();
+
+    renderCalendar();
+
+  },500);
 
 });
 // ======================
