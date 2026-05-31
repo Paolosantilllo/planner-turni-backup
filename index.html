@@ -336,8 +336,8 @@ window.firebaseFirestore = {
 ========================= */
 
 window.doLogin = async function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -351,17 +351,23 @@ window.logout = async function () {
 };
 
 /* =========================
-   LOGIN STATE CONTROL
+   LOGIN STATE CONTROL (STABILE)
 ========================= */
 
+const appDiv = document.querySelector(".app");
+const loginBox = document.getElementById("loginBox");
+
+/* evita crash iniziale Safari */
+if (appDiv) appDiv.style.display = "none";
+
 onAuthStateChanged(auth, (user) => {
+  if (!appDiv) return;
+
   if (user) {
-    document.querySelector(".app").style.display = "block";
-    const loginBox = document.getElementById("loginBox");
+    appDiv.style.display = "block";
     if (loginBox) loginBox.style.display = "none";
   } else {
-    document.querySelector(".app").style.display = "none";
-    const loginBox = document.getElementById("loginBox");
+    appDiv.style.display = "none";
     if (loginBox) loginBox.style.display = "flex";
   }
 });
