@@ -12,7 +12,24 @@ const monthNames = [
 let savedEvents = [];
 let editingIndex = null;
 
+/* ======================
+   UTENTE LOGGATO
+====================== */
 let CURRENT_USER = null;
+
+/* ======================
+   FIREBASE AUTH LISTENER
+====================== */
+const auth = getAuth(app);
+window.auth = auth;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    CURRENT_USER = user.email;
+  } else {
+    CURRENT_USER = null;
+  }
+});
 
 
 // ======================
