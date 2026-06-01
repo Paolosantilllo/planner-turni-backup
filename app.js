@@ -54,19 +54,17 @@ function loadEventsFromFirebase() {
         });
       });
 
-      // 🔥 IMPORTANTE: aggiorna SOLO qui
-      renderCalendar();
+      renderCalendar(); // ✔ SOLO QUI
     }
   );
 }
-
 
 /* ======================
    INIT APP
 ====================== */
 window.addEventListener("load", () => {
-  loadEventsFromFirebase();
-  renderCalendar(); // calendario visibile subito
+  renderCalendar();          // mostra subito calendario vuoto
+  loadEventsFromFirebase();  // poi carica dati
 });
 // ======================
 // CALENDAR
