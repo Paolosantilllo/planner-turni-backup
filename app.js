@@ -624,7 +624,24 @@ function closeChangePopup(){
   ).style.display = "none";
 }
 
+// ======================
+// POPUP RICHIESTE
+// ======================
+function openRequestsPopup(){
 
+  document.getElementById(
+    "requestsPopup"
+  ).style.display = "flex";
+
+}
+
+function closeRequestsPopup(){
+
+  document.getElementById(
+    "requestsPopup"
+  ).style.display = "none";
+
+}
 
 // ======================
 // SAVE SHIFT
