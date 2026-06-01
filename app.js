@@ -55,7 +55,7 @@ function loadEventsFromFirebase(){
           shift: data.shift
         });
       });
-
+   console.log("Eventi caricati:", savedEvents.length);
       renderCalendar(); // ✔ SOLO QUI
     }
   );
