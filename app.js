@@ -1103,13 +1103,6 @@ function prevMonth(){
 }
 
 
-
-// ======================
-// INIT
-// ======================
-window.addEventListener("load", () => {
-  loadEventsFromFirebase();
-});
 // ======================
 // GENERA PDF
 // ======================
