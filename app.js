@@ -21,13 +21,7 @@ let CURRENT_USER = null;
 /* ======================
    FIREBASE AUTH
 ====================== */
-const auth = getAuth(app);
-window.auth = auth;
-
-onAuthStateChanged(auth, (user) => {
-  CURRENT_USER = user ? user.email : null;
-  console.log("User:", CURRENT_USER);
-});
+console.log("APP JS PARTITO");
 
 
 /* ======================
