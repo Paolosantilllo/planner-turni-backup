@@ -78,7 +78,15 @@ function loadNotifications(){
             type: data.type,
             read: data.read
           });
+   onAuthStateChanged(auth, (user) => {
+  CURRENT_USER = user ? user.email : null;
 
+  console.log("User:", CURRENT_USER);
+
+  if(CURRENT_USER){
+    loadNotifications();
+  }
+});
         }
       });
 
