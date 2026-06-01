@@ -307,32 +307,20 @@ function loadChangeDays(){
     new Date(year, month + 1, 0).getDate();
 
 
-
-  // EVENTI DIPENDENTE CHE RICHIEDE
   const fromEvents =
     savedEvents.filter(ev =>
-
       ev.employee === fromEmployee &&
       ev.shift === selectedShift
-
     );
 
-
-
-  // EVENTI DIPENDENTE CON CUI CAMBIA
   const toEvents =
     savedEvents.filter(ev =>
-
       ev.employee === toEmployee &&
       ev.shift === selectedShift
-
     );
-
-
 
   let selectedFrom = null;
   let selectedTo = null;
-
 
 
   function buildCalendar(container, events, isFrom){
