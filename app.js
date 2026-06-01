@@ -23,6 +23,18 @@ let CURRENT_USER = null;
 ====================== */
 console.log("APP JS PARTITO");
 
+onAuthStateChanged(auth, (user) => {
+
+  CURRENT_USER = user ? user.email : null;
+
+  console.log("User:", CURRENT_USER);
+
+  if(CURRENT_USER){
+    loadNotifications();
+  }
+
+});
+
 
 /* ======================
    FIREBASE LOAD
@@ -40,6 +52,7 @@ function loadEventsFromFirebase(){
       savedEvents = [];
 
       snapshot.forEach(docSnap => {
+
         const data = docSnap.data();
 
         savedEvents.push({
@@ -48,26 +61,45 @@ function loadEventsFromFirebase(){
           date: data.date,
           shift: data.shift
         });
+
       });
-   console.log("Eventi caricati:", savedEvents.length);
-      renderCalendar(); // ✔ SOLO QUI
+
+      console.log(
+        "Eventi caricati:",
+        savedEvents.length
+      );
+
+      renderCalendar();
+
     }
   );
 }
-// ======================
-// FIREBASE NOTIFICATIONS
-// ======================
+
+
+/* ======================
+   FIREBASE NOTIFICATIONS
+====================== */
 function loadNotifications(){
 
-  if (!window.firebaseFirestore || !window.db || !CURRENT_USER) return;
+  if(
+    !window.firebaseFirestore ||
+    !window.db ||
+    !CURRENT_USER
+  ) return;
 
   window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(window.db, "notifications"),
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "notifications"
+    ),
+
     (snapshot) => {
 
       const myNotifications = [];
 
       snapshot.forEach(docSnap => {
+
         const data = docSnap.data();
 
         if(data.to === CURRENT_USER){
@@ -78,22 +110,19 @@ function loadNotifications(){
             type: data.type,
             read: data.read
           });
-   onAuthStateChanged(auth, (user) => {
-  CURRENT_USER = user ? user.email : null;
 
-  console.log("User:", CURRENT_USER);
-
-  if(CURRENT_USER){
-    loadNotifications();
-  }
-});
         }
+
       });
 
-      console.log("NOTIFICHE:", myNotifications);
+      console.log(
+        "NOTIFICHE:",
+        myNotifications
+      );
 
-      // 👉 QUI poi collegheremo la campanella UI
-      window.myNotifications = myNotifications;
+      window.myNotifications =
+        myNotifications;
+
     }
   );
 }
