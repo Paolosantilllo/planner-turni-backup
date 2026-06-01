@@ -54,7 +54,41 @@ function loadEventsFromFirebase(){
     }
   );
 }
+// ======================
+// FIREBASE NOTIFICATIONS
+// ======================
+function loadNotifications(){
 
+  if (!window.firebaseFirestore || !window.db || !CURRENT_USER) return;
+
+  window.firebaseFirestore.onSnapshot(
+    window.firebaseFirestore.collection(window.db, "notifications"),
+    (snapshot) => {
+
+      const myNotifications = [];
+
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+
+        if(data.to === CURRENT_USER){
+
+          myNotifications.push({
+            id: docSnap.id,
+            message: data.message,
+            type: data.type,
+            read: data.read
+          });
+
+        }
+      });
+
+      console.log("NOTIFICHE:", myNotifications);
+
+      // 👉 QUI poi collegheremo la campanella UI
+      window.myNotifications = myNotifications;
+    }
+  );
+}
 /* ======================
    INIT APP
 ====================== */
