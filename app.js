@@ -33,7 +33,9 @@ onAuthStateChanged(auth, (user) => {
 /* ======================
    FIREBASE LOAD
 ====================== */
-function loadEventsFromFirebase() {
+function loadEventsFromFirebase(){
+
+  console.log("Firebase avviato");
 
   if (!window.firebaseFirestore || !window.db) return;
 
@@ -70,6 +72,8 @@ window.addEventListener("load", () => {
 // CALENDAR
 // ======================
 function renderCalendar(){
+
+  console.log("renderCalendar eseguita");
 
   calendar.innerHTML = "";
 
