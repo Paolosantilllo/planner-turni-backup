@@ -639,8 +639,7 @@ async function saveShift(){
 
 
     const date =
-      `${y}-${m}-${d}`;
-
+  `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
 
 
     const day =
