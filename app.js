@@ -130,8 +130,9 @@ function loadNotifications(){
    INIT APP
 ====================== */
 window.addEventListener("load", () => {
-  renderCalendar();          // mostra subito calendario vuoto
-  loadEventsFromFirebase();  // poi carica dati
+  renderCalendar();
+  loadEventsFromFirebase();
+  loadRequests();
 });
 // ======================
 // CALENDAR
