@@ -1564,3 +1564,102 @@ else if(ev){
 
   );
 }
+// ======================
+// ACCETTA / RIFIUTA CAMBIO
+// ======================
+async function handleChangeRequest(requestId, action){
+
+  const reqRef = window.firebaseFirestore.doc(
+    window.db,
+    "changeRequests",
+    requestId
+  );
+
+  const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
+  const req = reqSnap.data();
+
+  if(!req) return;
+
+  // ======================
+  // RIFIUTA
+  // ======================
+  if(action === "REJECT"){
+
+    await window.firebaseFirestore.updateDoc(reqRef, {
+      status: "REJECTED"
+    });
+
+    // notifica a chi ha chiesto
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.fromEmployee,
+        message: "❌ Cambio turno rifiutato",
+        type: "error",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+
+    return;
+  }
+
+  // ======================
+  // ACCETTA
+  // ======================
+  if(action === "ACCEPT"){
+
+    await window.firebaseFirestore.updateDoc(reqRef, {
+      status: "ACCEPTED"
+    });
+
+    // 👉 scambia i turni nel tuo events
+    const eventA = savedEvents.find(e =>
+      e.employee === req.fromEmployee &&
+      e.date === req.fromDate &&
+      e.shift === req.shift
+    );
+
+    const eventB = savedEvents.find(e =>
+      e.employee === req.toEmployee &&
+      e.date === req.toDate &&
+      e.shift === req.shift
+    );
+
+    if(eventA && eventB){
+
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
+        { employee: req.toEmployee }
+      );
+
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
+        { employee: req.fromEmployee }
+      );
+    }
+
+    // notifica a entrambi
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.fromEmployee,
+        message: "✅ Cambio turno ACCETTATO",
+        type: "success",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.toEmployee,
+        message: "🔁 Cambio turno effettuato",
+        type: "success",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+  }
+}
