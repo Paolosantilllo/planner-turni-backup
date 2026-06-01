@@ -967,106 +967,51 @@ async function deleteShift(){
 async function sendChangeRequest(){
 
   const fromEmployee =
-    document.getElementById(
-      "changeFrom"
-    ).value;
-
-
+    document.getElementById("changeFrom").value;
 
   const toEmployee =
-    document.getElementById(
-      "changeTo"
-    ).value;
+    document.getElementById("changeTo").value;
 
-
-
-  const fromDate =
-    window._changeData.getFromDate();
-
-
-
-  const toDate =
-    window._changeData.getToDate();
-
-
+  const fromDate = window._changeData.getFromDate();
+  const toDate = window._changeData.getToDate();
 
   const shift =
-    document.getElementById(
-      "changeShift"
-    ).value;
+    document.getElementById("changeShift").value;
 
-
-
-  const eventA =
-    savedEvents.find(e =>
-
-      e.employee === fromEmployee &&
-      e.date === fromDate &&
-      e.shift === shift
-
-    );
-
-
-
-  const eventB =
-    savedEvents.find(e =>
-
-      e.employee === toEmployee &&
-      e.date === toDate &&
-      e.shift === shift
-
-    );
-
-
-
-  if(!eventA || !eventB){
-
-    alert("Turni non trovati");
-
+  if(!fromDate || !toDate){
+    alert("Seleziona entrambe le date");
     return;
   }
 
-
-
-  await window.firebaseFirestore.updateDoc(
-
-    window.firebaseFirestore.doc(
-      window.db,
-      "events",
-      eventA.firebaseId
-    ),
-
+  // 🔥 CREA RICHIESTA (NON TOCCA EVENTS)
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(db, "changeRequests"),
     {
-      employee: toEmployee
+      fromEmployee,
+      toEmployee,
+      fromDate,
+      toDate,
+      shift,
+      status: "PENDING_C",
+      createdAt: Date.now()
     }
-
   );
 
-
-
-  await window.firebaseFirestore.updateDoc(
-
-    window.firebaseFirestore.doc(
-      window.db,
-      "events",
-      eventB.firebaseId
-    ),
-
+  // 🔔 NOTIFICA A C
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(db, "notifications"),
     {
-      employee: fromEmployee
+      to: toEmployee,
+      message: `Richiesta cambio turno da ${fromEmployee}`,
+      type: "info",
+      read: false,
+      createdAt: Date.now()
     }
-
   );
 
-
-
-  alert("Cambio effettuato");
-
+  alert("Richiesta inviata");
   closeChangePopup();
 }
-
-
-
 // ======================
 // NAV
 // ======================
