@@ -606,41 +606,32 @@ function closePopup(){
 
 
 // ======================
-// POPUP CAMBIO
+// POPUP CAMBIO TURNO
 // ======================
-function openChangePopup(){
-
-  document.getElementById(
-    "changePopup"
-  ).style.display = "flex";
+function openChangePopup() {
+  const popup = document.getElementById("changePopup");
+  popup.style.display = "flex";
 
   loadChangeDays();
 }
 
-function closeChangePopup(){
-
-  document.getElementById(
-    "changePopup"
-  ).style.display = "none";
+function closeChangePopup() {
+  document.getElementById("changePopup").style.display = "none";
 }
 
-// ======================
-// POPUP RICHIESTE
-// ======================
-function openRequestsPopup(){
 
-  document.getElementById(
-    "requestsPopup"
-  ).style.display = "flex";
+// ======================
+// POPUP RICHIESTE CAMBIO
+// ======================
+function openRequestsPopup() {
+  document.getElementById("requestsPopup").style.display = "flex";
 
+  // opzionale ma consigliato: ricarica sempre le richieste quando apri
+  // loadRequests();
 }
 
-function closeRequestsPopup(){
-
-  document.getElementById(
-    "requestsPopup"
-  ).style.display = "none";
-
+function closeRequestsPopup() {
+  document.getElementById("requestsPopup").style.display = "none";
 }
 
 // ======================
