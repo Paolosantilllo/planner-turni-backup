@@ -1603,6 +1603,70 @@ else if(ev){
   );
 }
 // ======================
+// LOAD REQUESTS
+// ======================
+function loadRequests(){
+
+  if(
+    !window.firebaseFirestore ||
+    !window.db
+  ) return;
+
+  window.firebaseFirestore.onSnapshot(
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "changeRequests"
+    ),
+
+    (snapshot) => {
+
+      const container =
+        document.getElementById("requestsList");
+
+      if(!container) return;
+
+      container.innerHTML = "";
+
+      snapshot.forEach(docSnap => {
+
+        const req = docSnap.data();
+
+        const div =
+          document.createElement("div");
+
+        div.classList.add("request-item");
+
+        div.innerHTML = `
+          <div>
+            ${req.fromEmployee}
+            ➜
+            ${req.toEmployee}
+            <br>
+            ${req.fromDate}
+            ⇄
+            ${req.toDate}
+            <br>
+            Stato: ${req.status}
+          </div>
+
+          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+            Accetta
+          </button>
+
+          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+            Rifiuta
+          </button>
+        `;
+
+        container.appendChild(div);
+
+      });
+
+    }
+  );
+}
+// ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
 async function handleChangeRequest(requestId, action){
