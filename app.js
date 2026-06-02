@@ -23,6 +23,7 @@ let CURRENT_USER = null;
 ====================== */
 console.log("APP JS PARTITO");
 
+/*
 onAuthStateChanged(auth, (user) => {
 
   CURRENT_USER = user ? user.email : null;
@@ -34,6 +35,7 @@ onAuthStateChanged(auth, (user) => {
   }
 
 });
+*/
 
 
 /* ======================
