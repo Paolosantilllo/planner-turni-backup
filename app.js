@@ -57,7 +57,7 @@ onAuthStateChanged(window.auth, (user) => {
 
   const appDiv = document.getElementById("app");
 
-  // 🔴 UTENTE NON LOGGATO → vai al login
+  // 🔴 UTENTE NON LOGGATO → login
   if (!user) {
     window.location.href = "login.html";
     return;
@@ -73,18 +73,19 @@ onAuthStateChanged(window.auth, (user) => {
 
   alert("Loggato come: " + window.CURRENT_EMPLOYEE);
 
-  // 🔥 MOSTRA APP SOLO DOPO LOGIN (NO FLASH)
+  // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
     appDiv.style.display = "block";
   }
 
-  // 🔥 AVVIA FUNZIONI
+  // 🔥 IMPORTANTE: avvia SOLO dopo auth
   loadEventsFromFirebase();
   loadNotifications();
-  renderCalendar();
+
+  // ❌ NON chiamare renderCalendar subito qui se loadEvents lo richiama già
+  // 👉 meglio lasciarlo dentro onSnapshot
 
 });
-
 /* ======================
    FIREBASE LOAD
 ====================== */
