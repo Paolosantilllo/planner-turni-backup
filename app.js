@@ -53,37 +53,35 @@ function getEmployeeFromEmail(email){
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
+const appDiv = document.querySelector(".app");
+
+// 🔥 NASCONDE SUBITO L'APP (evita flash)
+if (appDiv) appDiv.style.display = "none";
+
 onAuthStateChanged(window.auth, (user) => {
 
-  const appDiv = document.getElementById("app");
-
-  // 🔴 UTENTE NON LOGGATO → login
+  // 🔴 NON LOGGATO
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  // 🟢 UTENTE LOGGATO
+  // 🟢 LOGGATO
   CURRENT_USER = user.email;
-
   window.CURRENT_EMPLOYEE = getEmployeeFromEmail(user.email);
 
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-
-  alert("Loggato come: " + window.CURRENT_EMPLOYEE);
 
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
     appDiv.style.display = "block";
   }
 
-  // 🔥 IMPORTANTE: avvia SOLO dopo auth
+  // 🔥 AVVIO APP
   loadEventsFromFirebase();
+  loadRequests();
   loadNotifications();
-
-  // ❌ NON chiamare renderCalendar subito qui se loadEvents lo richiama già
-  // 👉 meglio lasciarlo dentro onSnapshot
 
 });
 /* ======================
