@@ -16,8 +16,13 @@ let editingIndex = null;
    UTENTE LOGGATO
 ====================== */
 let CURRENT_USER = null;
+
 alert("APP JS CARICATO");
 alert("AUTH = " + typeof window.auth);
+
+console.log("AUTH =", window.auth);
+console.log("DB =", window.db);
+
 /* ======================
    MAPPA UTENTI
 ====================== */
