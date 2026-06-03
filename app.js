@@ -638,12 +638,12 @@ function toggleMiniCalendar(type){
 // ======================
 // POPUP
 // ======================
-function openPopup(){
+window.openPopup = function () {
 
   popup.style.display = "flex";
 }
 
-function closePopup(){
+window.closePopup = function () {
 
   popup.style.display = "none";
 }
