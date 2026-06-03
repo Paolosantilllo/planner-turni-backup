@@ -16,7 +16,7 @@ let editingIndex = null;
    UTENTE LOGGATO
 ====================== */
 let CURRENT_USER = null;
-
+alert("APP JS CARICATO");
 /* ======================
    MAPPA UTENTI
 ====================== */
