@@ -17,7 +17,28 @@ let editingIndex = null;
 ====================== */
 let CURRENT_USER = null;
 
+/* ======================
+   MAPPA UTENTI
+====================== */
+function getEmployeeFromEmail(email){
 
+  const users = {
+
+    "paolosantillo@yahoo.it":
+      "Dipendente A",
+
+    "dipb.planner@gmail.com":
+      "Dipendente B",
+
+    "dipc.planner@gmail.com":
+      "Dipendente C",
+
+    "dipd.planner@gmail.com":
+      "Dipendente D"
+  };
+
+  return users[email] || null;
+}
 
 
 
