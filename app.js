@@ -59,6 +59,10 @@ import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js")
     window.CURRENT_EMPLOYEE =
       getEmployeeFromEmail(user.email);
 
+    alert(
+  "Loggato come: " +
+  window.CURRENT_EMPLOYEE
+);
     console.log(
       "Utente:",
       CURRENT_USER
