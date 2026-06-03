@@ -18,24 +18,7 @@ let editingIndex = null;
 let CURRENT_USER = null;
 
 
-/* ======================
-   FIREBASE AUTH
-====================== */
-console.log("APP JS PARTITO");
 
-/*
-onAuthStateChanged(auth, (user) => {
-
-  CURRENT_USER = user ? user.email : null;
-
-  console.log("User:", CURRENT_USER);
-
-  if(CURRENT_USER){
-    loadNotifications();
-  }
-
-});
-*/
 
 
 /* ======================
