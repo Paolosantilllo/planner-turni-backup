@@ -49,39 +49,39 @@ function getEmployeeFromEmail(email){
 /* ======================
    FIREBASE AUTH
 ====================== */
-import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js")
-.then(({ onAuthStateChanged }) => {
 
-  onAuthStateChanged(window.auth, (user) => {
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-    if(!user){
+onAuthStateChanged(window.auth, (user) => {
 
-      window.location.href = "login.html";
-      return;
-    }
+  const appDiv = document.getElementById("app");
 
-    CURRENT_USER = user.email;
+  // 🔴 UTENTE NON LOGGATO → vai al login
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-    window.CURRENT_EMPLOYEE =
-      getEmployeeFromEmail(user.email);
+  // 🟢 UTENTE LOGGATO
+  CURRENT_USER = user.email;
 
-    alert(
-  "Loggato come: " +
-  window.CURRENT_EMPLOYEE
-);
-    console.log(
-      "Utente:",
-      CURRENT_USER
-    );
+  window.CURRENT_EMPLOYEE = getEmployeeFromEmail(user.email);
 
-    console.log(
-      "Dipendente:",
-      window.CURRENT_EMPLOYEE
-    );
+  console.log("Utente:", CURRENT_USER);
+  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
 
-    loadNotifications();
+  alert("Loggato come: " + window.CURRENT_EMPLOYEE);
 
-  });
+  // 🔥 MOSTRA APP SOLO DOPO LOGIN (NO FLASH)
+  if (appDiv) {
+    appDiv.style.display = "block";
+  }
+
+  // 🔥 AVVIA FUNZIONI
+  loadEventsFromFirebase();
+  loadNotifications();
+  renderCalendar();
 
 });
 
