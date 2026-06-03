@@ -40,7 +40,40 @@ function getEmployeeFromEmail(email){
   return users[email] || null;
 }
 
+/* ======================
+   FIREBASE AUTH
+====================== */
+import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js")
+.then(({ onAuthStateChanged }) => {
 
+  onAuthStateChanged(window.auth, (user) => {
+
+    if(!user){
+
+      window.location.href = "login.html";
+      return;
+    }
+
+    CURRENT_USER = user.email;
+
+    window.CURRENT_EMPLOYEE =
+      getEmployeeFromEmail(user.email);
+
+    console.log(
+      "Utente:",
+      CURRENT_USER
+    );
+
+    console.log(
+      "Dipendente:",
+      window.CURRENT_EMPLOYEE
+    );
+
+    loadNotifications();
+
+  });
+
+});
 
 /* ======================
    FIREBASE LOAD
@@ -357,8 +390,8 @@ if(isSunday || isHoliday){
 // ======================
 function loadChangeDays(){
 
-  const fromEmployee =
-    document.getElementById("changeFrom").value;
+ const fromEmployee =
+  window.CURRENT_EMPLOYEE;
 
   const toEmployee =
     document.getElementById("changeTo").value;
@@ -1053,8 +1086,8 @@ async function deleteShift(){
 async function sendChangeRequest(){
 
   const fromEmployee =
-    document.getElementById("changeFrom").value;
-
+  window.CURRENT_EMPLOYEE;
+  
   const toEmployee =
     document.getElementById("changeTo").value;
 
