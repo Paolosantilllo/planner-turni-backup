@@ -17,6 +17,7 @@ let editingIndex = null;
 ====================== */
 let CURRENT_USER = null;
 alert("APP JS CARICATO");
+alert("AUTH = " + typeof window.auth);
 /* ======================
    MAPPA UTENTI
 ====================== */
