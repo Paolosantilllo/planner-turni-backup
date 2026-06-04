@@ -14,7 +14,18 @@ let eventMap = new Map();
 let coverageSet = new Set();
 
 let editingIndex = null;
-
+const holidays = new Set([
+  "1-1",
+  "6-1",
+  "25-4",
+  "1-5",
+  "2-6",
+  "15-8",
+  "1-11",
+  "8-12",
+  "25-12",
+  "26-12"
+]);
 /* ======================
    UTENTE LOGGATO
 ====================== */
@@ -282,18 +293,7 @@ const currentDay = new Date(year, month, day);
 
 const isSunday = currentDay.getDay() === 0;
 
-const holidays = new Set([
-  "1-1",
-  "6-1",
-  "25-4",
-  "1-5",
-  "2-6",
-  "15-8",
-  "1-11",
-  "8-12",
-  "25-12",
-  "26-12"
-]);
+
 
 const isHoliday = holidays.has(`${day}-${month + 1}`);
 
