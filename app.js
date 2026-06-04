@@ -1548,98 +1548,49 @@ const ev = savedEvents.find(e =>
 
 const hasCoverage = coverageSet.has(date);
 
-// GIORNO SCOPERTO
-if(!hasCoverage){
+// ======================
+// COLORI CELLA
+// ======================
+
+if (!hasCoverage) {
+
   pdf.setFillColor(178, 102, 255);
-}
 
-else if(ev){
+} else if (ev) {
 
-  // VIOLA
-  pdf.setFillColor(
-    178,
-    102,
-    255
-  );
+  if (ev.shift === "REP") {
 
-}
+    pdf.setFillColor(231, 193, 181);
 
-else if(ev){
+  } else if (ev.shift === "FREP") {
 
-  // REP
-  if(ev.shift === "REP"){
+    pdf.setFillColor(216, 176, 163);
 
-    pdf.setFillColor(
-      231,
-      193,
-      181
-    );
+  } else if (ev.shift === "CFI") {
 
-  }
+    pdf.setFillColor(159, 190, 114);
 
-  // FREP
-  else if(ev.shift === "FREP"){
+  } else if (ev.shift === "CFI/REP") {
 
-    pdf.setFillColor(
-      216,
-      176,
-      163
-    );
+    pdf.setFillColor(183, 207, 138);
 
-  }
-
-  // CFI
-  else if(ev.shift === "CFI"){
-
-    pdf.setFillColor(
-      159,
-      190,
-      114
-    );
-
-  }
-
-  // CFI/REP
-  else if(ev.shift === "CFI/REP"){
-
-    pdf.setFillColor(
-      183,
-      207,
-      138
-    );
-
-  }
-
-  // LIC / REC
-  else if(
+  } else if (
     ev.shift === "LIC" ||
     ev.shift === "REC"
-  ){
+  ) {
 
-    pdf.setFillColor(
-      232,
-      199,
-      107
-    );
+    pdf.setFillColor(232, 199, 107);
+
+  } else {
+
+    pdf.setFillColor(240, 240, 240);
 
   }
 
-  else{
+} else {
 
-    pdf.setFillColor(
-      240,
-      240,
-      240
-    );
-  }
+  pdf.setFillColor(255, 255, 255);
 
-}else{
-
-  pdf.setFillColor(
-    255,
-    255,
-    255
-  );
 }
      
       // CELLA
