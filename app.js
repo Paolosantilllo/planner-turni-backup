@@ -81,6 +81,11 @@ onAuthStateChanged(window.auth, (user) => {
   loadNotifications();
 
 });
+window.logout = function () {
+  window.auth.signOut().then(() => {
+    window.location.href = "login.html";
+  });
+};
 document
   .getElementById("employeeFilter")
   .addEventListener("change", () => {
