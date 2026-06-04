@@ -171,14 +171,7 @@ function loadNotifications(){
     }
   );
 }
-/* ======================
-   INIT APP
-====================== */
-window.addEventListener("load", () => {
-  renderCalendar();
-  loadEventsFromFirebase();
-  loadRequests();
-});
+
 // ======================
 // CALENDAR
 // ======================
@@ -1714,7 +1707,7 @@ function loadRequests(){
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
-async function handleChangeRequest(requestId, action){
+window.handleChangeRequest = async function(requestId, action){
 
   const reqRef = window.firebaseFirestore.doc(
     window.db,
