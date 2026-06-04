@@ -950,7 +950,8 @@ body{
   transform: scale(0.98);
 }
 .login-container{
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
 }
 .login-box{
   animation: pop 0.25s ease;
