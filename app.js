@@ -1133,7 +1133,7 @@ window.sendChangeRequest = async function (){
 // ======================
 // NAV
 // ======================
-function nextMonth(){
+window.nextMonth = function () {
 
   currentDate.setMonth(
     currentDate.getMonth()+1
@@ -1141,8 +1141,7 @@ function nextMonth(){
 
   renderCalendar();
 }
-
-function prevMonth(){
+window.prevMonth = function () {
 
   currentDate.setMonth(
     currentDate.getMonth()-1
@@ -1155,7 +1154,7 @@ function prevMonth(){
 // ======================
 // GENERA PDF
 // ======================
-async function generatePDF(){
+window.generatePDF = async function () {
 
 
 
