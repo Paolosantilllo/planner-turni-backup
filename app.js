@@ -1527,18 +1527,7 @@ savedEvents.forEach(e => {
 // CONTROLLO COPERTURA
 // ======================
 
-const hasCoverage =
-  savedEvents.some(e =>
-
-    e.date === date && hi
-
-    (
-      e.shift === "REP" ||
-      e.shift === "FREP" ||
-      e.shift === "CFI/REP"
-    )
-
-  );
+const hasCoverage = coverageSet.has(date);
 
 
 
