@@ -1546,12 +1546,18 @@ savedEvents.forEach(e => {
 // CONTROLLO COPERTURA
 // ======================
 
+const ev = savedEvents.find(e =>
+  e.employee === emp && e.date === date
+);
+
 const hasCoverage = coverageSet.has(date);
-
-
 
 // GIORNO SCOPERTO
 if(!hasCoverage){
+  pdf.setFillColor(178, 102, 255);
+}
+
+else if(ev){
 
   // VIOLA
   pdf.setFillColor(
