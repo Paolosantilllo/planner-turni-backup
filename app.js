@@ -654,9 +654,14 @@ window.toggleMiniCalendar = function(type){
 
 
 // ======================
+// // ======================
 // POPUP
 // ======================
 window.openPopup = function () {
+
+  if (!window.IS_ADMIN) {
+    return;
+  }
 
   popup.style.display = "flex";
 }
@@ -701,6 +706,10 @@ window.closeRequestsPopup = function () {
 // SAVE SHIFT
 // ======================
 window.saveShift = async function () {
+
+  if (!window.IS_ADMIN) {
+    return;
+  }
 
   const employee =
     document.getElementById("employee").value;
