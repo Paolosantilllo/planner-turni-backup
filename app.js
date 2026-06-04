@@ -73,8 +73,20 @@ onAuthStateChanged(window.auth, (user) => {
   }
 
   // 🟢 LOGGATO
-  CURRENT_USER = user.email;
-  window.CURRENT_EMPLOYEE = getEmployeeFromEmail(user.email);
+  const userData = getEmployeeFromEmail(user.email);
+
+// sicurezza
+if(!userData){
+  alert("Utente non autorizzato");
+  window.auth.signOut();
+  window.location.href = "login.html";
+  return;
+}
+
+CURRENT_USER = user.email;
+
+window.CURRENT_EMPLOYEE = userData.employee;
+window.IS_ADMIN = userData.role === "ADMIN";
 
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
