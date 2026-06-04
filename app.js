@@ -682,7 +682,7 @@ function closeRequestsPopup() {
 // ======================
 // SAVE SHIFT
 // ======================
-async function saveShift(){
+window.saveShift = async function () {
 
   const employee =
     document.getElementById("employee").value;
@@ -1054,7 +1054,7 @@ if(editingIndex !== null){
 // ======================
 // DELETE SHIFT
 // ======================
-async function deleteShift(){
+window.deleteShift = async function (){
 
   if(editingIndex === null)
     return;
