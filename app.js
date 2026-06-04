@@ -387,7 +387,7 @@ if(isSunday || isHoliday){
 // ======================
 // CAMBIO TURNO
 // ======================
-function loadChangeDays(){
+window.loadChangeDays = function (){
 
  const fromEmployee =
   window.CURRENT_EMPLOYEE;
@@ -587,7 +587,7 @@ function loadChangeDays(){
 // ======================
 // TOGGLE MINI CALENDARI
 // ======================
-function toggleMiniCalendar(type){
+window.toggleMiniCalendar = function(type){
 
   const fromCal =
     document.getElementById(
