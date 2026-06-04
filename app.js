@@ -67,6 +67,9 @@ onAuthStateChanged(window.auth, (user) => {
   CURRENT_USER = user.email;
   window.CURRENT_EMPLOYEE = getEmployeeFromEmail(user.email);
 
+  window.IS_ADMIN =
+  user.email === "paolosantillo@yahoo.it";
+  
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
 
