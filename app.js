@@ -654,7 +654,6 @@ window.toggleMiniCalendar = function(type){
 
 
 // ======================
-// // ======================
 // POPUP
 // ======================
 window.openPopup = function () {
@@ -1022,7 +1021,7 @@ window.saveShift = async function () {
       }
     }
 
-   // ======================
+// ======================
 // SALVA / MODIFICA
 // ======================
 if(editingIndex !== null){
@@ -1527,15 +1526,14 @@ pdf.text(
         );
 
 
-
-     // ======================
+// ======================
 // CONTROLLO COPERTURA
 // ======================
 
 const hasCoverage =
   savedEvents.some(e =>
 
-    e.date === date &&
+    e.date === date && hi
 
     (
       e.shift === "REP" ||
@@ -1710,36 +1708,15 @@ function loadRequests() {
         const div = document.createElement("div");
         div.classList.add("request-card", statusClass);
 
-        div.innerHTML = `
-          <div class="request-title">
-            ${req.fromEmployee} ➜ ${req.toEmployee}
-          </div>
+       div.innerHTML = `
+  <div class="request-title">
+    ${req.fromEmployee} ➜ ${req.toEmployee}
+  </div>
 
-          <div class="request-dates">
-            ${req.fromDate} ⇄ ${req.toDate}
-          </div>
-
-          <div class="request-status">
-            Stato: ${req.status}
-          </div>
-
-          <div class="request-actions">
-
-            <button class="btn-accept"
-              ${disabled ? "disabled" : ""}
-              onclick="handleChangeRequest('${id}','ACCEPT')">
-              Accetta
-            </button>
-
-            <button class="btn-reject"
-              ${disabled ? "disabled" : ""}
-              onclick="handleChangeRequest('${id}','REJECT')">
-              Rifiuta
-            </button>
-
-          </div>
-        `;
-
+  <div class="request-status">
+    ${req.status}
+  </div>
+`;
         container.appendChild(div);
       });
 
