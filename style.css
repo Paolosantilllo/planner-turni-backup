@@ -981,3 +981,40 @@ body{
     opacity: 1;
   }
 }
+.request-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+
+.btn-accept,
+.btn-reject{
+  flex:1;
+  padding:10px 12px;
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+/* ACCETTA */
+.btn-accept{
+  background: linear-gradient(135deg, #34c759, #28a745);
+  color:white;
+  box-shadow:0 6px 15px rgba(52,199,89,0.25);
+}
+
+/* RIFIUTA */
+.btn-reject{
+  background: linear-gradient(135deg, #ff3b30, #d70015);
+  color:white;
+  box-shadow:0 6px 15px rgba(255,59,48,0.25);
+}
+
+/* CLICK ANIMATION */
+.btn-accept:active,
+.btn-reject:active{
+  transform: scale(0.96);
+}
