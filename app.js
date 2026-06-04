@@ -1751,7 +1751,7 @@ function loadRequests() {
     }
   );
 }
-=====================
+//=====================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
 window.handleChangeRequest = async function(requestId, action) {
