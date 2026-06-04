@@ -1751,10 +1751,13 @@ function loadRequests() {
     }
   );
 }
-// ======================
+=====================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
 window.handleChangeRequest = async function(requestId, action) {
+
+  // 🔥 DEBUG: verifica click
+  console.log("CLICK FUNZIONA", requestId, action);
 
   const reqRef = window.firebaseFirestore.doc(
     window.db,
@@ -1767,9 +1770,9 @@ window.handleChangeRequest = async function(requestId, action) {
 
   if (!req || req.status !== "PENDING") return;
 
-  // =====================
-  // REJECT
-  // =====================
+  // ======================
+  // RIFIUTA
+  // ======================
   if (action === "REJECT") {
 
     await window.firebaseFirestore.updateDoc(reqRef, {
@@ -1780,17 +1783,19 @@ window.handleChangeRequest = async function(requestId, action) {
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
         to: req.fromEmployee,
-        message: "❌ Cambio rifiutato",
+        message: "❌ Cambio turno rifiutato",
         type: "error",
         read: false,
         createdAt: Date.now()
       }
     );
+
+    return;
   }
 
-  // =====================
-  // ACCEPT
-  // =====================
+  // ======================
+  // ACCETTA
+  // ======================
   if (action === "ACCEPT") {
 
     await window.firebaseFirestore.updateDoc(reqRef, {
@@ -1832,7 +1837,6 @@ window.handleChangeRequest = async function(requestId, action) {
     );
   }
 };
-
   // ======================
   // RIFIUTA
   // ======================
