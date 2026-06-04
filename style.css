@@ -909,17 +909,6 @@ body{
 
   animation: pop 0.25s ease;
 }
-  width: 90%;
-  max-width: 340px;
-
-  background: white;
-  padding: 30px;
-  border-radius: 28px;
-
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-
-  text-align: center;
-}
 
 .login-box h2{
   margin-top: 15px;
