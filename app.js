@@ -10,22 +10,8 @@ const monthNames = [
 ];
 
 let savedEvents = [];
-let eventMap = new Map();
-let coverageSet = new Set();
-
 let editingIndex = null;
-const holidays = new Set([
-  "1-1",
-  "6-1",
-  "25-4",
-  "1-5",
-  "2-6",
-  "15-8",
-  "1-11",
-  "8-12",
-  "25-12",
-  "26-12"
-]);
+
 /* ======================
    UTENTE LOGGATO
 ====================== */
@@ -81,29 +67,13 @@ onAuthStateChanged(window.auth, (user) => {
   CURRENT_USER = user.email;
   window.CURRENT_EMPLOYEE = getEmployeeFromEmail(user.email);
 
-  window.IS_ADMIN =
-  user.email === "paolosantillo@yahoo.it";
-  
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
 
-// 🔥 MOSTRA APP SOLO DOPO LOGIN
-if (appDiv) {
-  appDiv.style.display = "block";
-}
-
-if (!window.IS_ADMIN) {
-
-  document.querySelector(".add-btn").style.display = "none";
-
-  document.querySelector(".monthly-send").style.display = "none";
-
-}
-
-// 🔥 AVVIO APP
-loadEventsFromFirebase();
-loadRequests();
-loadNotifications();
+  // 🔥 MOSTRA APP SOLO DOPO LOGIN
+  if (appDiv) {
+    appDiv.style.display = "block";
+  }
 
   // 🔥 AVVIO APP
   loadEventsFromFirebase();
@@ -149,26 +119,6 @@ function loadEventsFromFirebase(){
 
       });
 
-      // ======================
-      // 🔥 MAP + SET (VELOCE)
-      // ======================
-      eventMap = new Map();
-      coverageSet = new Set();
-
-      savedEvents.forEach(e => {
-
-        eventMap.set(e.employee + "_" + e.date, e);
-
-        if (
-          e.shift === "REP" ||
-          e.shift === "FREP" ||
-          e.shift === "CFI/REP"
-        ) {
-          coverageSet.add(e.date);
-        }
-
-      });
-
       console.log(
         "Eventi caricati:",
         savedEvents.length
@@ -179,6 +129,8 @@ function loadEventsFromFirebase(){
     }
   );
 }
+
+
 /* ======================
    FIREBASE NOTIFICATIONS
 ====================== */
@@ -289,13 +241,30 @@ function renderCalendar(){
         String(day).padStart(2,"0")
       }`;
 
-const currentDay = new Date(year, month, day);
+// FESTIVI ITALIANI
+const holidays = [
+  "1-1",
+  "6-1",
+  "25-4",
+  "1-5",
+  "2-6",
+  "15-8",
+  "1-11",
+  "8-12",
+  "25-12",
+  "26-12"
+];
 
-const isSunday = currentDay.getDay() === 0;
+const currentDay =
+  new Date(year, month, day);
 
+const isSunday =
+  currentDay.getDay() === 0;
 
-
-const isHoliday = holidays.has(`${day}-${month + 1}`);
+const isHoliday =
+  holidays.includes(
+    `${day}-${month + 1}`
+  );
 
 if(isSunday || isHoliday){
 
@@ -673,10 +642,6 @@ window.toggleMiniCalendar = function(type){
 // ======================
 window.openPopup = function () {
 
-  if (!window.IS_ADMIN) {
-    return;
-  }
-
   popup.style.display = "flex";
 }
 
@@ -720,10 +685,6 @@ window.closeRequestsPopup = function () {
 // SAVE SHIFT
 // ======================
 window.saveShift = async function () {
-
-  if (!window.IS_ADMIN) {
-    return;
-  }
 
   const employee =
     document.getElementById("employee").value;
@@ -1036,7 +997,7 @@ window.saveShift = async function () {
       }
     }
 
-// ======================
+   // ======================
 // SALVA / MODIFICA
 // ======================
 if(editingIndex !== null){
@@ -1097,12 +1058,10 @@ if(editingIndex !== null){
 // ======================
 window.deleteShift = async function (){
 
-  if (!window.IS_ADMIN) {
-    return;
-  }
-
   if(editingIndex === null)
     return;
+
+
 
   const ev =
     savedEvents[editingIndex];
@@ -1136,7 +1095,7 @@ window.sendChangeRequest = async function (){
 
   const fromEmployee =
   window.CURRENT_EMPLOYEE;
-  
+
   const toEmployee =
     document.getElementById("changeTo").value;
 
@@ -1206,12 +1165,9 @@ window.prevMonth = function () {
 // ======================
 window.generatePDF = async function () {
 
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-  alert("jsPDF non pronto");
-  return;
-}
 
-const jsPDF = window.jspdf.jsPDF;
+
+
 
   // ======================
   // CONTROLLO COPERTURA
@@ -1317,7 +1273,7 @@ const jsPDF = window.jspdf.jsPDF;
     }
   }
 
-alert("ARRIVATO A JSPDF");
+
 
   const { jsPDF } = window.jspdf;
   const pdf =
@@ -1407,7 +1363,7 @@ if(dayWeek === 4) dayLetter = "G";
 if(dayWeek === 5) dayLetter = "V";
 if(dayWeek === 6) dayLetter = "S";
 if(dayWeek === 0) dayLetter = "D";
- 
+
 
   // ======================
 // COLORE HEADER GIORNI
@@ -1535,64 +1491,125 @@ pdf.text(
 
 
 
-      
+      const ev =
+        savedEvents.find(e =>
+
+          e.employee === emp &&
+          e.date === date
+
+        );
 
 
-// ======================
+
+     // ======================
 // CONTROLLO COPERTURA
 // ======================
 
-const ev = savedEvents.find(e =>
-  e.employee === emp && e.date === date
-);
+const hasCoverage =
+  savedEvents.some(e =>
 
-const hasCoverage = coverageSet.has(date);
+    e.date === date &&
 
-// ======================
-// COLORI CELLA
-// ======================
+    (
+      e.shift === "REP" ||
+      e.shift === "FREP" ||
+      e.shift === "CFI/REP"
+    )
 
-if (!hasCoverage) {
+  );
 
-  pdf.setFillColor(178, 102, 255);
 
-} else if (ev) {
 
-  if (ev.shift === "REP") {
+// GIORNO SCOPERTO
+if(!hasCoverage){
 
-    pdf.setFillColor(231, 193, 181);
+  // VIOLA
+  pdf.setFillColor(
+    178,
+    102,
+    255
+  );
 
-  } else if (ev.shift === "FREP") {
+}
 
-    pdf.setFillColor(216, 176, 163);
+else if(ev){
 
-  } else if (ev.shift === "CFI") {
+  // REP
+  if(ev.shift === "REP"){
 
-    pdf.setFillColor(159, 190, 114);
-
-  } else if (ev.shift === "CFI/REP") {
-
-    pdf.setFillColor(183, 207, 138);
-
-  } else if (
-    ev.shift === "LIC" ||
-    ev.shift === "REC"
-  ) {
-
-    pdf.setFillColor(232, 199, 107);
-
-  } else {
-
-    pdf.setFillColor(240, 240, 240);
+    pdf.setFillColor(
+      231,
+      193,
+      181
+    );
 
   }
 
-} else {
+  // FREP
+  else if(ev.shift === "FREP"){
 
-  pdf.setFillColor(255, 255, 255);
+    pdf.setFillColor(
+      216,
+      176,
+      163
+    );
 
+  }
+
+  // CFI
+  else if(ev.shift === "CFI"){
+
+    pdf.setFillColor(
+      159,
+      190,
+      114
+    );
+
+  }
+
+  // CFI/REP
+  else if(ev.shift === "CFI/REP"){
+
+    pdf.setFillColor(
+      183,
+      207,
+      138
+    );
+
+  }
+
+  // LIC / REC
+  else if(
+    ev.shift === "LIC" ||
+    ev.shift === "REC"
+  ){
+
+    pdf.setFillColor(
+      232,
+      199,
+      107
+    );
+
+  }
+
+  else{
+
+    pdf.setFillColor(
+      240,
+      240,
+      240
+    );
+  }
+
+}else{
+
+  pdf.setFillColor(
+    255,
+    255,
+    255
+  );
 }
-     
+
       // CELLA
       pdf.rect(
         x,
@@ -1621,7 +1638,6 @@ if (!hasCoverage) {
 
 
   // DOWNLOAD
-  alert("PRIMA DEL SALVATAGGIO PDF");
   pdf.save(
 
     `Reperibilita_${
@@ -1635,64 +1651,71 @@ if (!hasCoverage) {
 // ======================
 // LOAD REQUESTS
 // ======================
-function loadRequests() {
+function loadRequests(){
 
-  if (!window.firebaseFirestore || !window.db) return;
+  if(
+    !window.firebaseFirestore ||
+    !window.db
+  ) return;
 
   window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(window.db, "changeRequests"),
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "changeRequests"
+    ),
+
     (snapshot) => {
 
-      const container = document.getElementById("requestsList");
-      if (!container) return;
+      const container =
+        document.getElementById("requestsList");
+
+      if(!container) return;
 
       container.innerHTML = "";
-
-      let unreadCount = 0;
 
       snapshot.forEach(docSnap => {
 
         const req = docSnap.data();
-        const id = docSnap.id;
 
-        if (req.read === false) unreadCount++;
+        const div =
+          document.createElement("div");
 
-        const statusClass =
-          req.status === "ACCEPTED" ? "status-accepted" :
-          req.status === "REJECTED" ? "status-rejected" :
-          "status-pending";
+        div.classList.add("request-item");
 
-        const disabled = req.status !== "PENDING";
+        div.innerHTML = `
+          <div>
+            ${req.fromEmployee}
+            ➜
+            ${req.toEmployee}
+            <br>
+            ${req.fromDate}
+            ⇄
+            ${req.toDate}
+            <br>
+            Stato: ${req.status}
+          </div>
 
-        const div = document.createElement("div");
-        div.classList.add("request-card", statusClass);
+          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+            Accetta
+          </button>
 
-       div.innerHTML = `
-  <div class="request-title">
-    ${req.fromEmployee} ➜ ${req.toEmployee}
-  </div>
+          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+            Rifiuta
+          </button>
+        `;
 
-  <div class="request-status">
-    ${req.status}
-  </div>
-`;
         container.appendChild(div);
+
       });
 
-      // 🔔 BADGE
-      const badge = document.getElementById("notifBadge");
-      if (badge) {
-        badge.textContent = unreadCount > 0 ? unreadCount : "";
-      }
     }
   );
 }
-//=====================
+// ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
-window.handleChangeRequest = async function(requestId, action) {
-
-  console.log("CLICK FUNZIONA", requestId, action);
+window.handleChangeRequest = async function(requestId, action){
 
   const reqRef = window.firebaseFirestore.doc(
     window.db,
@@ -1703,18 +1726,18 @@ window.handleChangeRequest = async function(requestId, action) {
   const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
   const req = reqSnap.data();
 
-  if (!req || req.status !== "PENDING_C") return;
+  if(!req) return;
 
   // ======================
   // RIFIUTA
   // ======================
-  if (action === "REJECT") {
+  if(action === "REJECT"){
 
     await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED",
-      read: true
+      status: "REJECTED"
     });
 
+    // notifica a chi ha chiesto
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1732,24 +1755,26 @@ window.handleChangeRequest = async function(requestId, action) {
   // ======================
   // ACCETTA
   // ======================
-  if (action === "ACCEPT") {
+  if(action === "ACCEPT"){
 
     await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "ACCEPTED",
-      read: true
+      status: "ACCEPTED"
     });
 
+    // 👉 scambia i turni nel tuo events
     const eventA = savedEvents.find(e =>
       e.employee === req.fromEmployee &&
-      e.date === req.fromDate
+      e.date === req.fromDate &&
+      e.shift === req.shift
     );
 
     const eventB = savedEvents.find(e =>
       e.employee === req.toEmployee &&
-      e.date === req.toDate
+      e.date === req.toDate &&
+      e.shift === req.shift
     );
 
-    if (eventA && eventB) {
+    if(eventA && eventB){
 
       await window.firebaseFirestore.updateDoc(
         window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
@@ -1762,15 +1787,27 @@ window.handleChangeRequest = async function(requestId, action) {
       );
     }
 
+    // notifica a entrambi
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
         to: req.fromEmployee,
-        message: "✅ Cambio accettato",
+        message: "✅ Cambio turno ACCETTATO",
+        type: "success",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.toEmployee,
+        message: "🔁 Cambio turno effettuato",
         type: "success",
         read: false,
         createdAt: Date.now()
       }
     );
   }
-};
+}
