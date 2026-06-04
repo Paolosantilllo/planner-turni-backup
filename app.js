@@ -10,6 +10,9 @@ const monthNames = [
 ];
 
 let savedEvents = [];
+let eventMap = new Map();
+let coverageSet = new Set();
+
 let editingIndex = null;
 
 /* ======================
