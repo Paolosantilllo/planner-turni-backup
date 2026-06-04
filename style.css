@@ -881,3 +881,71 @@ body{
   padding: 6px 10px;
   border-radius: 8px;
 }
+/* ======================
+   LOGIN STYLE iPHONE
+====================== */
+
+.login-container{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f2f7;
+}
+
+.login-box{
+  width: 90%;
+  max-width: 340px;
+
+  background: white;
+  padding: 30px;
+  border-radius: 28px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+  text-align: center;
+}
+
+.login-box h2{
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* input stile iPhone */
+.login-box input{
+  width: 100%;
+  padding: 14px;
+
+  margin-bottom: 12px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #f2f2f7;
+  font-size: 15px;
+}
+
+/* bottone login */
+.login-box button{
+  width: 100%;
+  padding: 14px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #007aff;
+  color: white;
+
+  font-weight: 700;
+  font-size: 16px;
+
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-box button:active{
+  transform: scale(0.98);
+}
