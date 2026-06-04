@@ -1760,7 +1760,7 @@ function loadRequests(){
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
-window.handleChangeRequest = async function(requestId, action){
+window.handleChangeRequest = async function (requestId, action) {
 
   const reqRef = window.firebaseFirestore.doc(
     window.db,
@@ -1771,42 +1771,24 @@ window.handleChangeRequest = async function(requestId, action){
   const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
   const req = reqSnap.data();
 
-  if(!req) return;
+  if (!req) return;
 
-  // ======================
-  // RIFIUTA
-  // ======================
-  if(action === "REJECT"){
-
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED"
-    });
-
-    // notifica a chi ha chiesto
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "❌ Cambio turno rifiutato",
-        type: "error",
-        read: false,
-        createdAt: Date.now()
-      }
-    );
-
+  // 🔒 BLOCCO: se già deciso NON si può più modificare
+  if (req.status !== "PENDING") {
     return;
   }
 
   // ======================
   // ACCETTA
   // ======================
-  if(action === "ACCEPT"){
+  if (action === "ACCEPT") {
 
     await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "ACCEPTED"
+      status: "ACCEPTED",
+      read: true
     });
 
-    // 👉 scambia i turni nel tuo events
+    // 👉 scambia i turni
     const eventA = savedEvents.find(e =>
       e.employee === req.fromEmployee &&
       e.date === req.fromDate &&
@@ -1819,7 +1801,7 @@ window.handleChangeRequest = async function(requestId, action){
       e.shift === req.shift
     );
 
-    if(eventA && eventB){
+    if (eventA && eventB) {
 
       await window.firebaseFirestore.updateDoc(
         window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
@@ -1832,7 +1814,7 @@ window.handleChangeRequest = async function(requestId, action){
       );
     }
 
-    // notifica a entrambi
+    // notifiche
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1855,4 +1837,27 @@ window.handleChangeRequest = async function(requestId, action){
       }
     );
   }
-}
+
+  // ======================
+  // RIFIUTA
+  // ======================
+  if (action === "REJECT") {
+
+    await window.firebaseFirestore.updateDoc(reqRef, {
+      status: "REJECTED",
+      read: true
+    });
+
+    // notifica
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.fromEmployee,
+        message: "❌ Cambio turno rifiutato",
+        type: "error",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+  }
+};
