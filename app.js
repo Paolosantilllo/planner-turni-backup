@@ -1729,15 +1729,15 @@ function loadRequests(){
             Stato: ${req.status}
           </div>
 
-        <div class="request-actions">
+    <div class="request-actions">
 
   <button class="btn-accept"
-    onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+    onclick="window.handleChangeRequest('${docSnap.id}','ACCEPT')">
     ✅ Accetta
   </button>
 
   <button class="btn-reject"
-    onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+    onclick="window.handleChangeRequest('${docSnap.id}','REJECT')">
     ❌ Rifiuta
   </button>
 
