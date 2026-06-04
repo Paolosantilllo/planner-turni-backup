@@ -1089,7 +1089,7 @@ window.deleteShift = async function (){
 // ======================
 // CAMBIO TURNO
 // ======================
-async function sendChangeRequest(){
+window.sendChangeRequest = async function (){
 
   const fromEmployee =
   window.CURRENT_EMPLOYEE;
