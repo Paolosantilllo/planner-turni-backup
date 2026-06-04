@@ -1103,7 +1103,7 @@ window.sendChangeRequest = async function (){
 
   // 🔥 CREA RICHIESTA (NON TOCCA EVENTS)
   await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(db, "changeRequests"),
+    window.firebaseFirestore.collection(window.db, "changeRequests"),
     {
       fromEmployee,
       toEmployee,
@@ -1117,7 +1117,7 @@ window.sendChangeRequest = async function (){
 
   // 🔔 NOTIFICA A C
   await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(db, "notifications"),
+    window.firebaseFirestore.collection(window.db, "notifications"),
     {
       to: toEmployee,
       message: `Richiesta cambio turno da ${fromEmployee}`,
