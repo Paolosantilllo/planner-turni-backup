@@ -1744,7 +1744,7 @@ window.handleChangeRequest = async function(requestId, action) {
   const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
   const req = reqSnap.data();
 
-  if (!req || req.status !== "PENDING") return;
+  if (!req || req.status !== "PENDING_C") return;
 
   // ======================
   // RIFIUTA
