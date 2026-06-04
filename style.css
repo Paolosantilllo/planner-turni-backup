@@ -1007,3 +1007,22 @@ body{
 .btn-reject:active{
   transform: scale(0.96);
 }
+.request-item button{
+  margin-top:10px;
+  margin-right:6px;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.request-item button:first-of-type{
+  background:#34c759;
+  color:white;
+}
+
+.request-item button:last-of-type{
+  background:#ff3b30;
+  color:white;
+}
