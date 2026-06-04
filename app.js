@@ -1701,9 +1701,15 @@ function loadRequests(){
 
       container.innerHTML = "";
 
+      // 🔥 ARRAY PER BADGE
+      let requests = [];
+
       snapshot.forEach(docSnap => {
 
         const req = docSnap.data();
+
+        // 🔥 salva per badge
+        requests.push(req);
 
         const div =
           document.createElement("div");
@@ -1735,6 +1741,18 @@ function loadRequests(){
         container.appendChild(div);
 
       });
+
+      // 🔥 BADGE NOTIFICA
+      const unreadCount =
+        requests.filter(r => !r.read).length;
+
+      const badge =
+        document.getElementById("notifBadge");
+
+      if (badge) {
+        badge.textContent =
+          unreadCount > 0 ? `(${unreadCount})` : "";
+      }
 
     }
   );
