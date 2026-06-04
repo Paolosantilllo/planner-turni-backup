@@ -1678,88 +1678,76 @@ else if(ev){
 // ======================
 // LOAD REQUESTS
 // ======================
-function loadRequests(){
+function loadRequests() {
 
-  if(
-    !window.firebaseFirestore ||
-    !window.db
-  ) return;
+  if (!window.firebaseFirestore || !window.db) return;
 
   window.firebaseFirestore.onSnapshot(
-
-    window.firebaseFirestore.collection(
-      window.db,
-      "changeRequests"
-    ),
-
+    window.firebaseFirestore.collection(window.db, "changeRequests"),
     (snapshot) => {
 
-      const container =
-        document.getElementById("requestsList");
-
-      if(!container) return;
+      const container = document.getElementById("requestsList");
+      if (!container) return;
 
       container.innerHTML = "";
 
-      // 🔥 ARRAY PER BADGE
-      let requests = [];
+      let unreadCount = 0;
 
       snapshot.forEach(docSnap => {
 
         const req = docSnap.data();
+        const id = docSnap.id;
 
-        // 🔥 salva per badge
-        requests.push(req);
+        if (req.read === false) unreadCount++;
 
-        const div =
-          document.createElement("div");
+        const statusClass =
+          req.status === "ACCEPTED" ? "status-accepted" :
+          req.status === "REJECTED" ? "status-rejected" :
+          "status-pending";
 
-        div.classList.add("request-item");
+        const disabled = req.status !== "PENDING";
+
+        const div = document.createElement("div");
+        div.classList.add("request-card", statusClass);
 
         div.innerHTML = `
-          <div>
-            ${req.fromEmployee}
-            ➜
-            ${req.toEmployee}
-            <br>
-            ${req.fromDate}
-            ⇄
-            ${req.toDate}
-            <br>
+          <div class="request-title">
+            ${req.fromEmployee} ➜ ${req.toEmployee}
+          </div>
+
+          <div class="request-dates">
+            ${req.fromDate} ⇄ ${req.toDate}
+          </div>
+
+          <div class="request-status">
             Stato: ${req.status}
           </div>
 
-    <div class="request-actions">
+          <div class="request-actions">
 
-  <button class="btn-accept"
-    onclick="window.handleChangeRequest('${docSnap.id}','ACCEPT')">
-    ✅ Accetta
-  </button>
+            <button class="btn-accept"
+              ${disabled ? "disabled" : ""}
+              onclick="handleChangeRequest('${id}','ACCEPT')">
+              Accetta
+            </button>
 
-  <button class="btn-reject"
-    onclick="window.handleChangeRequest('${docSnap.id}','REJECT')">
-    ❌ Rifiuta
-  </button>
+            <button class="btn-reject"
+              ${disabled ? "disabled" : ""}
+              onclick="handleChangeRequest('${id}','REJECT')">
+              Rifiuta
+            </button>
 
-</div>
+          </div>
         `;
 
         container.appendChild(div);
-
       });
 
-      // 🔥 BADGE NOTIFICA
-      const unreadCount =
-        requests.filter(r => !r.read).length;
-
-      const badge =
-        document.getElementById("notifBadge");
-
+      // 🔔 BADGE
+      const badge = document.getElementById("notifBadge");
       if (badge) {
-        badge.textContent =
-          unreadCount > 0 ? `(${unreadCount})` : "";
+        badge.textContent = unreadCount > 0 ? unreadCount : "";
       }
-
     }
   );
 }
