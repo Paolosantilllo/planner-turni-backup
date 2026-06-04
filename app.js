@@ -1298,7 +1298,7 @@ alert("PDF AVVIATO");
     }
   }
 
-
+alert("ARRIVATO A JSPDF");
 
   const { jsPDF } = window.jspdf;
   const pdf =
