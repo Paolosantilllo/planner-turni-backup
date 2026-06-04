@@ -873,3 +873,11 @@ body{
     color: #111 !important;
   }
 }
+.logout-btn {
+  margin-left: auto;
+  background: #ff3b30;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
