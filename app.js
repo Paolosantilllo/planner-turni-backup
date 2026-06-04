@@ -138,6 +138,26 @@ function loadEventsFromFirebase(){
 
       });
 
+      // ======================
+      // 🔥 MAP + SET (VELOCE)
+      // ======================
+      eventMap = new Map();
+      coverageSet = new Set();
+
+      savedEvents.forEach(e => {
+
+        eventMap.set(e.employee + "_" + e.date, e);
+
+        if (
+          e.shift === "REP" ||
+          e.shift === "FREP" ||
+          e.shift === "CFI/REP"
+        ) {
+          coverageSet.add(e.date);
+        }
+
+      });
+
       console.log(
         "Eventi caricati:",
         savedEvents.length
@@ -148,8 +168,6 @@ function loadEventsFromFirebase(){
     }
   );
 }
-
-
 /* ======================
    FIREBASE NOTIFICATIONS
 ====================== */
