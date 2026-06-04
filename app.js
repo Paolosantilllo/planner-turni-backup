@@ -27,17 +27,26 @@ function getEmployeeFromEmail(email){
 
   const users = {
 
-    "paolosantillo@yahoo.it":
-      "Dipendente A",
+    "paolosantillo@yahoo.it": {
+      employee: "Dipendente A",
+      role: "ADMIN"
+    },
 
-    "dipb.planner@gmail.com":
-      "Dipendente B",
+    "dipb.planner@gmail.com": {
+      employee: "Dipendente B",
+      role: "USER"
+    },
 
-    "dipc.planner@gmail.com":
-      "Dipendente C",
+    "dipc.planner@gmail.com": {
+      employee: "Dipendente C",
+      role: "USER"
+    },
 
-    "dipd.planner@gmail.com":
-      "Dipendente D"
+    "dipd.planner@gmail.com": {
+      employee: "Dipendente D",
+      role: "USER"
+    }
+
   };
 
   return users[email] || null;
