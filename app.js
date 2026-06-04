@@ -1083,10 +1083,12 @@ if(editingIndex !== null){
 // ======================
 window.deleteShift = async function (){
 
+  if (!window.IS_ADMIN) {
+    return;
+  }
+
   if(editingIndex === null)
     return;
-
-
 
   const ev =
     savedEvents[editingIndex];
