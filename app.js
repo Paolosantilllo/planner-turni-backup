@@ -1729,13 +1729,19 @@ function loadRequests(){
             Stato: ${req.status}
           </div>
 
-          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
-            Accetta
-          </button>
+        <div class="request-actions">
 
-          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
-            Rifiuta
-          </button>
+  <button class="btn-accept"
+    onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+    ✅ Accetta
+  </button>
+
+  <button class="btn-reject"
+    onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+    ❌ Rifiuta
+  </button>
+
+</div>
         `;
 
         container.appendChild(div);
