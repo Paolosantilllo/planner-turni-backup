@@ -653,14 +653,14 @@ window.closePopup = function () {
 // ======================
 // POPUP CAMBIO TURNO
 // ======================
-function openChangePopup() {
+window.openChangePopup = function () {
   const popup = document.getElementById("changePopup");
   popup.style.display = "flex";
 
   loadChangeDays();
 }
 
-function closeChangePopup() {
+window.closeChangePopup = function () {
   document.getElementById("changePopup").style.display = "none";
 }
 
@@ -668,14 +668,14 @@ function closeChangePopup() {
 // ======================
 // POPUP RICHIESTE CAMBIO
 // ======================
-function openRequestsPopup() {
+window.openRequestsPopup = function () {
   document.getElementById("requestsPopup").style.display = "flex";
 
   // opzionale ma consigliato: ricarica sempre le richieste quando apri
   // loadRequests();
 }
 
-function closeRequestsPopup() {
+window.closeRequestsPopup = function () {
   document.getElementById("requestsPopup").style.display = "none";
 }
 
