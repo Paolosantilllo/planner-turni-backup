@@ -1191,7 +1191,6 @@ window.prevMonth = function () {
 // ======================
 window.generatePDF = async function () {
 
-alert("PDF AVVIATO");
 
 
 
