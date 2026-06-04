@@ -1206,14 +1206,16 @@ window.prevMonth = function () {
 // ======================
 window.generatePDF = async function () {
 
-  alert("PDF AVVIATO");
+  try {
 
-  if (!window.jspdf) {
-    alert("jsPDF non caricato");
-    return;
-  }
+    alert("PDF AVVIATO");
 
-  const { jsPDF } = window.jspdf;
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      alert("jsPDF non pronto");
+      return;
+    }
+
+    const jsPDF = window.jspdf.jsPDF;
 
   // ======================
   // CONTROLLO COPERTURA
