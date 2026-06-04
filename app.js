@@ -1516,13 +1516,11 @@ pdf.text(
 
 
 
-      const ev =
-        savedEvents.find(e =>
+      const eventMap = new Map();
 
-          e.employee === emp &&
-          e.date === date
-
-        );
+savedEvents.forEach(e => {
+  eventMap.set(e.employee + "_" + e.date, e);
+});
 
 
 // ======================
