@@ -81,6 +81,11 @@ onAuthStateChanged(window.auth, (user) => {
   loadNotifications();
 
 });
+document
+  .getElementById("employeeFilter")
+  .addEventListener("change", () => {
+    renderCalendar();
+  });
 /* ======================
    FIREBASE LOAD
 ====================== */
@@ -296,8 +301,7 @@ if(isSunday || isHoliday){
       document.getElementById("employeeFilter").value;
 
 
-
-    const events =
+const events =
       savedEvents.filter(e =>
 
         e.date === formatted &&
