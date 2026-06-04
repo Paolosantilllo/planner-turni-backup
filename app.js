@@ -73,10 +73,23 @@ onAuthStateChanged(window.auth, (user) => {
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
 
-  // 🔥 MOSTRA APP SOLO DOPO LOGIN
-  if (appDiv) {
-    appDiv.style.display = "block";
-  }
+// 🔥 MOSTRA APP SOLO DOPO LOGIN
+if (appDiv) {
+  appDiv.style.display = "block";
+}
+
+if (!window.IS_ADMIN) {
+
+  document.querySelector(".add-btn").style.display = "none";
+
+  document.querySelector(".monthly-send").style.display = "none";
+
+}
+
+// 🔥 AVVIO APP
+loadEventsFromFirebase();
+loadRequests();
+loadNotifications();
 
   // 🔥 AVVIO APP
   loadEventsFromFirebase();
