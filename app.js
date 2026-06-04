@@ -1756,7 +1756,6 @@ function loadRequests() {
 // ======================
 window.handleChangeRequest = async function(requestId, action) {
 
-  // 🔥 DEBUG: verifica click
   console.log("CLICK FUNZIONA", requestId, action);
 
   const reqRef = window.firebaseFirestore.doc(
@@ -1776,7 +1775,8 @@ window.handleChangeRequest = async function(requestId, action) {
   if (action === "REJECT") {
 
     await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED"
+      status: "REJECTED",
+      read: true
     });
 
     await window.firebaseFirestore.addDoc(
@@ -1799,7 +1799,8 @@ window.handleChangeRequest = async function(requestId, action) {
   if (action === "ACCEPT") {
 
     await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "ACCEPTED"
+      status: "ACCEPTED",
+      read: true
     });
 
     const eventA = savedEvents.find(e =>
@@ -1831,29 +1832,6 @@ window.handleChangeRequest = async function(requestId, action) {
         to: req.fromEmployee,
         message: "✅ Cambio accettato",
         type: "success",
-        read: false,
-        createdAt: Date.now()
-      }
-    );
-  }
-};
-  // ======================
-  // RIFIUTA
-  // ======================
-  if (action === "REJECT") {
-
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED",
-      read: true
-    });
-
-    // notifica
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "❌ Cambio turno rifiutato",
-        type: "error",
         read: false,
         createdAt: Date.now()
       }
