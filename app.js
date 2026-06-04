@@ -75,25 +75,36 @@ onAuthStateChanged(window.auth, (user) => {
   // 🟢 LOGGATO
   const userData = getEmployeeFromEmail(user.email);
 
-// sicurezza
-if(!userData){
-  alert("Utente non autorizzato");
-  window.auth.signOut();
-  window.location.href = "login.html";
-  return;
-}
+  // ❌ UTENTE NON AUTORIZZATO
+  if (!userData) {
+    alert("Utente non autorizzato");
+    window.auth.signOut();
+    window.location.href = "login.html";
+    return;
+  }
 
-CURRENT_USER = user.email;
+  CURRENT_USER = user.email;
 
-window.CURRENT_EMPLOYEE = userData.employee;
-window.IS_ADMIN = userData.role === "ADMIN";
+  window.CURRENT_EMPLOYEE = userData.employee;
+  window.IS_ADMIN = userData.role === "ADMIN";
 
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
+  console.log("Admin:", window.IS_ADMIN);
 
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
     appDiv.style.display = "block";
+  }
+
+  // 🔥 BLOCCO UI PER USER (NON ADMIN)
+  if (!window.IS_ADMIN) {
+
+    const addBtn = document.querySelector(".add-btn");
+    if (addBtn) addBtn.style.display = "none";
+
+    const monthly = document.querySelector(".monthly-send");
+    if (monthly) monthly.style.display = "none";
   }
 
   // 🔥 AVVIO APP
