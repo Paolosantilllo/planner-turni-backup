@@ -1206,7 +1206,12 @@ window.prevMonth = function () {
 // ======================
 window.generatePDF = async function () {
 
-  
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+  alert("jsPDF non pronto");
+  return;
+}
+
+const jsPDF = window.jspdf.jsPDF;
 
   // ======================
   // CONTROLLO COPERTURA
