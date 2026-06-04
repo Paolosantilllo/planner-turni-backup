@@ -1662,6 +1662,7 @@ else if(ev){
 
 
   // DOWNLOAD
+  alert("PRIMA DEL SALVATAGGIO PDF");
   pdf.save(
 
     `Reperibilita_${
