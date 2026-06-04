@@ -1535,11 +1535,7 @@ pdf.text(
 
 
 
-      const eventMap = new Map();
-
-savedEvents.forEach(e => {
-  eventMap.set(e.employee + "_" + e.date, e);
-});
+      
 
 
 // ======================
