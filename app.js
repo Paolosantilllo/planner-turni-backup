@@ -1871,7 +1871,7 @@ window.handleChangeRequest = async function(requestId, action){
       status: "REJECTED"
     });
 
-    // notifica a chi ha chiesto
+    // notifica a chi ha richiesto
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1879,9 +1879,18 @@ window.handleChangeRequest = async function(requestId, action){
         message: "❌ Cambio turno rifiutato",
         type: "error",
         read: false,
+        requestId: requestId,
         createdAt: Date.now()
       }
     );
+
+    // 🔥 opzionale: rimuove la notifica originale
+    if(req.notifId){
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "notifications", req.notifId),
+        { read: true }
+      );
+    }
 
     return;
   }
@@ -1921,7 +1930,7 @@ window.handleChangeRequest = async function(requestId, action){
       );
     }
 
-    // notifica a entrambi
+    // notifica a chi ha chiesto
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1929,10 +1938,12 @@ window.handleChangeRequest = async function(requestId, action){
         message: "✅ Cambio turno ACCETTATO",
         type: "success",
         read: false,
+        requestId: requestId,
         createdAt: Date.now()
       }
     );
 
+    // notifica a destinatario
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1940,8 +1951,17 @@ window.handleChangeRequest = async function(requestId, action){
         message: "🔁 Cambio turno effettuato",
         type: "success",
         read: false,
+        requestId: requestId,
         createdAt: Date.now()
       }
     );
+
+    // 🔥 opzionale: segna notifica originale come letta
+    if(req.notifId){
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "notifications", req.notifId),
+        { read: true }
+      );
+    }
   }
 }
