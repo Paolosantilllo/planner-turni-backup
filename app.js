@@ -1780,86 +1780,67 @@ else if(ev){
 // ======================
 function loadRequests(){
 
-  if(
-    !window.firebaseFirestore ||
-    !window.db
-  ) return;
+  if(!window.firebaseFirestore || !window.db) return;
 
   window.firebaseFirestore.onSnapshot(
-
-    window.firebaseFirestore.collection(
-      window.db,
-      "changeRequests"
-    ),
-
+    window.firebaseFirestore.collection(window.db, "changeRequests"),
     (snapshot) => {
 
-      const container =
-        document.getElementById("requestsList");
-
+      const container = document.getElementById("requestsList");
       if(!container) return;
 
       container.innerHTML = "";
 
       snapshot.forEach(docSnap => {
 
-  const req = docSnap.data();
+        const req = docSnap.data();
 
-  // ADMIN vede tutto
-  if(window.IS_ADMIN !== true){
+        // 🔥 FILTRO UTENTE
+        if(window.IS_ADMIN !== true){
 
-    // il dipendente vede solo
-    // richieste ricevute o inviate
-    if(
-      req.fromEmployee !== window.CURRENT_EMPLOYEE &&
-      req.toEmployee !== window.CURRENT_EMPLOYEE
-    ){
-      return;
-    }
+          if(
+            req.fromEmployee !== window.CURRENT_EMPLOYEE &&
+            req.toEmployee !== window.CURRENT_EMPLOYEE
+          ){
+            return;
+          }
+        }
 
-  }
+        const div = document.createElement("div");
+        div.classList.add("request-item");
 
-  const div =
-    document.createElement("div");
+        const isActive =
+          window._activeRequest &&
+          window._activeRequest.requestId === docSnap.id;
 
-  div.classList.add("request-item");
+        div.innerHTML = `
+          <div>
+            ${req.fromEmployee} ➜ ${req.toEmployee}
+            <br>
+            ${req.fromDate} ⇄ ${req.toDate}
+            <br>
+            Stato: ${req.status}
+          </div>
 
-  const isActive =
-  window._activeRequest &&
-  window._activeRequest.requestId === docSnap.id;
+          ${isActive ? `
+            <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+              Accetta
+            </button>
 
-div.innerHTML = `
-  <div>
-    ${req.fromEmployee}
-    ➜
-    ${req.toEmployee}
-    <br>
-    ${req.fromDate}
-    ⇄
-    ${req.toDate}
-    <br>
-    Stato: ${req.status}
-  </div>
+            <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+              Rifiuta
+            </button>
+          ` : ""}
+        `;
 
-  ${isActive ? `
-    <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
-      Accetta
-    </button>
-
-    <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
-      Rifiuta
-    </button>
-  ` : ""}
-`;
-      container.appendChild(div);
-
+        container.appendChild(div);
       });
 
     }
-
   );
+}
 
-}  
+
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
@@ -1897,11 +1878,10 @@ window.handleChangeRequest = async function(requestId, action){
       }
     );
 
-    // 🔥 CHIUDE POPUP NOTIFICA (IMPORTANTE)
     document.getElementById("requestsPopup").style.display = "none";
-
     return;
   }
+
 
   // ======================
   // ACCETTA
@@ -1912,7 +1892,6 @@ window.handleChangeRequest = async function(requestId, action){
       status: "ACCEPTED"
     });
 
-    // 👉 scambia i turni
     const eventA = savedEvents.find(e =>
       e.employee === req.fromEmployee &&
       e.date === req.fromDate &&
@@ -1938,9 +1917,6 @@ window.handleChangeRequest = async function(requestId, action){
       );
     }
 
-    // ======================
-    // NOTIFICHE
-    // ======================
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1965,10 +1941,11 @@ window.handleChangeRequest = async function(requestId, action){
       }
     );
 
-    // 🔥 CHIUDE POPUP NOTIFICA
     document.getElementById("requestsPopup").style.display = "none";
   }
 };
+
+
 // ======================
 // APERTURA DA NOTIFICA
 // ======================
@@ -1986,10 +1963,15 @@ window.openRequestFromNotification = async function(requestId, notifId){
 
   const req = snap.data();
 
-  window._activeRequest = { requestId, notifId, data: req };
+  window._activeRequest = {
+    requestId,
+    notifId,
+    data: req
+  };
 
   document.getElementById("requestsPopup").style.display = "flex";
 
+  // 🔥 segna notifica come letta
   if(notifId){
     await window.firebaseFirestore.updateDoc(
       window.firebaseFirestore.doc(window.db, "notifications", notifId),
