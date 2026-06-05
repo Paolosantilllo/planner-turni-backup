@@ -229,7 +229,7 @@ function loadNotifications(){
 // ======================
 const list = document.getElementById("requestsList");
 
-if(!list) return;
+if (!list) return;
 
 list.innerHTML = "";
 
@@ -248,7 +248,7 @@ myNotifications.forEach(n => {
     </button>
   `;
 
-  // CLICK SOLO SUL BOTTONE (meglio)
+  // CLICK SOLO SUL BOTTONE
   const btn = div.querySelector(".open-btn");
 
   btn.addEventListener("click", (e) => {
