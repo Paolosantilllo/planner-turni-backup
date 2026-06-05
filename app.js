@@ -1871,7 +1871,6 @@ window.handleChangeRequest = async function(requestId, action){
       status: "REJECTED"
     });
 
-    // notifica a chi ha richiesto
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1883,14 +1882,6 @@ window.handleChangeRequest = async function(requestId, action){
         createdAt: Date.now()
       }
     );
-
-    // 🔥 opzionale: rimuove la notifica originale
-    if(req.notifId){
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "notifications", req.notifId),
-        { read: true }
-      );
-    }
 
     return;
   }
@@ -1904,7 +1895,7 @@ window.handleChangeRequest = async function(requestId, action){
       status: "ACCEPTED"
     });
 
-    // 👉 scambia i turni nel tuo events
+    // 👉 scambia i turni
     const eventA = savedEvents.find(e =>
       e.employee === req.fromEmployee &&
       e.date === req.fromDate &&
@@ -1930,7 +1921,9 @@ window.handleChangeRequest = async function(requestId, action){
       );
     }
 
-    // notifica a chi ha chiesto
+    // ======================
+    // NOTIFICHE
+    // ======================
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1943,7 +1936,6 @@ window.handleChangeRequest = async function(requestId, action){
       }
     );
 
-    // notifica a destinatario
     await window.firebaseFirestore.addDoc(
       window.firebaseFirestore.collection(window.db, "notifications"),
       {
@@ -1955,13 +1947,5 @@ window.handleChangeRequest = async function(requestId, action){
         createdAt: Date.now()
       }
     );
-
-    // 🔥 opzionale: segna notifica originale come letta
-    if(req.notifId){
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "notifications", req.notifId),
-        { read: true }
-      );
-    }
   }
 }
