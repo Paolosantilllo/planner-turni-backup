@@ -175,7 +175,6 @@ function loadNotifications(){
   ) return;
 
   window.firebaseFirestore.onSnapshot(
-
     window.firebaseFirestore.collection(
       window.db,
       "notifications"
@@ -189,26 +188,76 @@ function loadNotifications(){
 
         const data = docSnap.data();
 
-        if(data.to === CURRENT_USER){
+        if(data.to !== CURRENT_USER) return;
+        if(data.read === true) return;
 
-          myNotifications.push({
-            id: docSnap.id,
-            message: data.message,
-            type: data.type,
-            read: data.read
-          });
-
-        }
+        myNotifications.push({
+          id: docSnap.id,
+          message: data.message,
+          type: data.type,
+          requestId: data.requestId,
+          createdAt: data.createdAt
+        });
 
       });
 
-      console.log(
-        "NOTIFICHE:",
-        myNotifications
+      myNotifications.sort(
+        (a,b) => b.createdAt - a.createdAt
       );
 
-      window.myNotifications =
-        myNotifications;
+      window.myNotifications = myNotifications;
+
+      // BADGE
+      const badge =
+        document.getElementById("notifBadge");
+
+      if(badge){
+
+        badge.innerText =
+          myNotifications.length > 0
+            ? myNotifications.length
+            : "";
+
+      }
+
+      // LISTA
+      const list =
+        document.getElementById("requestsList");
+
+      if(!list) return;
+
+      list.innerHTML = "";
+
+      myNotifications.forEach(n => {
+
+        const div =
+          document.createElement("div");
+
+        div.classList.add("request-item");
+
+        div.innerHTML = `
+          <div>
+            🔔 ${n.message}
+          </div>
+
+          <button class="open-btn">
+            Apri richiesta
+          </button>
+        `;
+
+        div.querySelector(".open-btn")
+        .addEventListener("click", () => {
+
+          window.openRequestFromNotification(
+            n.requestId,
+            n.id
+          );
+
+        });
+
+        list.appendChild(div);
+
+      });
 
     }
   );
