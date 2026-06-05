@@ -1753,58 +1753,44 @@ function loadRequests(){
 
       snapshot.forEach(docSnap => {
 
-        const req = docSnap.data();
-// ADMIN vede tutto
-if(window.IS_ADMIN === true){
+  const req = docSnap.data();
 
-  // continua
+  // ADMIN vede tutto
+  if(window.IS_ADMIN !== true){
 
-}else{
-
-  // il dipendente vede solo
-  // richieste ricevute o inviate
-
-  if(
-    req.fromEmployee !== window.CURRENT_EMPLOYEE &&
-    req.toEmployee !== window.CURRENT_EMPLOYEE
-  ){
-    return;
-  }
-}
-        const div =
-          document.createElement("div");
-
-        div.classList.add("request-item");
-
-        div.innerHTML = `
-          <div>
-            ${req.fromEmployee}
-            ➜
-            ${req.toEmployee}
-            <br>
-            ${req.fromDate}
-            ⇄
-            ${req.toDate}
-            <br>
-            Stato: ${req.status}
-          </div>
-
-          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
-            Accetta
-          </button>
-
-          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
-            Rifiuta
-          </button>
-        `;
-
-        container.appendChild(div);
-
-      });
-
+    // il dipendente vede solo
+    // richieste ricevute o inviate
+    if(
+      req.fromEmployee !== window.CURRENT_EMPLOYEE &&
+      req.toEmployee !== window.CURRENT_EMPLOYEE
+    ){
+      return;
     }
-  );
-}
+
+  }
+
+  const div =
+    document.createElement("div");
+
+  div.classList.add("request-item");
+
+  div.innerHTML = `
+    <div>
+      ${req.fromEmployee}
+      ➜
+      ${req.toEmployee}
+      <br>
+      ${req.fromDate}
+      ⇄
+      ${req.toDate}
+      <br>
+      Stato: ${req.status}
+    </div>
+  `;
+
+  container.appendChild(div);
+
+});
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
