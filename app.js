@@ -1754,7 +1754,23 @@ function loadRequests(){
       snapshot.forEach(docSnap => {
 
         const req = docSnap.data();
+// ADMIN vede tutto
+if(window.IS_ADMIN === true){
 
+  // continua
+
+}else{
+
+  // il dipendente vede solo
+  // richieste ricevute o inviate
+
+  if(
+    req.fromEmployee !== window.CURRENT_EMPLOYEE &&
+    req.toEmployee !== window.CURRENT_EMPLOYEE
+  ){
+    return;
+  }
+}
         const div =
           document.createElement("div");
 
