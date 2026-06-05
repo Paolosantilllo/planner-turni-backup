@@ -56,7 +56,8 @@ function getEmployeeFromEmail(email){
    FIREBASE AUTH
 ====================== */
 
-
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 const appDiv = document.querySelector(".app");
 
@@ -188,80 +189,30 @@ function loadNotifications(){
 
         const data = docSnap.data();
 
-        // 🔥 SOLO UTENTE LOGGATO
-        if(data.to !== CURRENT_USER) return;
+        if(data.to === CURRENT_USER){
 
-        // 🔥 SOLO NON LETTE
-        if(data.read === true) return;
+          myNotifications.push({
+            id: docSnap.id,
+            message: data.message,
+            type: data.type,
+            read: data.read
+          });
 
-        myNotifications.push({
-          id: docSnap.id,
-          message: data.message,
-          type: data.type,
-          requestId: data.requestId,
-          createdAt: data.createdAt
-        });
+        }
 
       });
 
-      // 🔥 ORDINA PIÙ RECENTI
-      myNotifications.sort((a, b) => b.createdAt - a.createdAt);
+      console.log(
+        "NOTIFICHE:",
+        myNotifications
+      );
 
-      window.myNotifications = myNotifications;
+      window.myNotifications =
+        myNotifications;
 
-      console.log("NOTIFICHE UTENTE:", myNotifications);
-
-      // ======================
-      // 🔥 BADGE (tipo WhatsApp)
-      // ======================
-      const badge = document.getElementById("notifBadge");
-
-      if(badge){
-        badge.innerText =
-          myNotifications.length > 0
-            ? myNotifications.length
-            : "";
-      }
-
-// ======================
-// LISTA UI NOTIFICHE
-// ======================
-const list = document.getElementById("requestsList");
-
-if (!list) return;
-
-list.innerHTML = "";
-
-myNotifications.forEach(n => {
-
-  const div = document.createElement("div");
-  div.classList.add("request-item");
-
-  div.innerHTML = `
-    <div>
-      🔔 ${n.message}
-    </div>
-
-    <button class="open-btn">
-      Apri richiesta
-    </button>
-  `;
-
-  // CLICK SOLO SUL BOTTONE
-  const btn = div.querySelector(".open-btn");
-
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    window.openRequestFromNotification(
-      n.requestId,
-      n.id
-    );
-  });
-
-  list.appendChild(div);
-
-});
+    }
+  );
+}
 
 // ======================
 // CALENDAR
@@ -353,24 +304,20 @@ if(isSunday || isHoliday){
 
 }
 
- // CLICK GIORNO
-dayBox.addEventListener("click",()=>{
+    // CLICK GIORNO
+    dayBox.addEventListener("click",()=>{
 
-  if(!window.IS_ADMIN){
-    return;
-  }
+      editingIndex = null;
 
-  editingIndex = null;
+      openPopup();
 
-  openPopup();
+      document.getElementById("startDate").value =
+        formatted;
 
-  document.getElementById("startDate").value =
-    formatted;
+      document.getElementById("endDate").value =
+        formatted;
 
-  document.getElementById("endDate").value =
-    formatted;
-
-});
+    });
 
 
 
@@ -440,33 +387,30 @@ const events =
 
 
 
- // MODIFICA
-div.addEventListener("click",(e)=>{
+      // MODIFICA
+      div.addEventListener("click",(e)=>{
 
-  e.stopPropagation();
+        e.stopPropagation();
 
-  if(!window.IS_ADMIN){
-    return;
-  }
+        editingIndex =
+          savedEvents.indexOf(event);
 
-  editingIndex =
-    savedEvents.indexOf(event);
+        document.getElementById("employee").value =
+          event.employee;
 
-  document.getElementById("employee").value =
-    event.employee;
+        document.getElementById("startDate").value =
+          event.date;
 
-  document.getElementById("startDate").value =
-    event.date;
+        document.getElementById("endDate").value =
+          event.date;
 
-  document.getElementById("endDate").value =
-    event.date;
+        document.getElementById("shift").value =
+          event.shift;
 
-  document.getElementById("shift").value =
-    event.shift;
+        openPopup();
 
-  openPopup();
+      });
 
-});
 
 
       dayBox.appendChild(div);
@@ -1775,186 +1719,165 @@ else if(ev){
   );
 }
 // ======================
-// FIREBASE NOTIFICATIONS
+// LOAD REQUESTS
 // ======================
-function loadNotifications() {
+function loadRequests(){
 
-  if (
+  if(
     !window.firebaseFirestore ||
-    !window.db ||
-    !CURRENT_USER
+    !window.db
   ) return;
 
   window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(window.db, "notifications"),
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "changeRequests"
+    ),
+
     (snapshot) => {
 
-      const myNotifications = [];
+      const container =
+        document.getElementById("requestsList");
+
+      if(!container) return;
+
+      container.innerHTML = "";
 
       snapshot.forEach(docSnap => {
 
-        const data = docSnap.data();
+        const req = docSnap.data();
 
-        if (data.to !== CURRENT_USER) return;
-        if (data.read === true) return;
+        const div =
+          document.createElement("div");
 
-        myNotifications.push({
-          id: docSnap.id,
-          message: data.message,
-          type: data.type,
-          requestId: data.requestId,
-          createdAt: data.createdAt
-        });
-
-      });
-
-      myNotifications.sort((a, b) => b.createdAt - a.createdAt);
-
-      window.myNotifications = myNotifications;
-
-      const badge = document.getElementById("notifBadge");
-
-      if (badge) {
-        badge.innerText =
-          myNotifications.length > 0
-            ? myNotifications.length
-            : "";
-      }
-
-      // ======================
-      // LISTA UI NOTIFICHE
-      // ======================
-      const list = document.getElementById("requestsList");
-
-      if (!list) return;
-
-      list.innerHTML = "";
-
-      myNotifications.forEach(n => {
-
-        const div = document.createElement("div");
         div.classList.add("request-item");
 
         div.innerHTML = `
           <div>
-            🔔 ${n.message}
+            ${req.fromEmployee}
+            ➜
+            ${req.toEmployee}
+            <br>
+            ${req.fromDate}
+            ⇄
+            ${req.toDate}
+            <br>
+            Stato: ${req.status}
           </div>
 
-          <button class="open-btn">
-            Apri richiesta
+          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+            Accetta
+          </button>
+
+          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+            Rifiuta
           </button>
         `;
 
-        const btn = div.querySelector(".open-btn");
-
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-
-          window.openRequestFromNotification(
-            n.requestId,
-            n.id
-          );
-        });
-
-        list.appendChild(div);
+        container.appendChild(div);
 
       });
 
     }
   );
 }
-
-
 // ======================
-// CALENDAR
+// ACCETTA / RIFIUTA CAMBIO
 // ======================
-function renderCalendar() {
+window.handleChangeRequest = async function(requestId, action){
 
-  console.log("renderCalendar eseguita");
+  const reqRef = window.firebaseFirestore.doc(
+    window.db,
+    "changeRequests",
+    requestId
+  );
 
-  calendar.innerHTML = "";
+  const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
+  const req = reqSnap.data();
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  if(!req) return;
 
-  monthTitle.innerText =
-    monthNames[month] + " " + year;
+  // ======================
+  // RIFIUTA
+  // ======================
+  if(action === "REJECT"){
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  let startDay = firstDay - 1;
-  if (startDay < 0) startDay = 6;
-
-  for (let i = 0; i < startDay; i++) {
-    const empty = document.createElement("div");
-    empty.classList.add("empty-day");
-    calendar.appendChild(empty);
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-
-    const dayBox = document.createElement("div");
-    dayBox.classList.add("day");
-
-    const formatted =
-      `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-    const currentDay = new Date(year, month, day);
-    const isSunday = currentDay.getDay() === 0;
-
-    const holidays = [
-      "1-1", "6-1", "25-4", "1-5", "2-6",
-      "15-8", "1-11", "8-12", "25-12", "26-12"
-    ];
-
-    const isHoliday = holidays.includes(`${day}-${month + 1}`);
-
-    if (isSunday || isHoliday) {
-      dayBox.classList.add("holiday-day");
-    }
-
-    dayBox.addEventListener("click", () => {
-      if (!window.IS_ADMIN) return;
-
-      editingIndex = null;
-      openPopup();
-
-      document.getElementById("startDate").value = formatted;
-      document.getElementById("endDate").value = formatted;
+    await window.firebaseFirestore.updateDoc(reqRef, {
+      status: "REJECTED"
     });
 
-    const num = document.createElement("div");
-    num.classList.add("day-number");
-    num.innerText = day;
-    dayBox.appendChild(num);
-
-    const selectedEmployee =
-      document.getElementById("employeeFilter").value;
-
-    const events = savedEvents.filter(e =>
-      e.date === formatted &&
-      (
-        selectedEmployee === "ALL" ||
-        e.employee === selectedEmployee
-      )
+    // notifica a chi ha chiesto
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.fromEmployee,
+        message: "❌ Cambio turno rifiutato",
+        type: "error",
+        read: false,
+        createdAt: Date.now()
+      }
     );
 
-    events.forEach(event => {
+    return;
+  }
 
-      const div = document.createElement("div");
-      div.classList.add("event");
+  // ======================
+  // ACCETTA
+  // ======================
+  if(action === "ACCEPT"){
 
-      div.innerHTML = `
-        <div class="event-shift">
-          ${event.shift}
-        </div>
-      `;
-
-      dayBox.appendChild(div);
-
+    await window.firebaseFirestore.updateDoc(reqRef, {
+      status: "ACCEPTED"
     });
 
-    calendar.appendChild(dayBox);
+    // 👉 scambia i turni nel tuo events
+    const eventA = savedEvents.find(e =>
+      e.employee === req.fromEmployee &&
+      e.date === req.fromDate &&
+      e.shift === req.shift
+    );
+
+    const eventB = savedEvents.find(e =>
+      e.employee === req.toEmployee &&
+      e.date === req.toDate &&
+      e.shift === req.shift
+    );
+
+    if(eventA && eventB){
+
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
+        { employee: req.toEmployee }
+      );
+
+      await window.firebaseFirestore.updateDoc(
+        window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
+        { employee: req.fromEmployee }
+      );
+    }
+
+    // notifica a entrambi
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.fromEmployee,
+        message: "✅ Cambio turno ACCETTATO",
+        type: "success",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
+
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "notifications"),
+      {
+        to: req.toEmployee,
+        message: "🔁 Cambio turno effettuato",
+        type: "success",
+        read: false,
+        createdAt: Date.now()
+      }
+    );
   }
 }
