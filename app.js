@@ -1790,7 +1790,13 @@ function loadRequests(){
 
   container.appendChild(div);
 
-});
+      });
+
+    }
+
+  );
+
+}
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
