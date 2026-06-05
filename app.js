@@ -1956,3 +1956,35 @@ window.handleChangeRequest = async function(requestId, action){
     document.getElementById("requestsPopup").style.display = "none";
   }
 };
+// ======================
+// APERTURA DA NOTIFICA
+// ======================
+window.openRequestFromNotification = async function(requestId, notifId){
+
+  const reqRef = window.firebaseFirestore.doc(
+    window.db,
+    "changeRequests",
+    requestId
+  );
+
+  const snap = await window.firebaseFirestore.getDoc(reqRef);
+
+  if(!snap.exists()) return;
+
+  const req = snap.data();
+
+  window._activeRequest = { requestId, notifId, data: req };
+
+  document.getElementById("requestsPopup").style.display = "flex";
+
+  if(notifId){
+    await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.doc(window.db, "notifications", notifId),
+      { read: true }
+    );
+  }
+
+  if(window.loadRequests){
+    window.loadRequests();
+  }
+};
