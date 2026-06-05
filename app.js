@@ -305,20 +305,16 @@ if(isSunday || isHoliday){
 }
 
     // CLICK GIORNO
-    dayBox.addEventListener("click",()=>{
+  dayBox.addEventListener("click", () => {
 
-      editingIndex = null;
+  if (!window.IS_ADMIN) return;
 
-      openPopup();
+  editingIndex = null;
+  openPopup();
 
-      document.getElementById("startDate").value =
-        formatted;
-
-      document.getElementById("endDate").value =
-        formatted;
-
-    });
-
+  document.getElementById("startDate").value = formatted;
+  document.getElementById("endDate").value = formatted;
+});
 
 
     // NUMERO
