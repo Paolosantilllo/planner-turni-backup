@@ -297,7 +297,32 @@ margin:50px auto;
   </div>
 
 </div>
+<!-- POPUP AZIONE RICHIESTA -->
+<div id="requestActionPopup" class="popup" style="display:none;">
+  <div class="popup-content">
 
+    <h2>Gestione richiesta</h2>
+
+    <button onclick="handleChangeRequest(
+      document.getElementById('requestActionPopup').dataset.requestId,
+      'ACCEPT'
+    )">
+      ✅ Accetta
+    </button>
+
+    <button onclick="handleChangeRequest(
+      document.getElementById('requestActionPopup').dataset.requestId,
+      'REJECT'
+    )">
+      ❌ Rifiuta
+    </button>
+
+    <button onclick="closeRequestActionPopup()">
+      Chiudi
+    </button>
+
+  </div>
+</div>
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
