@@ -1142,35 +1142,52 @@ window.sendChangeRequest = async function (){
     return;
   }
 
-  // 🔥 CREA RICHIESTA (NON TOCCA EVENTS)
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "changeRequests"),
-    {
-      fromEmployee,
-      toEmployee,
-      fromDate,
-      toDate,
-      shift,
-      status: "PENDING_C",
-      createdAt: Date.now()
-    }
-  );
+// 🔥 CREA RICHIESTA (NON TOCCA EVENTS)
+const requestRef =
+await window.firebaseFirestore.addDoc(
+  window.firebaseFirestore.collection(window.db, "changeRequests"),
+  {
+    fromEmployee,
+    toEmployee,
+    fromDate,
+    toDate,
+    shift,
+    status: "PENDING_C",
+    createdAt: Date.now()
+  }
+);
 
-  // 🔔 NOTIFICA A C
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "notifications"),
-    {
-      to: toEmployee,
-      message: `Richiesta cambio turno da ${fromEmployee}`,
-      type: "info",
-      read: false,
-      createdAt: Date.now()
-    }
-  );
+// EMAIL DESTINATARIO
+const userEmails = {
 
-  alert("Richiesta inviata");
-  closeChangePopup();
-}
+  "Dipendente A": "paolosantillo@yahoo.it",
+
+  "Dipendente B": "dipb.planner@gmail.com",
+
+  "Dipendente C": "dipc.planner@gmail.com",
+
+  "Dipendente D": "dipd.planner@gmail.com"
+
+};
+
+const targetEmail =
+  userEmails[toEmployee];
+
+// 🔔 NOTIFICA A CHI DEVE ACCETTARE
+await window.firebaseFirestore.addDoc(
+  window.firebaseFirestore.collection(window.db, "notifications"),
+  {
+    to: targetEmail,
+    message: `Richiesta cambio turno da ${fromEmployee}`,
+    type: "info",
+    read: false,
+    requestId: requestRef.id,
+    createdAt: Date.now()
+  }
+);
+
+alert("Richiesta inviata");
+closeChangePopup();
 // ======================
 // NAV
 // ======================
