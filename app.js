@@ -1851,6 +1851,15 @@ div.innerHTML = `
     </button>
   ` : ""}
 `;
+      container.appendChild(div);
+
+      });
+
+    }
+
+  );
+
+}  
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
