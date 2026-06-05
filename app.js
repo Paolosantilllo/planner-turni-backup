@@ -238,11 +238,15 @@ function loadNotifications(){
         const div = document.createElement("div");
         div.classList.add("request-item");
 
-        div.innerHTML = `
-          <div>
-            🔔 ${n.message}
-          </div>
-        `;
+     div.innerHTML = `
+  <div>
+    🔔 ${n.message}
+  </div>
+
+  <button onclick="openRequestFromNotification('${n.requestId}', '${n.id}')">
+    Apri richiesta
+  </button>
+`;
 
         // ======================
         // CLICK NOTIFICA
