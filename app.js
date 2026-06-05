@@ -264,9 +264,7 @@ function loadNotifications(){
 }
 window.openRequestFromNotification = async function(requestId, notifId){
 
-  console.log("Apri richiesta:", requestId);
-
-  // qui metteremo tutta la logica accetta/rifiuta
+  alert("Richiesta: " + requestId);
 
 };
 // ======================
