@@ -384,30 +384,29 @@ const events =
 
 
       // MODIFICA
-      div.addEventListener("click",(e)=>{
+      div.addEventListener("click", (e) => {
 
-        e.stopPropagation();
+  e.stopPropagation();
 
-        editingIndex =
-          savedEvents.indexOf(event);
+  // 🔴 BLOCCO USER
+  if (!window.IS_ADMIN) return;
 
-        document.getElementById("employee").value =
-          event.employee;
+  editingIndex = savedEvents.indexOf(event);
 
-        document.getElementById("startDate").value =
-          event.date;
+  document.getElementById("employee").value =
+    event.employee;
 
-        document.getElementById("endDate").value =
-          event.date;
+  document.getElementById("startDate").value =
+    event.date;
 
-        document.getElementById("shift").value =
-          event.shift;
+  document.getElementById("endDate").value =
+    event.date;
 
-        openPopup();
+  document.getElementById("shift").value =
+    event.shift;
 
-      });
-
-
+  openPopup();
+});
 
       dayBox.appendChild(div);
 
