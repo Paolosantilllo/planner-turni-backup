@@ -1188,6 +1188,9 @@ await window.firebaseFirestore.addDoc(
 
 alert("Richiesta inviata");
 closeChangePopup();
+
+} 
+
 // ======================
 // NAV
 // ======================
