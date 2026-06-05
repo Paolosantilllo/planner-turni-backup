@@ -213,9 +213,8 @@ function loadNotifications(){
       console.log("NOTIFICHE UTENTE:", myNotifications);
 
       // ======================
-      // 🔥 RENDER UI NOTIFICHE
+      // 🔥 BADGE (tipo WhatsApp)
       // ======================
-      const list = document.getElementById("requestsList");
       const badge = document.getElementById("notifBadge");
 
       if(badge){
@@ -224,6 +223,11 @@ function loadNotifications(){
             ? myNotifications.length
             : "";
       }
+
+      // ======================
+      // 🔥 LISTA UI
+      // ======================
+      const list = document.getElementById("requestsList");
 
       if(!list) return;
 
@@ -241,11 +245,14 @@ function loadNotifications(){
         `;
 
         // ======================
-        // CLICK = APRI DETTAGLIO
+        // CLICK NOTIFICA
         // ======================
         div.addEventListener("click", () => {
 
-          window.openRequestFromNotification(n.requestId, n.id);
+          window.openRequestFromNotification(
+            n.requestId,
+            n.id
+          );
 
         });
 
