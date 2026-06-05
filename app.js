@@ -264,8 +264,28 @@ function loadNotifications(){
 }
 window.openRequestFromNotification = async function(requestId, notifId){
 
-  alert("Richiesta: " + requestId);
+  console.log("CLICK NOTIFICA:", requestId);
 
+  const requestRef = await window.firebaseFirestore.getDoc(
+    window.firebaseFirestore.doc(
+      window.db,
+      "changeRequests",
+      requestId
+    )
+  );
+
+  if (!requestRef.exists()) {
+    alert("Richiesta non trovata");
+    return;
+  }
+
+  const data = requestRef.data();
+
+  console.log("DATA REQUEST:", data);
+
+  alert(
+    `Da: ${data.fromEmployee}\nA: ${data.toEmployee}\nShift: ${data.shift}`
+  );
 };
 // ======================
 // CALENDAR
