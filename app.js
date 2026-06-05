@@ -224,49 +224,46 @@ function loadNotifications(){
             : "";
       }
 
-      // ======================
-      // 🔥 LISTA UI
-      // ======================
-      const list = document.getElementById("requestsList");
+// ======================
+// LISTA UI NOTIFICHE
+// ======================
+const list = document.getElementById("requestsList");
 
-      if(!list) return;
+if(!list) return;
 
-      list.innerHTML = "";
+list.innerHTML = "";
 
-      myNotifications.forEach(n => {
+myNotifications.forEach(n => {
 
-        const div = document.createElement("div");
-        div.classList.add("request-item");
+  const div = document.createElement("div");
+  div.classList.add("request-item");
 
-     div.innerHTML = `
-  <div>
-    🔔 ${n.message}
-  </div>
+  div.innerHTML = `
+    <div>
+      🔔 ${n.message}
+    </div>
 
-  <button onclick="openRequestFromNotification('${n.requestId}', '${n.id}')">
-    Apri richiesta
-  </button>
-`;
+    <button class="open-btn">
+      Apri richiesta
+    </button>
+  `;
 
-        // ======================
-        // CLICK NOTIFICA
-        // ======================
-        div.addEventListener("click", () => {
+  // CLICK SOLO SUL BOTTONE (meglio)
+  const btn = div.querySelector(".open-btn");
 
-          window.openRequestFromNotification(
-            n.requestId,
-            n.id
-          );
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
 
-        });
+    window.openRequestFromNotification(
+      n.requestId,
+      n.id
+    );
+  });
 
-        list.appendChild(div);
+  list.appendChild(div);
 
-      });
+});
 
-    }
-  );
-}
 // ======================
 // CALENDAR
 // ======================
