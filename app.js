@@ -213,7 +213,13 @@ function loadNotifications(){
     }
   );
 }
+window.openRequestFromNotification = async function(requestId, notifId){
 
+  console.log("Apri richiesta:", requestId);
+
+  // qui metteremo tutta la logica accetta/rifiuta
+
+};
 // ======================
 // CALENDAR
 // ======================
@@ -1118,74 +1124,58 @@ window.deleteShift = async function (){
 // ======================
 // CAMBIO TURNO
 // ======================
-window.sendChangeRequest = async function (){
+window.sendChangeRequest = async function () {
 
-  const fromEmployee =
-  window.CURRENT_EMPLOYEE;
-
-  const toEmployee =
-    document.getElementById("changeTo").value;
+  const fromEmployee = window.CURRENT_EMPLOYEE;
+  const toEmployee = document.getElementById("changeTo").value;
+  const shift = document.getElementById("changeShift").value;
 
   const fromDate = window._changeData.getFromDate();
   const toDate = window._changeData.getToDate();
 
-  const shift =
-    document.getElementById("changeShift").value;
-
-  if(!fromDate || !toDate){
+  if (!fromDate || !toDate) {
     alert("Seleziona entrambe le date");
     return;
   }
 
-// 🔥 CREA RICHIESTA (NON TOCCA EVENTS)
-const requestRef =
-await window.firebaseFirestore.addDoc(
-  window.firebaseFirestore.collection(window.db, "changeRequests"),
-  {
-    fromEmployee,
-    toEmployee,
-    fromDate,
-    toDate,
-    shift,
-    status: "PENDING_C",
-    createdAt: Date.now()
-  }
-);
+  // 1️⃣ CREA REQUEST
+  const requestRef = await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(window.db, "changeRequests"),
+    {
+      fromEmployee,
+      toEmployee,
+      fromDate,
+      toDate,
+      shift,
+      status: "PENDING_EMPLOYEE",
+      createdAt: Date.now()
+    }
+  );
 
-// EMAIL DESTINATARIO
-const userEmails = {
+  // 2️⃣ EMAIL MAP
+  const userEmails = {
+    "Dipendente A": "paolosantillo@yahoo.it",
+    "Dipendente B": "dipb.planner@gmail.com",
+    "Dipendente C": "dipc.planner@gmail.com",
+    "Dipendente D": "dipd.planner@gmail.com"
+  };
 
-  "Dipendente A": "paolosantillo@yahoo.it",
+  // 3️⃣ NOTIFICA SOLO AL DESTINATARIO
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(window.db, "notifications"),
+    {
+      to: userEmails[toEmployee],
+      message: `Richiesta cambio da ${fromEmployee}`,
+      type: "CHANGE_REQUEST",
+      requestId: requestRef.id,
+      read: false,
+      createdAt: Date.now()
+    }
+  );
 
-  "Dipendente B": "dipb.planner@gmail.com",
-
-  "Dipendente C": "dipc.planner@gmail.com",
-
-  "Dipendente D": "dipd.planner@gmail.com"
-
+  alert("Richiesta inviata");
+  closeChangePopup();
 };
-
-const targetEmail =
-  userEmails[toEmployee];
-
-// 🔔 NOTIFICA A CHI DEVE ACCETTARE
-await window.firebaseFirestore.addDoc(
-  window.firebaseFirestore.collection(window.db, "notifications"),
-  {
-    to: targetEmail,
-    message: `Richiesta cambio turno da ${fromEmployee}`,
-    type: "info",
-    read: false,
-    requestId: requestRef.id,
-    createdAt: Date.now()
-  }
-);
-
-alert("Richiesta inviata");
-closeChangePopup();
-
-} 
-
 // ======================
 // NAV
 // ======================
