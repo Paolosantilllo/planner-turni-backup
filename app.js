@@ -262,30 +262,21 @@ function loadNotifications(){
     }
   );
 }
-window.openRequestFromNotification = async function(requestId, notifId){
+window.openRequestFromNotification = async function (requestId, notifId) {
 
-  console.log("CLICK NOTIFICA:", requestId);
+  console.log("REQUEST OPEN:", requestId);
 
-  const requestRef = await window.firebaseFirestore.getDoc(
-    window.firebaseFirestore.doc(
-      window.db,
-      "changeRequests",
-      requestId
-    )
-  );
+  const popup = document.getElementById("requestActionPopup");
 
-  if (!requestRef.exists()) {
-    alert("Richiesta non trovata");
+  if (!popup) {
+    alert("Popup azioni mancante");
     return;
   }
 
-  const data = requestRef.data();
+  popup.style.display = "flex";
 
-  console.log("DATA REQUEST:", data);
-
-  alert(
-    `Da: ${data.fromEmployee}\nA: ${data.toEmployee}\nShift: ${data.shift}`
-  );
+  popup.dataset.requestId = requestId;
+  popup.dataset.notifId = notifId;
 };
 // ======================
 // CALENDAR
