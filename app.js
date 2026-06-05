@@ -1883,6 +1883,9 @@ window.handleChangeRequest = async function(requestId, action){
       }
     );
 
+    // 🔥 CHIUDE POPUP NOTIFICA (IMPORTANTE)
+    document.getElementById("requestsPopup").style.display = "none";
+
     return;
   }
 
@@ -1947,5 +1950,8 @@ window.handleChangeRequest = async function(requestId, action){
         createdAt: Date.now()
       }
     );
+
+    // 🔥 CHIUDE POPUP NOTIFICA
+    document.getElementById("requestsPopup").style.display = "none";
   }
-}
+};
