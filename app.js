@@ -1185,43 +1185,52 @@ window.sendChangeRequest = async function () {
     return;
   }
 
-  // 1️⃣ CREA REQUEST
-  const requestRef = await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "changeRequests"),
-    {
-      fromEmployee,
-      toEmployee,
-      fromDate,
-      toDate,
-      shift,
-      status: "PENDING_EMPLOYEE",
-      createdAt: Date.now()
-    }
-  );
+// ======================
+// CREA REQUEST
+// ======================
+const requestRef = await window.firebaseFirestore.addDoc(
+  window.firebaseFirestore.collection(window.db, "changeRequests"),
+  {
+    fromEmployee,
+    toEmployee,
+    fromDate,
+    toDate,
+    shift,
 
-  // 2️⃣ EMAIL MAP
-  const userEmails = {
-    "Dipendente A": "paolosantillo@yahoo.it",
-    "Dipendente B": "dipb.planner@gmail.com",
-    "Dipendente C": "dipc.planner@gmail.com",
-    "Dipendente D": "dipd.planner@gmail.com"
-  };
+    status: "PENDING_EMPLOYEE",
+    step: 1,
 
-  // 3️⃣ NOTIFICA SOLO AL DESTINATARIO
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "notifications"),
-    {
-      to: userEmails[toEmployee],
-      message: `Richiesta cambio da ${fromEmployee}`,
-      type: "CHANGE_REQUEST",
-      requestId: requestRef.id,
-      read: false,
-      createdAt: Date.now()
-    }
-  );
+    createdAt: Date.now()
+  }
+);
 
-  alert("Richiesta inviata");
-  closeChangePopup();
+// ======================
+// EMAIL MAP
+// ======================
+const userEmails = {
+  "Dipendente A": "paolosantillo@yahoo.it",
+  "Dipendente B": "dipb.planner@gmail.com",
+  "Dipendente C": "dipc.planner@gmail.com",
+  "Dipendente D": "dipd.planner@gmail.com"
+};
+
+// ======================
+// NOTIFICA DESTINATARIO
+// ======================
+await window.firebaseFirestore.addDoc(
+  window.firebaseFirestore.collection(window.db, "notifications"),
+  {
+    to: userEmails[toEmployee],
+    message: `Richiesta cambio da ${fromEmployee}`,
+    type: "CHANGE_REQUEST",
+    requestId: requestRef.id,
+    read: false,
+    createdAt: Date.now()
+  }
+);
+
+alert("Richiesta inviata");
+closeChangePopup();
 };
 // ======================
 // NAV
