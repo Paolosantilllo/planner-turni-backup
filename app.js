@@ -1776,64 +1776,89 @@ else if(ev){
   );
 }
 // ======================
-// LOAD REQUESTS
+// FIREBASE NOTIFICATIONS
 // ======================
-function loadRequests(){
+function loadNotifications(){
 
-  if(!window.firebaseFirestore || !window.db) return;
+  if(
+    !window.firebaseFirestore ||
+    !window.db ||
+    !CURRENT_USER
+  ) return;
 
   window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(window.db, "changeRequests"),
+    window.firebaseFirestore.collection(window.db, "notifications"),
     (snapshot) => {
 
-      const container = document.getElementById("requestsList");
-      if(!container) return;
-
-      container.innerHTML = "";
+      const myNotifications = [];
 
       snapshot.forEach(docSnap => {
 
-        const req = docSnap.data();
+        const data = docSnap.data();
 
-        // 🔥 FILTRO UTENTE
-        if(window.IS_ADMIN !== true){
+        if(data.to !== CURRENT_USER) return;
+        if(data.read === true) return;
 
-          if(
-            req.fromEmployee !== window.CURRENT_EMPLOYEE &&
-            req.toEmployee !== window.CURRENT_EMPLOYEE
-          ){
-            return;
-          }
-        }
+        myNotifications.push({
+          id: docSnap.id,
+          message: data.message,
+          type: data.type,
+          requestId: data.requestId,
+          createdAt: data.createdAt
+        });
+
+      });
+
+      myNotifications.sort((a, b) => b.createdAt - a.createdAt);
+
+      window.myNotifications = myNotifications;
+
+      const badge = document.getElementById("notifBadge");
+
+      if(badge){
+        badge.innerText =
+          myNotifications.length > 0
+            ? myNotifications.length
+            : "";
+      }
+
+      // ======================
+      // LISTA UI NOTIFICHE
+      // ======================
+      const list = document.getElementById("requestsList");
+
+      if(!list) return;
+
+      list.innerHTML = "";
+
+      myNotifications.forEach(n => {
 
         const div = document.createElement("div");
         div.classList.add("request-item");
 
-        const isActive =
-          window._activeRequest &&
-          window._activeRequest.requestId === docSnap.id;
-
         div.innerHTML = `
           <div>
-            ${req.fromEmployee} ➜ ${req.toEmployee}
-            <br>
-            ${req.fromDate} ⇄ ${req.toDate}
-            <br>
-            Stato: ${req.status}
+            🔔 ${n.message}
           </div>
 
-          ${isActive ? `
-            <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
-              Accetta
-            </button>
-
-            <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
-              Rifiuta
-            </button>
-          ` : ""}
+          <button class="open-btn">
+            Apri richiesta
+          </button>
         `;
 
-        container.appendChild(div);
+        const btn = div.querySelector(".open-btn");
+
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          window.openRequestFromNotification(
+            n.requestId,
+            n.id
+          );
+        });
+
+        list.appendChild(div);
+
       });
 
     }
@@ -1842,144 +1867,95 @@ function loadRequests(){
 
 
 // ======================
-// ACCETTA / RIFIUTA CAMBIO
+// CALENDAR
 // ======================
-window.handleChangeRequest = async function(requestId, action){
+function renderCalendar(){
 
-  const reqRef = window.firebaseFirestore.doc(
-    window.db,
-    "changeRequests",
-    requestId
-  );
+  console.log("renderCalendar eseguita");
 
-  const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
-  const req = reqSnap.data();
+  calendar.innerHTML = "";
 
-  if(!req) return;
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-  // ======================
-  // RIFIUTA
-  // ======================
-  if(action === "REJECT"){
+  monthTitle.innerText =
+    monthNames[month] + " " + year;
 
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED"
-    });
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "❌ Cambio turno rifiutato",
-        type: "error",
-        read: false,
-        requestId: requestId,
-        createdAt: Date.now()
-      }
-    );
+  let startDay = firstDay - 1;
+  if(startDay < 0) startDay = 6;
 
-    document.getElementById("requestsPopup").style.display = "none";
-    return;
+  for(let i=0;i<startDay;i++){
+    const empty = document.createElement("div");
+    empty.classList.add("empty-day");
+    calendar.appendChild(empty);
   }
 
+  for(let day=1; day<=daysInMonth; day++){
 
-  // ======================
-  // ACCETTA
-  // ======================
-  if(action === "ACCEPT"){
+    const dayBox = document.createElement("div");
+    dayBox.classList.add("day");
 
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "ACCEPTED"
-    });
+    const formatted =
+      `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
 
-    const eventA = savedEvents.find(e =>
-      e.employee === req.fromEmployee &&
-      e.date === req.fromDate &&
-      e.shift === req.shift
-    );
+    const currentDay = new Date(year, month, day);
+    const isSunday = currentDay.getDay() === 0;
 
-    const eventB = savedEvents.find(e =>
-      e.employee === req.toEmployee &&
-      e.date === req.toDate &&
-      e.shift === req.shift
-    );
+    const holidays = [
+      "1-1","6-1","25-4","1-5","2-6",
+      "15-8","1-11","8-12","25-12","26-12"
+    ];
 
-    if(eventA && eventB){
+    const isHoliday = holidays.includes(`${day}-${month+1}`);
 
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
-        { employee: req.toEmployee }
-      );
-
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
-        { employee: req.fromEmployee }
-      );
+    if(isSunday || isHoliday){
+      dayBox.classList.add("holiday-day");
     }
 
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "✅ Cambio turno ACCETTATO",
-        type: "success",
-        read: false,
-        requestId: requestId,
-        createdAt: Date.now()
-      }
+    dayBox.addEventListener("click", () => {
+      if(!window.IS_ADMIN) return;
+
+      editingIndex = null;
+      openPopup();
+
+      document.getElementById("startDate").value = formatted;
+      document.getElementById("endDate").value = formatted;
+    });
+
+    const num = document.createElement("div");
+    num.classList.add("day-number");
+    num.innerText = day;
+    dayBox.appendChild(num);
+
+    const selectedEmployee =
+      document.getElementById("employeeFilter").value;
+
+    const events = savedEvents.filter(e =>
+      e.date === formatted &&
+      (
+        selectedEmployee === "ALL" ||
+        e.employee === selectedEmployee
+      )
     );
 
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.toEmployee,
-        message: "🔁 Cambio turno effettuato",
-        type: "success",
-        read: false,
-        requestId: requestId,
-        createdAt: Date.now()
-      }
-    );
+    events.forEach(event => {
 
-    document.getElementById("requestsPopup").style.display = "none";
+      const div = document.createElement("div");
+      div.classList.add("event");
+
+      div.innerHTML = `
+        <div class="event-shift">
+          ${event.shift}
+        </div>
+      `;
+
+      dayBox.appendChild(div);
+
+    });
+
+    calendar.appendChild(dayBox);
   }
-};
-
-
-// ======================
-// APERTURA DA NOTIFICA
-// ======================
-window.openRequestFromNotification = async function(requestId, notifId){
-
-  const reqRef = window.firebaseFirestore.doc(
-    window.db,
-    "changeRequests",
-    requestId
-  );
-
-  const snap = await window.firebaseFirestore.getDoc(reqRef);
-
-  if(!snap.exists()) return;
-
-  const req = snap.data();
-
-  window._activeRequest = {
-    requestId,
-    notifId,
-    data: req
-  };
-
-  document.getElementById("requestsPopup").style.display = "flex";
-
-  // 🔥 segna notifica come letta
-  if(notifId){
-    await window.firebaseFirestore.updateDoc(
-      window.firebaseFirestore.doc(window.db, "notifications", notifId),
-      { read: true }
-    );
-  }
-
-  if(window.loadRequests){
-    window.loadRequests();
-  }
-};
+}
