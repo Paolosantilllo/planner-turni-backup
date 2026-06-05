@@ -189,31 +189,40 @@ function loadNotifications(){
 
         const data = docSnap.data();
 
-        if(data.to === CURRENT_USER){
+        // 🔥 SOLO notifiche dell’utente loggato
+        if(data.to !== CURRENT_USER) return;
 
-          myNotifications.push({
-            id: docSnap.id,
-            message: data.message,
-            type: data.type,
-            read: data.read
-          });
+        // 🔥 OPZIONALE: nasconde già lette
+        if(data.read === true) return;
 
-        }
+        myNotifications.push({
+          id: docSnap.id,
+          message: data.message,
+          type: data.type,
+          read: data.read
+        });
 
       });
 
-      console.log(
-        "NOTIFICHE:",
-        myNotifications
-      );
+      // 🔥 ORDINA (più recenti sopra)
+      myNotifications.sort((a, b) => b.createdAt - a.createdAt);
 
-      window.myNotifications =
-        myNotifications;
+      window.myNotifications = myNotifications;
+
+      console.log("NOTIFICHE UTENTE:", myNotifications);
+
+      // 🔥 BADGE (tipo WhatsApp)
+      const badge = document.getElementById("notifBadge");
+
+      if(badge){
+        badge.innerText = myNotifications.length > 0
+          ? myNotifications.length
+          : "";
+      }
 
     }
   );
 }
-
 // ======================
 // CALENDAR
 // ======================
