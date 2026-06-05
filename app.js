@@ -1778,9 +1778,9 @@ else if(ev){
 // ======================
 // FIREBASE NOTIFICATIONS
 // ======================
-function loadNotifications(){
+function loadNotifications() {
 
-  if(
+  if (
     !window.firebaseFirestore ||
     !window.db ||
     !CURRENT_USER
@@ -1796,8 +1796,8 @@ function loadNotifications(){
 
         const data = docSnap.data();
 
-        if(data.to !== CURRENT_USER) return;
-        if(data.read === true) return;
+        if (data.to !== CURRENT_USER) return;
+        if (data.read === true) return;
 
         myNotifications.push({
           id: docSnap.id,
@@ -1815,7 +1815,7 @@ function loadNotifications(){
 
       const badge = document.getElementById("notifBadge");
 
-      if(badge){
+      if (badge) {
         badge.innerText =
           myNotifications.length > 0
             ? myNotifications.length
@@ -1827,7 +1827,7 @@ function loadNotifications(){
       // ======================
       const list = document.getElementById("requestsList");
 
-      if(!list) return;
+      if (!list) return;
 
       list.innerHTML = "";
 
@@ -1869,7 +1869,7 @@ function loadNotifications(){
 // ======================
 // CALENDAR
 // ======================
-function renderCalendar(){
+function renderCalendar() {
 
   console.log("renderCalendar eseguita");
 
@@ -1885,38 +1885,38 @@ function renderCalendar(){
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   let startDay = firstDay - 1;
-  if(startDay < 0) startDay = 6;
+  if (startDay < 0) startDay = 6;
 
-  for(let i=0;i<startDay;i++){
+  for (let i = 0; i < startDay; i++) {
     const empty = document.createElement("div");
     empty.classList.add("empty-day");
     calendar.appendChild(empty);
   }
 
-  for(let day=1; day<=daysInMonth; day++){
+  for (let day = 1; day <= daysInMonth; day++) {
 
     const dayBox = document.createElement("div");
     dayBox.classList.add("day");
 
     const formatted =
-      `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
     const currentDay = new Date(year, month, day);
     const isSunday = currentDay.getDay() === 0;
 
     const holidays = [
-      "1-1","6-1","25-4","1-5","2-6",
-      "15-8","1-11","8-12","25-12","26-12"
+      "1-1", "6-1", "25-4", "1-5", "2-6",
+      "15-8", "1-11", "8-12", "25-12", "26-12"
     ];
 
-    const isHoliday = holidays.includes(`${day}-${month+1}`);
+    const isHoliday = holidays.includes(`${day}-${month + 1}`);
 
-    if(isSunday || isHoliday){
+    if (isSunday || isHoliday) {
       dayBox.classList.add("holiday-day");
     }
 
     dayBox.addEventListener("click", () => {
-      if(!window.IS_ADMIN) return;
+      if (!window.IS_ADMIN) return;
 
       editingIndex = null;
       openPopup();
