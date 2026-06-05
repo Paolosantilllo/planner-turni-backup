@@ -56,8 +56,7 @@ function getEmployeeFromEmail(email){
    FIREBASE AUTH
 ====================== */
 
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
 
 const appDiv = document.querySelector(".app");
 
