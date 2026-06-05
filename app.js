@@ -1824,29 +1824,33 @@ function loadRequests(){
 
   div.classList.add("request-item");
 
-  div.innerHTML = `
-    <div>
-      ${req.fromEmployee}
-      ➜
-      ${req.toEmployee}
-      <br>
-      ${req.fromDate}
-      ⇄
-      ${req.toDate}
-      <br>
-      Stato: ${req.status}
-    </div>
-  `;
+  const isActive =
+  window._activeRequest &&
+  window._activeRequest.requestId === docSnap.id;
 
-  container.appendChild(div);
+div.innerHTML = `
+  <div>
+    ${req.fromEmployee}
+    ➜
+    ${req.toEmployee}
+    <br>
+    ${req.fromDate}
+    ⇄
+    ${req.toDate}
+    <br>
+    Stato: ${req.status}
+  </div>
 
-      });
+  ${isActive ? `
+    <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
+      Accetta
+    </button>
 
-    }
-
-  );
-
-}
+    <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
+      Rifiuta
+    </button>
+  ` : ""}
+`;
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
