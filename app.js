@@ -189,36 +189,69 @@ function loadNotifications(){
 
         const data = docSnap.data();
 
-        // 🔥 SOLO notifiche dell’utente loggato
+        // 🔥 SOLO UTENTE LOGGATO
         if(data.to !== CURRENT_USER) return;
 
-        // 🔥 OPZIONALE: nasconde già lette
+        // 🔥 SOLO NON LETTE
         if(data.read === true) return;
 
         myNotifications.push({
           id: docSnap.id,
           message: data.message,
           type: data.type,
-          read: data.read
+          requestId: data.requestId,
+          createdAt: data.createdAt
         });
 
       });
 
-      // 🔥 ORDINA (più recenti sopra)
+      // 🔥 ORDINA PIÙ RECENTI
       myNotifications.sort((a, b) => b.createdAt - a.createdAt);
 
       window.myNotifications = myNotifications;
 
       console.log("NOTIFICHE UTENTE:", myNotifications);
 
-      // 🔥 BADGE (tipo WhatsApp)
+      // ======================
+      // 🔥 RENDER UI NOTIFICHE
+      // ======================
+      const list = document.getElementById("requestsList");
       const badge = document.getElementById("notifBadge");
 
       if(badge){
-        badge.innerText = myNotifications.length > 0
-          ? myNotifications.length
-          : "";
+        badge.innerText =
+          myNotifications.length > 0
+            ? myNotifications.length
+            : "";
       }
+
+      if(!list) return;
+
+      list.innerHTML = "";
+
+      myNotifications.forEach(n => {
+
+        const div = document.createElement("div");
+        div.classList.add("request-item");
+
+        div.innerHTML = `
+          <div>
+            🔔 ${n.message}
+          </div>
+        `;
+
+        // ======================
+        // CLICK = APRI DETTAGLIO
+        // ======================
+        div.addEventListener("click", () => {
+
+          window.openRequestFromNotification(n.requestId, n.id);
+
+        });
+
+        list.appendChild(div);
+
+      });
 
     }
   );
