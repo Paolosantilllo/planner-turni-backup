@@ -264,19 +264,66 @@ function loadNotifications(){
 }
 window.openRequestFromNotification = async function (requestId, notifId) {
 
-  console.log("REQUEST OPEN:", requestId);
+  const popup =
+    document.getElementById("requestActionPopup");
 
-  const popup = document.getElementById("requestActionPopup");
+  if (!popup) return;
 
-  if (!popup) {
-    alert("Popup azioni mancante");
+  const reqSnap =
+    await window.firebaseFirestore.getDoc(
+
+      window.firebaseFirestore.doc(
+        window.db,
+        "changeRequests",
+        requestId
+      )
+
+    );
+
+  if(!reqSnap.exists()){
+
+    alert("Richiesta non trovata");
     return;
+
   }
 
-  // chiudi lista notifiche
-  document.getElementById("requestsPopup").style.display = "none";
+  const req = reqSnap.data();
 
-  // apri popup azioni
+  document.getElementById(
+    "requestDetails"
+  ).innerHTML = `
+
+    <p>
+      <strong>Da:</strong>
+      ${req.fromEmployee}
+    </p>
+
+    <p>
+      <strong>A:</strong>
+      ${req.toEmployee}
+    </p>
+
+    <p>
+      <strong>Reperibilità:</strong>
+      ${req.shift}
+    </p>
+
+    <p>
+      <strong>Giorno da dare:</strong>
+      ${req.fromDate}
+    </p>
+
+    <p>
+      <strong>Giorno da ricevere:</strong>
+      ${req.toDate}
+    </p>
+
+  `;
+
+  document.getElementById(
+    "requestsPopup"
+  ).style.display = "none";
+
   popup.style.display = "flex";
 
   popup.dataset.requestId = requestId;
