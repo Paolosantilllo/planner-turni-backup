@@ -293,30 +293,23 @@ window.openRequestFromNotification = async function (requestId, notifId) {
     "requestDetails"
   ).innerHTML = `
 
-    <p>
-      <strong>Da:</strong>
-      ${req.fromEmployee}
-    </p>
+    <div style="text-align:center;">
 
-    <p>
-      <strong>A:</strong>
-      ${req.toEmployee}
-    </p>
+      <strong>${req.fromEmployee}</strong>
 
-    <p>
-      <strong>Reperibilità:</strong>
-      ${req.shift}
-    </p>
+      <br><br>
 
-    <p>
-      <strong>Giorno da dare:</strong>
-      ${req.fromDate}
-    </p>
+      (${req.shift})
 
-    <p>
-      <strong>Giorno da ricevere:</strong>
-      ${req.toDate}
-    </p>
+      <br><br>
+
+      <strong>
+        ${req.fromDate.split("-").reverse().join("/")}
+→
+${req.toDate.split("-").reverse().join("/")}
+      </strong>
+
+    </div>
 
   `;
 
