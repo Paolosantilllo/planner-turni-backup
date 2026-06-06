@@ -273,10 +273,26 @@ window.openRequestFromNotification = async function (requestId, notifId) {
     return;
   }
 
+  // chiudi lista notifiche
+  document.getElementById("requestsPopup").style.display = "none";
+
+  // apri popup azioni
   popup.style.display = "flex";
 
   popup.dataset.requestId = requestId;
   popup.dataset.notifId = notifId;
+};
+
+window.closeRequestActionPopup = function () {
+
+  const popup = document.getElementById("requestActionPopup");
+
+  if (popup) {
+    popup.style.display = "none";
+  }
+
+  // riapri lista notifiche
+  document.getElementById("requestsPopup").style.display = "flex";
 };
 // ======================
 // CALENDAR
