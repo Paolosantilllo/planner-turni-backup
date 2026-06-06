@@ -1893,7 +1893,7 @@ function loadRequests(){
 // ======================
 // ACCETTA / RIFIUTA CAMBIO
 // ======================
-window.handleChangeRequest = async function(requestId, action){
+window.handleChangeRequest = async function(requestId, action, notifId){
 
   alert("CLICK " + action);
 
@@ -1905,62 +1905,114 @@ window.handleChangeRequest = async function(requestId, action){
       requestId
     );
 
-    const reqSnap =
-      await window.firebaseFirestore.getDoc(reqRef);
-
-    alert("Documento letto");
+    const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
 
     if(!reqSnap.exists()){
-
       alert("Richiesta non trovata");
       return;
-
     }
 
     const req = reqSnap.data();
 
-    alert("Richiesta caricata");
-
+    // ======================
+    // RIFIUTA
+    // ======================
     if(action === "REJECT"){
 
-      alert("Entrato in REJECT");
+      await window.firebaseFirestore.updateDoc(reqRef, {
+        status: "REJECTED"
+      });
 
-      await window.firebaseFirestore.updateDoc(
-        reqRef,
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
         {
-          status: "REJECTED"
+          to: req.fromEmployee,
+          message: "❌ Cambio reperibilità rifiutato",
+          type: "error",
+          read: false,
+          createdAt: Date.now()
         }
       );
 
-      alert("Rifiuto salvato");
-
-      return;
     }
 
+    // ======================
+    // ACCETTA
+    // ======================
     if(action === "ACCEPT"){
 
-      alert("Entrato in ACCEPT");
+      await window.firebaseFirestore.updateDoc(reqRef, {
+        status: "ACCEPTED"
+      });
 
-      await window.firebaseFirestore.updateDoc(
-        reqRef,
+      const eventA = savedEvents.find(e =>
+        e.employee === req.fromEmployee &&
+        e.date === req.fromDate &&
+        e.shift === req.shift
+      );
+
+      const eventB = savedEvents.find(e =>
+        e.employee === req.toEmployee &&
+        e.date === req.toDate &&
+        e.shift === req.shift
+      );
+
+      if(eventA && eventB){
+
+        await window.firebaseFirestore.updateDoc(
+          window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
+          { employee: req.toEmployee }
+        );
+
+        await window.firebaseFirestore.updateDoc(
+          window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
+          { employee: req.fromEmployee }
+        );
+
+      }
+
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
         {
-          status: "ACCEPTED"
+          to: req.fromEmployee,
+          message: "✅ Cambio reperibilità ACCETTATO",
+          type: "success",
+          read: false,
+          createdAt: Date.now()
         }
       );
 
-      alert("Accettazione salvata");
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
+        {
+          to: req.toEmployee,
+          message: "🔁 Cambio reperibilità effettuato",
+          type: "success",
+          read: false,
+          createdAt: Date.now()
+        }
+      );
+    }
 
-      return;
+    // ======================
+    // 🔥 ELIMINA NOTIFICA ORIGINALE
+    // ======================
+    if(notifId){
+
+      await window.firebaseFirestore.deleteDoc(
+        window.firebaseFirestore.doc(
+          window.db,
+          "notifications",
+          notifId
+        )
+      );
+
     }
 
   } catch(err){
 
     console.error(err);
-
-    alert(
-      "ERRORE: " +
-      err.message
-    );
+    alert("ERRORE: " + err.message);
 
   }
 
