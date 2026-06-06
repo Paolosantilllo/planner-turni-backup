@@ -1897,15 +1897,74 @@ window.handleChangeRequest = async function(requestId, action){
 
   alert("CLICK " + action);
 
-  const reqRef = window.firebaseFirestore.doc(
-    window.db,
-    "changeRequests",
-    requestId
-  );
-  const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
-  const req = reqSnap.data();
+  try {
 
-  if(!req) return;
+    const reqRef = window.firebaseFirestore.doc(
+      window.db,
+      "changeRequests",
+      requestId
+    );
+
+    const reqSnap =
+      await window.firebaseFirestore.getDoc(reqRef);
+
+    alert("Documento letto");
+
+    if(!reqSnap.exists()){
+
+      alert("Richiesta non trovata");
+      return;
+
+    }
+
+    const req = reqSnap.data();
+
+    alert("Richiesta caricata");
+
+    if(action === "REJECT"){
+
+      alert("Entrato in REJECT");
+
+      await window.firebaseFirestore.updateDoc(
+        reqRef,
+        {
+          status: "REJECTED"
+        }
+      );
+
+      alert("Rifiuto salvato");
+
+      return;
+    }
+
+    if(action === "ACCEPT"){
+
+      alert("Entrato in ACCEPT");
+
+      await window.firebaseFirestore.updateDoc(
+        reqRef,
+        {
+          status: "ACCEPTED"
+        }
+      );
+
+      alert("Accettazione salvata");
+
+      return;
+    }
+
+  } catch(err){
+
+    console.error(err);
+
+    alert(
+      "ERRORE: " +
+      err.message
+    );
+
+  }
+
+};
 
   // ======================
   // RIFIUTA
