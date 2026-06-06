@@ -1895,12 +1895,13 @@ function loadRequests(){
 // ======================
 window.handleChangeRequest = async function(requestId, action){
 
+  alert("CLICK " + action);
+
   const reqRef = window.firebaseFirestore.doc(
     window.db,
     "changeRequests",
     requestId
   );
-
   const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
   const req = reqSnap.data();
 
