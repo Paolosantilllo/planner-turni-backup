@@ -1895,98 +1895,134 @@ function loadRequests(){
 // ======================
 window.handleChangeRequest = async function(requestId, action){
 
-  alert("CLICK " + action);
+alert(“CLICK “ + action);
 
-  const reqRef = window.firebaseFirestore.doc(
-    window.db,
-    "changeRequests",
-    requestId
-  );
-  const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
-  const req = reqSnap.data();
+try {
 
-  if(!req) return;
-
-  // ======================
-  // RIFIUTA
-  // ======================
-  if(action === "REJECT"){
-
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "REJECTED"
-    });
-
-    // notifica a chi ha chiesto
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "❌ Cambio turno rifiutato",
-        type: "error",
-        read: false,
-        createdAt: Date.now()
-      }
-    );
-
-    return;
-  }
-
-  // ======================
-  // ACCETTA
-  // ======================
-  if(action === "ACCEPT"){
-
-    await window.firebaseFirestore.updateDoc(reqRef, {
-      status: "ACCEPTED"
-    });
-
-    // 👉 scambia i turni nel tuo events
-    const eventA = savedEvents.find(e =>
-      e.employee === req.fromEmployee &&
-      e.date === req.fromDate &&
-      e.shift === req.shift
-    );
-
-    const eventB = savedEvents.find(e =>
-      e.employee === req.toEmployee &&
-      e.date === req.toDate &&
-      e.shift === req.shift
-    );
-
-    if(eventA && eventB){
-
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
-        { employee: req.toEmployee }
-      );
-
-      await window.firebaseFirestore.updateDoc(
-        window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
-        { employee: req.fromEmployee }
-      );
-    }
-
-    // notifica a entrambi
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.fromEmployee,
-        message: "✅ Cambio turno ACCETTATO",
-        type: "success",
-        read: false,
-        createdAt: Date.now()
-      }
-    );
-
-    await window.firebaseFirestore.addDoc(
-      window.firebaseFirestore.collection(window.db, "notifications"),
-      {
-        to: req.toEmployee,
-        message: "🔁 Cambio turno effettuato",
-        type: "success",
-        read: false,
-        createdAt: Date.now()
-      }
-    );
-  }
+const reqRef = window.firebaseFirestore.doc(
+  window.db,
+  "changeRequests",
+  requestId
+);
+const reqSnap =
+  await window.firebaseFirestore.getDoc(reqRef);
+alert("Documento letto");
+if(!reqSnap.exists()){
+  alert("Richiesta non trovata");
+  return;
 }
+const req = reqSnap.data();
+alert("Richiesta caricata");
+// ======================
+// RIFIUTA
+// ======================
+if(action === "REJECT"){
+  alert("Entrato in REJECT");
+  await window.firebaseFirestore.updateDoc(reqRef, {
+    status: "REJECTED"
+  });
+  alert("Stato aggiornato");
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(
+      window.db,
+      "notifications"
+    ),
+    {
+      to: req.fromEmployee,
+      message: "❌ Cambio turno rifiutato",
+      type: "error",
+      read: false,
+      createdAt: Date.now()
+    }
+  );
+  alert("Notifica inviata");
+  closeRequestActionPopup();
+  return;
+}
+// ======================
+// ACCETTA
+// ======================
+if(action === "ACCEPT"){
+  alert("Entrato in ACCEPT");
+  await window.firebaseFirestore.updateDoc(reqRef, {
+    status: "ACCEPTED"
+  });
+  alert("Stato aggiornato");
+  const eventA = savedEvents.find(e =>
+    e.employee === req.fromEmployee &&
+    e.date === req.fromDate &&
+    e.shift === req.shift
+  );
+  const eventB = savedEvents.find(e =>
+    e.employee === req.toEmployee &&
+    e.date === req.toDate &&
+    e.shift === req.shift
+  );
+  alert(
+    "EventA: " + (eventA ? "OK" : "NO") +
+    " | EventB: " + (eventB ? "OK" : "NO")
+  );
+  if(eventA && eventB){
+    await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        eventA.firebaseId
+      ),
+      {
+        employee: req.toEmployee
+      }
+    );
+    await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        eventB.firebaseId
+      ),
+      {
+        employee: req.fromEmployee
+      }
+    );
+    alert("Turni scambiati");
+  }
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(
+      window.db,
+      "notifications"
+    ),
+    {
+      to: req.fromEmployee,
+      message: "✅ Cambio turno ACCETTATO",
+      type: "success",
+      read: false,
+      createdAt: Date.now()
+    }
+  );
+  await window.firebaseFirestore.addDoc(
+    window.firebaseFirestore.collection(
+      window.db,
+      "notifications"
+    ),
+    {
+      to: req.toEmployee,
+      message: "🔁 Cambio turno effettuato",
+      type: "success",
+      read: false,
+      createdAt: Date.now()
+    }
+  );
+  alert("Fine procedura");
+  closeRequestActionPopup();
+}
+
+} catch(err){
+
+console.error(err);
+alert(
+  "ERRORE: " +
+  err.message
+);
+
+}
+
+};
