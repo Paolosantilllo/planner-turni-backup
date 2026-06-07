@@ -1896,7 +1896,7 @@ function loadRequests(){
 window.handleChangeRequest = async function(requestId, action, notifId){
 
   alert("CLICK " + action);
-
+alert("NOTIF ID = " + notifId);
   try {
 
     const reqRef = window.firebaseFirestore.doc(
