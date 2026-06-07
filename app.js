@@ -1268,8 +1268,7 @@ const requestRef = await window.firebaseFirestore.addDoc(
     toDate,
     shift,
 
-    status: "PENDING_EMPLOYEE",
-    step: 1,
+    status: "PENDING_ADMIN",,
 
     createdAt: Date.now()
   }
