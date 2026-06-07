@@ -1916,43 +1916,55 @@ window.handleChangeRequest = async function(requestId, action, notifId){
 
     const req = reqSnap.data();
 
+    // 🔒 SOLO ADMIN
+    if(window.currentUserRole !== "ADMIN"){
+      alert("Solo l'admin può decidere le richieste");
+      return;
+    }
+
     // ======================
-    // RIFIUTA
+    // ❌ REJECT ADMIN
     // ======================
     if(action === "REJECT"){
 
       await window.firebaseFirestore.updateDoc(reqRef, {
-        status: "REJECTED"
+        status: "REJECTED_ADMIN"
       });
 
+      // notifica a entrambi
       await window.firebaseFirestore.addDoc(
         window.firebaseFirestore.collection(window.db, "notifications"),
         {
           to: req.fromEmployee,
-          message: "❌ Cambio reperibilità rifiutato",
+          message: "❌ Admin ha rifiutato il cambio",
           type: "error",
           read: false,
           createdAt: Date.now()
         }
       );
 
-      if(notifId){
-        await window.firebaseFirestore.deleteDoc(
-          window.firebaseFirestore.doc(window.db, "notifications", notifId)
-        );
-      }
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
+        {
+          to: req.toEmployee,
+          message: "❌ Admin ha rifiutato il cambio",
+          type: "error",
+          read: false,
+          createdAt: Date.now()
+        }
+      );
 
       closeRequestActionPopup();
       return;
     }
 
     // ======================
-    // ACCETTA
+    // ✅ ACCEPT ADMIN
     // ======================
     if(action === "ACCEPT"){
 
       await window.firebaseFirestore.updateDoc(reqRef, {
-        status: "ACCEPTED"
+        status: "ACCEPTED_ADMIN"
       });
 
       const eventA = savedEvents.find(e =>
@@ -1980,11 +1992,12 @@ window.handleChangeRequest = async function(requestId, action, notifId){
         );
       }
 
+      // notifica entrambi
       await window.firebaseFirestore.addDoc(
         window.firebaseFirestore.collection(window.db, "notifications"),
         {
           to: req.fromEmployee,
-          message: "✅ Cambio reperibilità ACCETTATO",
+          message: "✅ Admin ha APPROVATO il cambio",
           type: "success",
           read: false,
           createdAt: Date.now()
@@ -1995,18 +2008,12 @@ window.handleChangeRequest = async function(requestId, action, notifId){
         window.firebaseFirestore.collection(window.db, "notifications"),
         {
           to: req.toEmployee,
-          message: "🔁 Cambio reperibilità effettuato",
+          message: "🔁 Admin ha APPROVATO il cambio",
           type: "success",
           read: false,
           createdAt: Date.now()
         }
       );
-
-      if(notifId){
-        await window.firebaseFirestore.deleteDoc(
-          window.firebaseFirestore.doc(window.db, "notifications", notifId)
-        );
-      }
 
       closeRequestActionPopup();
       return;
@@ -2016,9 +2023,7 @@ window.handleChangeRequest = async function(requestId, action, notifId){
     console.error(err);
     alert("ERRORE: " + err.message);
   }
-
 };
-
 // ======================
 // DROPDOWN DIPENDENTI
 // ======================
