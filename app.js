@@ -1915,6 +1915,7 @@ window.handleChangeRequest = async function(requestId, action, notifId){
     }
 
     const req = reqSnap.data();
+    alert("STATUS = " + req.status);
 
     // ======================
     // 👤 STEP 1: DIPENDENTE D (o B, C, ecc)
