@@ -1268,8 +1268,7 @@ const requestRef = await window.firebaseFirestore.addDoc(
     toDate,
     shift,
 
-    // richiesta in attesa dell'ADMIN
-    status: "PENDING_ADMIN",
+    status: "PENDING_EMPLOYEE",
 
     createdAt: Date.now()
   }
