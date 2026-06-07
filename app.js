@@ -1916,107 +1916,149 @@ window.handleChangeRequest = async function(requestId, action, notifId){
 
     const req = reqSnap.data();
 
-    // 🔒 SOLO ADMIN
-    if(window.currentUserRole !== "ADMIN"){
-      alert("Solo l'admin può decidere le richieste");
-      return;
-    }
-
     // ======================
-    // ❌ REJECT ADMIN
+    // 👤 STEP 1: DIPENDENTE D (o B, C, ecc)
     // ======================
-    if(action === "REJECT"){
 
-      await window.firebaseFirestore.updateDoc(reqRef, {
-        status: "REJECTED_ADMIN"
-      });
+    if(req.status === "PENDING_EMPLOYEE"){
 
-      // notifica a entrambi
-      await window.firebaseFirestore.addDoc(
-        window.firebaseFirestore.collection(window.db, "notifications"),
-        {
-          to: req.fromEmployee,
-          message: "❌ Admin ha rifiutato il cambio",
-          type: "error",
-          read: false,
-          createdAt: Date.now()
-        }
-      );
+      if(action === "REJECT"){
 
-      await window.firebaseFirestore.addDoc(
-        window.firebaseFirestore.collection(window.db, "notifications"),
-        {
-          to: req.toEmployee,
-          message: "❌ Admin ha rifiutato il cambio",
-          type: "error",
-          read: false,
-          createdAt: Date.now()
-        }
-      );
+        await window.firebaseFirestore.updateDoc(reqRef, {
+          status: "REJECTED_EMPLOYEE"
+        });
 
-      closeRequestActionPopup();
-      return;
-    }
-
-    // ======================
-    // ✅ ACCEPT ADMIN
-    // ======================
-    if(action === "ACCEPT"){
-
-      await window.firebaseFirestore.updateDoc(reqRef, {
-        status: "ACCEPTED_ADMIN"
-      });
-
-      const eventA = savedEvents.find(e =>
-        e.employee === req.fromEmployee &&
-        e.date === req.fromDate &&
-        e.shift === req.shift
-      );
-
-      const eventB = savedEvents.find(e =>
-        e.employee === req.toEmployee &&
-        e.date === req.toDate &&
-        e.shift === req.shift
-      );
-
-      if(eventA && eventB){
-
-        await window.firebaseFirestore.updateDoc(
-          window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
-          { employee: req.toEmployee }
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: req.fromEmployee,
+            message: "❌ Cambio rifiutato dal dipendente",
+            type: "error",
+            read: false,
+            createdAt: Date.now()
+          }
         );
 
-        await window.firebaseFirestore.updateDoc(
-          window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
-          { employee: req.fromEmployee }
-        );
+        closeRequestActionPopup();
+        return;
       }
 
-      // notifica entrambi
-      await window.firebaseFirestore.addDoc(
-        window.firebaseFirestore.collection(window.db, "notifications"),
-        {
-          to: req.fromEmployee,
-          message: "✅ Admin ha APPROVATO il cambio",
-          type: "success",
-          read: false,
-          createdAt: Date.now()
-        }
-      );
+      if(action === "ACCEPT"){
 
-      await window.firebaseFirestore.addDoc(
-        window.firebaseFirestore.collection(window.db, "notifications"),
-        {
-          to: req.toEmployee,
-          message: "🔁 Admin ha APPROVATO il cambio",
-          type: "success",
-          read: false,
-          createdAt: Date.now()
-        }
-      );
+        await window.firebaseFirestore.updateDoc(reqRef, {
+          status: "PENDING_ADMIN"
+        });
 
-      closeRequestActionPopup();
-      return;
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: "ADMIN",
+            message: "⚠️ Nuova richiesta da approvare",
+            type: "info",
+            read: false,
+            createdAt: Date.now()
+          }
+        );
+
+        closeRequestActionPopup();
+        return;
+      }
+    }
+
+    // ======================
+    // 👑 STEP 2: ADMIN DECISIONE FINALE
+    // ======================
+
+    if(window.currentUserRole === "ADMIN"){
+
+      if(action === "REJECT"){
+
+        await window.firebaseFirestore.updateDoc(reqRef, {
+          status: "REJECTED_ADMIN"
+        });
+
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: req.fromEmployee,
+            message: "❌ Admin ha rifiutato il cambio",
+            type: "error",
+            read: false,
+            createdAt: Date.now()
+          }
+        );
+
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: req.toEmployee,
+            message: "❌ Admin ha rifiutato il cambio",
+            type: "error",
+            read: false,
+            createdAt: Date.now()
+          }
+        );
+
+        closeRequestActionPopup();
+        return;
+      }
+
+      if(action === "ACCEPT"){
+
+        await window.firebaseFirestore.updateDoc(reqRef, {
+          status: "ACCEPTED_ADMIN"
+        });
+
+        const eventA = savedEvents.find(e =>
+          e.employee === req.fromEmployee &&
+          e.date === req.fromDate &&
+          e.shift === req.shift
+        );
+
+        const eventB = savedEvents.find(e =>
+          e.employee === req.toEmployee &&
+          e.date === req.toDate &&
+          e.shift === req.shift
+        );
+
+        if(eventA && eventB){
+
+          await window.firebaseFirestore.updateDoc(
+            window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
+            { employee: req.toEmployee }
+          );
+
+          await window.firebaseFirestore.updateDoc(
+            window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
+            { employee: req.fromEmployee }
+          );
+        }
+
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: req.fromEmployee,
+            message: "✅ Admin ha APPROVATO il cambio",
+            type: "success",
+            read: false,
+            createdAt: Date.now()
+          }
+        );
+
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.db, "notifications"),
+          {
+            to: req.toEmployee,
+            message: "🔁 Cambio approvato dall'admin",
+            type: "success",
+            read: false,
+            createdAt: Date.now()
+          }
+        );
+
+        closeRequestActionPopup();
+        return;
+      }
     }
 
   } catch(err){
