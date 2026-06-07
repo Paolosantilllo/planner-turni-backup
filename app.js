@@ -1895,7 +1895,7 @@ function loadRequests(){
 // ======================
 window.handleChangeRequest = async function(requestId, action, notifId){
 
-  
+  try {
 
     const reqRef = window.firebaseFirestore.doc(
       window.db,
@@ -1912,129 +1912,105 @@ window.handleChangeRequest = async function(requestId, action, notifId){
 
     const req = reqSnap.data();
 
-// ======================
-// RIFIUTA
-// ======================
-if(action === "REJECT"){
-
-  await window.firebaseFirestore.updateDoc(
-    reqRef,
-    {
-      status: "REJECTED"
-    }
-  );
-
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "notifications"),
-    {
-      to: req.fromEmployee,
-      message: "❌ Cambio reperibilità rifiutato",
-      type: "error",
-      read: false,
-      createdAt: Date.now()
-    }
-  );
-
-  closeRequestActionPopup();
-  return;
-}
-
-// ======================
-// ACCETTA
-// ======================
-if(action === "ACCEPT"){
-
-  await window.firebaseFirestore.updateDoc(
-    reqRef,
-    {
-      status: "ACCEPTED"
-    }
-  );
-
-  const eventA = savedEvents.find(e =>
-    e.employee === req.fromEmployee &&
-    e.date === req.fromDate &&
-    e.shift === req.shift
-  );
-
-  const eventB = savedEvents.find(e =>
-    e.employee === req.toEmployee &&
-    e.date === req.toDate &&
-    e.shift === req.shift
-  );
-
-  if(eventA && eventB){
-
-    await window.firebaseFirestore.updateDoc(
-      window.firebaseFirestore.doc(
-        window.db,
-        "events",
-        eventA.firebaseId
-      ),
-      {
-        employee: req.toEmployee
-      }
-    );
-
-    await window.firebaseFirestore.updateDoc(
-      window.firebaseFirestore.doc(
-        window.db,
-        "events",
-        eventB.firebaseId
-      ),
-      {
-        employee: req.fromEmployee
-      }
-    );
-
-  }
-
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "notifications"),
-    {
-      to: req.fromEmployee,
-      message: "✅ Cambio reperibilità ACCETTATO",
-      type: "success",
-      read: false,
-      createdAt: Date.now()
-    }
-  );
-
-  await window.firebaseFirestore.addDoc(
-    window.firebaseFirestore.collection(window.db, "notifications"),
-    {
-      to: req.toEmployee,
-      message: "🔁 Cambio reperibilità effettuato",
-      type: "success",
-      read: false,
-      createdAt: Date.now()
-    }
-  );
-
-  closeRequestActionPopup();
-  return;
-}
-
     // ======================
-    // 🔥 ELIMINA NOTIFICA ORIGINALE
+    // RIFIUTA
     // ======================
-    if(notifId){
+    if(action === "REJECT"){
 
-      await window.firebaseFirestore.deleteDoc(
-        window.firebaseFirestore.doc(
-          window.db,
-          "notifications",
-          notifId
-        )
+      await window.firebaseFirestore.updateDoc(reqRef, {
+        status: "REJECTED"
+      });
+
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
+        {
+          to: req.fromEmployee,
+          message: "❌ Cambio reperibilità rifiutato",
+          type: "error",
+          read: false,
+          createdAt: Date.now()
+        }
       );
 
+      if(notifId){
+        await window.firebaseFirestore.deleteDoc(
+          window.firebaseFirestore.doc(window.db, "notifications", notifId)
+        );
+      }
+
+      closeRequestActionPopup();
+      return;
+    }
+
+    // ======================
+    // ACCETTA
+    // ======================
+    if(action === "ACCEPT"){
+
+      await window.firebaseFirestore.updateDoc(reqRef, {
+        status: "ACCEPTED"
+      });
+
+      const eventA = savedEvents.find(e =>
+        e.employee === req.fromEmployee &&
+        e.date === req.fromDate &&
+        e.shift === req.shift
+      );
+
+      const eventB = savedEvents.find(e =>
+        e.employee === req.toEmployee &&
+        e.date === req.toDate &&
+        e.shift === req.shift
+      );
+
+      if(eventA && eventB){
+
+        await window.firebaseFirestore.updateDoc(
+          window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
+          { employee: req.toEmployee }
+        );
+
+        await window.firebaseFirestore.updateDoc(
+          window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
+          { employee: req.fromEmployee }
+        );
+      }
+
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
+        {
+          to: req.fromEmployee,
+          message: "✅ Cambio reperibilità ACCETTATO",
+          type: "success",
+          read: false,
+          createdAt: Date.now()
+        }
+      );
+
+      await window.firebaseFirestore.addDoc(
+        window.firebaseFirestore.collection(window.db, "notifications"),
+        {
+          to: req.toEmployee,
+          message: "🔁 Cambio reperibilità effettuato",
+          type: "success",
+          read: false,
+          createdAt: Date.now()
+        }
+      );
+
+      if(notifId){
+        await window.firebaseFirestore.deleteDoc(
+          window.firebaseFirestore.doc(window.db, "notifications", notifId)
+        );
+      }
+
+      closeRequestActionPopup();
+      return;
     }
 
   } catch(err){
-
     console.error(err);
     alert("ERRORE: " + err.message);
-
   }
 
 };
