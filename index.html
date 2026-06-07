@@ -316,24 +316,26 @@ margin:50px auto;
 
     <div id="requestDetails"></div>
 
-    <button
-      class="save-btn"
-      onclick="handleChangeRequest(
-        document.getElementById('requestActionPopup').dataset.requestId,
-        'ACCEPT'
-      )">
-      ✅ Accetta
-    </button>
+    
+  <button
+  class="save-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'ACCEPT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ✅ Accetta
+</button>
 
-    <button
-      class="delete-btn"
-      onclick="handleChangeRequest(
-        document.getElementById('requestActionPopup').dataset.requestId,
-        'REJECT'
-      )">
-      ❌ Rifiuta
-    </button>
-
+  <button
+  class="delete-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'REJECT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ❌ Rifiuta
+</button>
   </div>
 
 </div>
