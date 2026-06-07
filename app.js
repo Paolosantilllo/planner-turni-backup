@@ -803,8 +803,12 @@ window.closePopup = function () {
 // POPUP CAMBIO TURNO
 // ======================
 window.openChangePopup = function () {
+
   const popup = document.getElementById("changePopup");
   popup.style.display = "flex";
+
+  const currentUser = window.currentUser;
+  loadEmployeesDropdown(currentUser);
 
   loadChangeDays();
 }
@@ -2014,3 +2018,31 @@ window.handleChangeRequest = async function(requestId, action, notifId){
   }
 
 };
+
+// ======================
+// DROPDOWN DIPENDENTI
+// ======================
+function loadEmployeesDropdown(currentUser) {
+
+  const select = document.getElementById("changeTo");
+
+  const allEmployees = [
+    "Dipendente A",
+    "Dipendente B",
+    "Dipendente C",
+    "Dipendente D"
+  ];
+
+  select.innerHTML = "";
+
+  allEmployees.forEach(emp => {
+
+    if (emp === currentUser) return;
+
+    const option = document.createElement("option");
+    option.value = emp;
+    option.textContent = emp;
+
+    select.appendChild(option);
+  });
+}
