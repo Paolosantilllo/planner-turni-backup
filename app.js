@@ -246,15 +246,19 @@ function loadNotifications(){
         `;
 
         div.querySelector(".open-btn")
-        .addEventListener("click", () => {
+.addEventListener("click", () => {
 
-          window.openRequestFromNotification(
-            n.requestId,
-            n.id
-          );
+  if (!n.requestId) {
+    alert("Errore: requestId mancante nella notifica");
+    return;
+  }
 
-        });
+  window.openRequestFromNotification(
+    n.requestId,
+    n.id
+  );
 
+});
         list.appendChild(div);
 
       });
