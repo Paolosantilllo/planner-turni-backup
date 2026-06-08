@@ -2136,3 +2136,39 @@ function loadEmployeesDropdown(currentUser) {
     select.appendChild(option);
   });
 }
+async function migrateEmployeesInsideApp(){
+
+  const eventsRef =
+    window.firebaseFirestore.collection(window.db, "events");
+
+  const snapshot =
+    await window.firebaseFirestore.getDocs(eventsRef);
+
+  const map = {
+    "SANTILLO": "A",
+    "MANUNTA": "B",
+    "Dipendente C": "C",
+    "Dipendente D": "D"
+  };
+
+  snapshot.forEach(async (docSnap) => {
+
+    const data = docSnap.data();
+
+    const newId = map[data.employee];
+
+    if(!newId) return;
+
+    await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.doc(window.db, "events", docSnap.id),
+      {
+        employeeId: newId
+      }
+    );
+
+    console.log("✔ aggiornato:", data.employee, "→", newId);
+  });
+
+  console.log("🔥 MIGRAZIONE COMPLETATA");
+}
+window.migrateEmployeesInsideApp = migrateEmployeesInsideApp;
