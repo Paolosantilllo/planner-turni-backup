@@ -28,12 +28,12 @@ function getEmployeeFromEmail(email){
   const users = {
 
     "paolosantillo@yahoo.it": {
-      employee: "Dipendente A",
+      employee: "SANTILLO",
       role: "ADMIN"
     },
 
     "dipb.planner@gmail.com": {
-      employee: "Dipendente B",
+      employee: "MANUNTA",
       role: "USER"
     },
 
