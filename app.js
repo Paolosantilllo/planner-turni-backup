@@ -522,12 +522,12 @@ else{
     div.classList.add("dipendente-c");
   }
 
-  if(event.employee === "Dipendente B"){
-    div.classList.add("dipendente-b");
+  if(event.employee === "MANUNTA"){
+    div.classList.add("manunta");
   }
 
-  if(event.employee === "Dipendente A"){
-    div.classList.add("dipendente-a");
+  if(event.employee === "SANTILLO"){
+    div.classList.add("santillo");
   }
 
 }
@@ -540,12 +540,12 @@ else{
         div.classList.add("dipendente-c");
       }
 
-      if(event.employee === "Dipendente B"){
-        div.classList.add("dipendente-b");
+      if(event.employee === "MANUNTA"){
+        div.classList.add("manunta");
       }
 
-      if(event.employee === "Dipendente A"){
-        div.classList.add("dipendente-a");
+      if(event.employee === "SANTILLO"){
+        div.classList.add("manunta");
       }
 
 
@@ -1333,8 +1333,8 @@ const requestRef = await window.firebaseFirestore.addDoc(
 // EMAIL MAP
 // ======================
 const userEmails = {
-  "Dipendente A": "paolosantillo@yahoo.it",
-  "Dipendente B": "dipb.planner@gmail.com",
+  "SANTILLO": "paolosantillo@yahoo.it",
+  "MANUNTA": "dipb.planner@gmail.com",
   "Dipendente C": "dipc.planner@gmail.com",
   "Dipendente D": "dipd.planner@gmail.com"
 };
@@ -1539,8 +1539,8 @@ const cellH = 10;
 
     "Dipendente D",
     "Dipendente C",
-    "Dipendente B",
-    "Dipendente A"
+    "MANUNTA",
+    "SANTILLO"
 
   ];
 
@@ -2188,8 +2188,8 @@ function loadEmployeesDropdown(currentUser) {
   const select = document.getElementById("changeTo");
 
   const allEmployees = [
-    "Dipendente A",
-    "Dipendente B",
+    "SANTILLO",
+    "MANUNTA",
     "Dipendente C",
     "Dipendente D"
   ];
