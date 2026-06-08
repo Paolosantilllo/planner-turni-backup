@@ -1914,10 +1914,9 @@ window.handleChangeRequest = async function(requestId, action, notifId){
     }
 
     const req = reqSnap.data();
-    alert("STATUS = " + req.status);
 
     // ======================
-    // 👤 STEP 1: DIPENDENTE D (o B, C, ecc)
+    // 👤 STEP 1: DIPENDENTE
     // ======================
 
     if(req.status === "PENDING_EMPLOYEE"){
@@ -1938,6 +1937,16 @@ window.handleChangeRequest = async function(requestId, action, notifId){
             createdAt: Date.now()
           }
         );
+
+        if(notifId){
+          await window.firebaseFirestore.deleteDoc(
+            window.firebaseFirestore.doc(
+              window.db,
+              "notifications",
+              notifId
+            )
+          );
+        }
 
         closeRequestActionPopup();
         return;
@@ -1960,13 +1969,23 @@ window.handleChangeRequest = async function(requestId, action, notifId){
           }
         );
 
+        if(notifId){
+          await window.firebaseFirestore.deleteDoc(
+            window.firebaseFirestore.doc(
+              window.db,
+              "notifications",
+              notifId
+            )
+          );
+        }
+
         closeRequestActionPopup();
         return;
       }
     }
 
     // ======================
-    // 👑 STEP 2: ADMIN DECISIONE FINALE
+    // 👑 STEP 2: ADMIN
     // ======================
 
     if(window.currentUserRole === "ADMIN"){
@@ -1999,6 +2018,16 @@ window.handleChangeRequest = async function(requestId, action, notifId){
           }
         );
 
+        if(notifId){
+          await window.firebaseFirestore.deleteDoc(
+            window.firebaseFirestore.doc(
+              window.db,
+              "notifications",
+              notifId
+            )
+          );
+        }
+
         closeRequestActionPopup();
         return;
       }
@@ -2024,13 +2053,25 @@ window.handleChangeRequest = async function(requestId, action, notifId){
         if(eventA && eventB){
 
           await window.firebaseFirestore.updateDoc(
-            window.firebaseFirestore.doc(window.db, "events", eventA.firebaseId),
-            { employee: req.toEmployee }
+            window.firebaseFirestore.doc(
+              window.db,
+              "events",
+              eventA.firebaseId
+            ),
+            {
+              employee: req.toEmployee
+            }
           );
 
           await window.firebaseFirestore.updateDoc(
-            window.firebaseFirestore.doc(window.db, "events", eventB.firebaseId),
-            { employee: req.fromEmployee }
+            window.firebaseFirestore.doc(
+              window.db,
+              "events",
+              eventB.firebaseId
+            ),
+            {
+              employee: req.fromEmployee
+            }
           );
         }
 
@@ -2055,6 +2096,16 @@ window.handleChangeRequest = async function(requestId, action, notifId){
             createdAt: Date.now()
           }
         );
+
+        if(notifId){
+          await window.firebaseFirestore.deleteDoc(
+            window.firebaseFirestore.doc(
+              window.db,
+              "notifications",
+              notifId
+            )
+          );
+        }
 
         closeRequestActionPopup();
         return;
