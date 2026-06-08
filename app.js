@@ -85,12 +85,14 @@ onAuthStateChanged(window.auth, (user) => {
 
   CURRENT_USER = user.email;
 
-  window.CURRENT_EMPLOYEE = userData.employee;
-  window.IS_ADMIN = userData.role === "ADMIN";
+window.CURRENT_EMPLOYEE = userData.employee;
+window.currentUserRole = userData.role;
+window.IS_ADMIN = userData.role === "ADMIN";
 
-  console.log("Utente:", CURRENT_USER);
-  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-  console.log("Admin:", window.IS_ADMIN);
+console.log("Utente:", CURRENT_USER);
+console.log("Dipendente:", window.CURRENT_EMPLOYEE);
+console.log("Ruolo:", window.currentUserRole);
+console.log("Admin:", window.IS_ADMIN);
 
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
