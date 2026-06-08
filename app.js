@@ -617,16 +617,27 @@ window.loadChangeDays = function (){
 
 
   const fromEvents =
-    savedEvents.filter(ev =>
-      ev.employee === fromEmployee &&
-      ev.shift === selectedShift
-    );
+  savedEvents.filter(ev => (
 
-  const toEvents =
-    savedEvents.filter(ev =>
-      ev.employee === toEmployee &&
-      ev.shift === selectedShift
-    );
+    ev.employee === fromEmployee ||
+
+    (fromEmployee === "SANTILLO" && ev.employee === "Dipendente A") ||
+
+    (fromEmployee === "MANUNTA" && ev.employee === "Dipendente B")
+
+  ) && ev.shift === selectedShift);
+
+
+const toEvents =
+  savedEvents.filter(ev => (
+
+    ev.employee === toEmployee ||
+
+    (toEmployee === "SANTILLO" && ev.employee === "Dipendente A") ||
+
+    (toEmployee === "MANUNTA" && ev.employee === "Dipendente B")
+
+  ) && ev.shift === selectedShift);
 
   let selectedFrom = null;
   let selectedTo = null;
