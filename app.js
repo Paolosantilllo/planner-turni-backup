@@ -264,8 +264,10 @@ function loadNotifications(){
 }
 window.openRequestFromNotification = async function (requestId, notifId) {
 
-  const popup =
-    document.getElementById("requestActionPopup");
+  const popup = document.getElementById("requestActionPopup");
+
+popup.dataset.requestId = requestId;
+popup.dataset.notifId = notifId;
 
   if (!popup) return;
 
