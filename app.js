@@ -1879,13 +1879,20 @@ function loadRequests(){
             Stato: ${req.status}
           </div>
 
-          <button onclick="handleChangeRequest('${docSnap.id}','ACCEPT')">
-            Accetta
-          </button>
-
-          <button onclick="handleChangeRequest('${docSnap.id}','REJECT')">
-            Rifiuta
-          </button>
+          <button onclick="handleChangeRequest(
+  '${docSnap.id}',
+  'ACCEPT',
+  '${n.id}'
+)">
+  Accetta
+</button>
+<button onclick="handleChangeRequest(
+  '${docSnap.id}',
+  'REJECT',
+  '${n.id}'
+)">
+  Rifiuta
+</button>
         `;
 
         container.appendChild(div);
