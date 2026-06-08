@@ -266,65 +266,70 @@ window.openRequestFromNotification = async function (requestId, notifId) {
 
   const popup = document.getElementById("requestActionPopup");
 
-popup.dataset.requestId = requestId;
-popup.dataset.notifId = notifId;
-
   if (!popup) return;
 
-  const reqSnap =
-    await window.firebaseFirestore.getDoc(
+  try {
 
+    const reqSnap = await window.firebaseFirestore.getDoc(
       window.firebaseFirestore.doc(
         window.db,
         "changeRequests",
         requestId
       )
-
     );
 
-  if(!reqSnap.exists()){
+    if (!reqSnap.exists()) {
+      alert("Richiesta non trovata");
+      return;
+    }
 
-    alert("Richiesta non trovata");
-    return;
+    const req = reqSnap.data();
 
+    // ======================
+    // DETTAGLI
+    // ======================
+    document.getElementById("requestDetails").innerHTML = `
+      <div style="text-align:center;">
+
+        <strong>${req.fromEmployee}</strong>
+
+        <br><br>
+
+        (${req.shift})
+
+        <br><br>
+
+        <strong>
+          ${req.fromDate.split("-").reverse().join("/")}
+          →
+          ${req.toDate.split("-").reverse().join("/")}
+        </strong>
+
+      </div>
+    `;
+
+    // ======================
+    // NASCONDI LISTA NOTIFICHE
+    // ======================
+    const list = document.getElementById("requestsPopup");
+    if (list) list.style.display = "none";
+
+    // ======================
+    // APRI POPUP
+    // ======================
+    popup.style.display = "flex";
+
+    // ======================
+    // SALVA ID
+    // ======================
+    popup.dataset.requestId = requestId;
+    popup.dataset.notifId = notifId;
+
+  } catch (err) {
+    console.error(err);
+    alert("ERRORE: " + err.message);
   }
-
-  const req = reqSnap.data();
-
-  document.getElementById(
-    "requestDetails"
-  ).innerHTML = `
-
-    <div style="text-align:center;">
-
-      <strong>${req.fromEmployee}</strong>
-
-      <br><br>
-
-      (${req.shift})
-
-      <br><br>
-
-      <strong>
-        ${req.fromDate.split("-").reverse().join("/")}
-→
-${req.toDate.split("-").reverse().join("/")}
-      </strong>
-
-    </div>
-
-  `;
-
-  document.getElementById(
-    "requestsPopup"
-  ).style.display = "none";
-
-  popup.style.display = "flex";
-
-  popup.dataset.requestId = requestId;
-  popup.dataset.notifId = notifId;
 };
-
 window.closeRequestActionPopup = function () {
 
   const popup = document.getElementById("requestActionPopup");
