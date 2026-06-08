@@ -1527,7 +1527,7 @@ const cellH = 10;
 
     "Dipendente D",
     "Dipendente C",
-    "Dipendente B",
+    "MANUNTA",
     "SANTILLO"
 
   ];
@@ -2118,7 +2118,7 @@ function loadEmployeesDropdown(currentUser) {
 
   const allEmployees = [
     "SANTILLO",
-    "Dipendente B",
+    "MANUNTA",
     "Dipendente C",
     "Dipendente D"
   ];
