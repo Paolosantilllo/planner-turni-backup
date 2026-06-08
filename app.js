@@ -502,24 +502,6 @@ if(selectedEmployee !== "ALL"){
 }
 else{
 
-  if(event.employee === "Dipendente D"){
-    div.classList.add("dipendente-d");
-  }
-
-  if(event.employee === "Dipendente C"){
-    div.classList.add("dipendente-c");
-  }
-
-  if(event.employee === "Dipendente B"){
-    div.classList.add("dipendente-b");
-  }
-
-  if(event.employee === "SANTILLO"){
-    div.classList.add("dipendente-santillo");
-  }
-
-}
-
       if(event.employee === "Dipendente D"){
         div.classList.add("dipendente-d");
       }
@@ -532,11 +514,14 @@ else{
         div.classList.add("dipendente-b");
       }
 
-      if(event.employee === "SANTILLO"){
-        div.classList.add("dipendente-santillo");
-      }
+      if(
+  event.employee === "Dipendente A" ||
+  event.employee === "SANTILLO"
+){
+  div.classList.add("dipendente-santillo");
+  }
 
-
+}
 
       div.innerHTML = `
         <div class="event-shift">
