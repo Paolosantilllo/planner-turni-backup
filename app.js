@@ -1983,7 +1983,7 @@ window.handleChangeRequest = async function(requestId, action, notifId){
             message: "⚠️ Nuova richiesta da approvare",
             type: "info",
             read: false,
-            requestId: requestRef.id,
+            requestId: reqRef.id,
             createdAt: Date.now()
           }
         );
