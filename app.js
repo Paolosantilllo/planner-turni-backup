@@ -33,7 +33,7 @@ function getEmployeeFromEmail(email){
     },
 
     "dipb.planner@gmail.com": {
-      employee: "MANUNTA",
+      employee: "Dipendente B",
       role: "USER"
     },
 
@@ -522,8 +522,8 @@ else{
     div.classList.add("dipendente-c");
   }
 
-  if(event.employee === "MANUNTA"){
-    div.classList.add("manunta");
+  if(event.employee === "DIPENDENTE B"){
+    div.classList.add("dipendente-b");
   }
 
   if(event.employee === "SANTILLO"){
@@ -540,12 +540,12 @@ else{
         div.classList.add("dipendente-c");
       }
 
-      if(event.employee === "MANUNTA"){
-        div.classList.add("manunta");
+      if(event.employee === "DIPENDENTE B"){
+        div.classList.add("dipendente-b");
       }
 
       if(event.employee === "SANTILLO"){
-        div.classList.add("manunta");
+        div.classList.add("santillo");
       }
 
 
@@ -1334,7 +1334,7 @@ const requestRef = await window.firebaseFirestore.addDoc(
 // ======================
 const userEmails = {
   "SANTILLO": "paolosantillo@yahoo.it",
-  "MANUNTA": "dipb.planner@gmail.com",
+  "Dipendente B": "dipb.planner@gmail.com",
   "Dipendente C": "dipc.planner@gmail.com",
   "Dipendente D": "dipd.planner@gmail.com"
 };
@@ -1539,7 +1539,7 @@ const cellH = 10;
 
     "Dipendente D",
     "Dipendente C",
-    "MANUNTA",
+    "Dipendente B",
     "SANTILLO"
 
   ];
@@ -2189,7 +2189,7 @@ function loadEmployeesDropdown(currentUser) {
 
   const allEmployees = [
     "SANTILLO",
-    "MANUNTA",
+    "Dipendente B",
     "Dipendente C",
     "Dipendente D"
   ];
