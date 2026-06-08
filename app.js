@@ -462,7 +462,13 @@ const events =
 
         (
           selectedEmployee === "ALL" ||
-          e.employee === selectedEmployee
+
+          e.employee === selectedEmployee ||
+
+          (
+            selectedEmployee === "SANTILLO" &&
+            e.employee === "Dipendente A"
+          )
         )
 
       );
