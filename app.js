@@ -1932,7 +1932,12 @@ window.handleChangeRequest = async function(requestId, action, notifId){
     }
 
     const req = reqSnap.data();
-
+alert(
+  "requestId=" + requestId +
+  "\naction=" + action +
+  "\nstatus=" + req.status +
+  "\nrole=" + window.currentUserRole
+);
     // ======================
     // 👤 STEP 1: DIPENDENTE
     // ======================
