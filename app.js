@@ -515,7 +515,7 @@ else{
   }
 
   if(event.employee === "SANTILLO"){
-    div.classList.add("dipendente-a");
+    div.classList.add("dipendente-santillo");
   }
 
 }
@@ -533,7 +533,7 @@ else{
       }
 
       if(event.employee === "SANTILLO"){
-        div.classList.add("dipendente-a");
+        div.classList.add("dipendente-santillo");
       }
 
 
