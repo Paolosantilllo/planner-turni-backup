@@ -1,2209 +1,403 @@
-const calendar = document.getElementById("calendar");
-const monthTitle = document.getElementById("monthTitle");
-const popup = document.getElementById("popup");
-
-let currentDate = new Date();
-
-const monthNames = [
-  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
-  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
-];
-
-let savedEvents = [];
-let editingIndex = null;
-
-/* ======================
-   UTENTE LOGGATO
-====================== */
-let CURRENT_USER = null;
-
-console.log("APP JS CARICATO");
-console.log("AUTH =", window.auth);
-console.log("DB =", window.db);
-/* ======================
-   MAPPA UTENTI
-====================== */
-function getEmployeeFromEmail(email){
-
-  const users = {
-
-    "paolosantillo@yahoo.it": {
-      employee: "Dipendente A",
-      role: "ADMIN"
-    },
-
-    "dipb.planner@gmail.com": {
-      employee: "Dipendente B",
-      role: "USER"
-    },
-
-    "dipc.planner@gmail.com": {
-      employee: "Dipendente C",
-      role: "USER"
-    },
-
-    "dipd.planner@gmail.com": {
-      employee: "Dipendente D",
-      role: "USER"
-    }
-
-  };
-
-  return users[email] || null;
-}
-
-/* ======================
-   FIREBASE AUTH
-====================== */
-
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-const appDiv = document.querySelector(".app");
-
-// 🔥 NASCONDE SUBITO L'APP (evita flash)
-if (appDiv) appDiv.style.display = "none";
-
-onAuthStateChanged(window.auth, (user) => {
+Index.html  backup 08/06/26
 
-  // 🔴 NON LOGGATO
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  // 🟢 LOGGATO
-  const userData = getEmployeeFromEmail(user.email);
-
-  // ❌ UTENTE NON AUTORIZZATO
-  if (!userData) {
-    alert("Utente non autorizzato");
-    window.auth.signOut();
-    window.location.href = "login.html";
-    return;
-  }
-
-  CURRENT_USER = user.email;
-
-window.CURRENT_EMPLOYEE = userData.employee;
-window.currentUserRole = userData.role;
-window.IS_ADMIN = userData.role === "ADMIN";
+<!DOCTYPE html>
+<html lang="it">
 
-console.log("Utente:", CURRENT_USER);
-console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-console.log("Ruolo:", window.currentUserRole);
-console.log("Admin:", window.IS_ADMIN);
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planner REP</title>
 
-  // 🔥 MOSTRA APP SOLO DOPO LOGIN
-  if (appDiv) {
-    appDiv.style.display = "block";
-  }
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  // 🔥 BLOCCO UI PER USER (NON ADMIN)
-  if (!window.IS_ADMIN) {
+<body>
 
-    const addBtn = document.querySelector(".add-btn");
-    if (addBtn) addBtn.style.display = "none";
+<div id="loginBox" style="
+display:none;
+flex-direction:column;
+gap:10px;
+padding:20px;
+max-width:300px;
+margin:50px auto;
+">
 
-    const monthly = document.querySelector(".monthly-send");
-    if (monthly) monthly.style.display = "none";
-  }
+  <h2>Login</h2>
 
-  // 🔥 AVVIO APP
-  loadEventsFromFirebase();
-  loadRequests();
-  loadNotifications();
+  <input
+    type="email"
+    id="email"
+    placeholder="Email"
+  >
 
-});
-window.logout = function () {
-  window.auth.signOut().then(() => {
-    window.location.href = "login.html";
-  });
-};
-document
-  .getElementById("employeeFilter")
-  .addEventListener("change", () => {
-    renderCalendar();
-  });
-/* ======================
-   FIREBASE LOAD
-====================== */
-function loadEventsFromFirebase(){
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+  >
 
-  console.log("Firebase avviato");
+  <button onclick="doLogin()">
+    Accedi
+  </button>
 
-  if (!window.firebaseFirestore || !window.db) return;
+</div>
 
-  window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(window.db, "events"),
-    (snapshot) => {
+<div class="app" id="app" style="display:none;">
+  <div class="app-logo">
+  </div>
 
-      savedEvents = [];
+  <!-- HEADER -->
+<header class="topbar">
 
-      snapshot.forEach(docSnap => {
+  <button class="month-btn" onclick="prevMonth()">◀</button>
 
-        const data = docSnap.data();
+  <h1 id="monthTitle"></h1>
 
-        savedEvents.push({
-          firebaseId: docSnap.id,
-          employee: data.employee,
-          date: data.date,
-          shift: data.shift
-        });
+  <button class="month-btn" onclick="nextMonth()">▶</button>
 
-      });
+  <button class="logout-btn" onclick="logout()">Logout</button>
 
-      console.log(
-        "Eventi caricati:",
-        savedEvents.length
-      );
+</header>
 
-      renderCalendar();
+  <!-- INVIO MENSILE -->
+  <div class="monthly-send">
+    <button class="monthly-send-btn" onclick="generatePDF()">
+      📤 Invia Mensile
+    </button>
+  </div>
 
-    }
-  );
-}
+  <!-- TOOLBAR -->
+  <div class="toolbar">
 
+    <select id="employeeFilter" onchange="renderCalendar()">
+      <option value="ALL">Tutti</option>
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
-/* ======================
-   FIREBASE NOTIFICATIONS
-====================== */
-function loadNotifications(){
+    <div class="toolbar-actions">
 
-  if(
-    !window.firebaseFirestore ||
-    !window.db ||
-    !CURRENT_USER
-  ) return;
+      <button class="change-btn" onclick="openChangePopup()">🔁</button>
 
-  window.firebaseFirestore.onSnapshot(
-    window.firebaseFirestore.collection(
-      window.db,
-      "notifications"
-    ),
+ <button class="notify-btn" onclick="openRequestsPopup()">
+  🔔 <span id="notifBadge"></span>
+</button>
 
-    (snapshot) => {
+      <button class="add-btn" onclick="openPopup()">+</button>
 
-      const myNotifications = [];
+    </div>
 
-      snapshot.forEach(docSnap => {
+  </div>
 
-        const data = docSnap.data();
+  <!-- GIORNI -->
+  <div class="weekdays">
+    <div>L</div>
+    <div>Ma</div>
+    <div>Me</div>
+    <div>G</div>
+    <div>V</div>
+    <div class="saturday">S</div>
+    <div class="sunday">D</div>
+  </div>
 
-        if(data.to !== CURRENT_USER) return;
-        if(data.read === true) return;
+  <!-- CALENDARIO -->
+  <div class="calendar" id="calendar"></div>
 
-        myNotifications.push({
-          id: docSnap.id,
-          message: data.message,
-          type: data.type,
-          requestId: data.requestId,
-          createdAt: data.createdAt
-        });
+</div>
 
-      });
+<!-- POPUP REPERIBILITÀ -->
+<div class="popup" id="popup">
 
-      myNotifications.sort(
-        (a,b) => b.createdAt - a.createdAt
-      );
+  <div class="popup-content">
 
-      window.myNotifications = myNotifications;
+    <div class="popup-header">
+      <h2>Nuovo Inserimento</h2>
 
-      // BADGE
-      const badge =
-        document.getElementById("notifBadge");
+      <button class="close-btn" onclick="closePopup()">
+        ✕
+      </button>
+    </div>
 
-      if(badge){
+    <label>Dipendente</label>
 
-        badge.innerText =
-          myNotifications.length > 0
-            ? myNotifications.length
-            : "";
+    <select id="employee">
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
-      }
+    <label>Data Inizio</label>
+    <input type="date" id="startDate">
 
-      // LISTA
-      const list =
-        document.getElementById("requestsList");
+    <label>Data Fine</label>
+    <input type="date" id="endDate">
 
-      if(!list) return;
+    <label>Reperibilità</label>
 
-      list.innerHTML = "";
+    <select id="shift">
+      <option></option>
+      <option>REP</option>
+      <option>FREP</option>
+      <option>CFI</option>
+      <option>CFI/REP</option>
+      <option>LIC</option>
+      <option>REC</option>
+    </select>
 
-      myNotifications.forEach(n => {
+    <button class="save-btn" onclick="saveShift()">
+      Salva
+    </button>
 
-        const div =
-          document.createElement("div");
+    <button class="delete-btn" onclick="deleteShift()">
+      Elimina
+    </button>
 
-        div.classList.add("request-item");
+  </div>
 
-        div.innerHTML = `
-          <div>
-            🔔 ${n.message}
-          </div>
+</div>
 
-          <button class="open-btn">
-            Apri richiesta
-          </button>
-        `;
+<!-- POPUP CAMBIO REPERIBILITÀ -->
+<div class="popup" id="changePopup">
 
-        div.querySelector(".open-btn")
-.addEventListener("click", () => {
+  <div class="popup-content">
 
-  if (!n.requestId) {
-    alert("Errore: requestId mancante nella notifica");
-    return;
-  }
+    <div class="popup-header">
 
-  window.openRequestFromNotification(
-    n.requestId,
-    n.id
-  );
+      <h2>Richiesta cambio reperibilità</h2>
 
-});
-        list.appendChild(div);
+      <button class="close-btn" onclick="closeChangePopup()">
+        ✕
+      </button>
 
-      });
+    </div>
 
-    }
-  );
-}
-window.openRequestFromNotification = async function (requestId, notifId) {
+  <input type="hidden" id="changeFrom">
 
-  const popup = document.getElementById("requestActionPopup");
+    <!-- CAMBIO CON -->
+<label>Cambio con</label>
 
-  if (!popup) return;
+<select id="changeTo" onchange="loadChangeDays()">
+</select>
 
-  try {
+    <!-- REPERIBILITÀ -->
+    <label>Reperibilità</label>
 
-    const reqSnap = await window.firebaseFirestore.getDoc(
-      window.firebaseFirestore.doc(
-        window.db,
-        "changeRequests",
-        requestId
-      )
-    );
+    <select id="changeShift" onchange="loadChangeDays()">
+      <option>REP</option>
+      <option>FREP</option>
+      <option>CFI</option>
+      <option>CFI/REP</option>
+      <option>LIC</option>
+      <option>REC</option>
+    </select>
 
-    if (!reqSnap.exists()) {
-      alert("Richiesta non trovata");
-      return;
-    }
+    <!-- GIORNO DA DARE -->
+    <label>Giorno da dare</label>
 
-    const req = reqSnap.data();
+    <div
+      class="calendar-selector"
+      onclick="toggleMiniCalendar('from')"
+    >
+      <span id="selectedFromText">
+        Seleziona giorno
+      </span>
+    </div>
 
-    // ======================
-    // DETTAGLI
-    // ======================
-    document.getElementById("requestDetails").innerHTML = `
-      <div style="text-align:center;">
+    <div
+      id="changeCalendarFrom"
+      class="mini-calendar hidden-calendar"
+    >
 
-        <strong>${req.fromEmployee}</strong>
-
-        <br><br>
-
-        (${req.shift})
-
-        <br><br>
-
-        <strong>
-          ${req.fromDate.split("-").reverse().join("/")}
-          →
-          ${req.toDate.split("-").reverse().join("/")}
-        </strong>
-
+      <div class="mini-weekdays">
+        <div>L</div>
+        <div>Ma</div>
+        <div>Me</div>
+        <div>G</div>
+        <div>V</div>
+        <div>S</div>
+        <div>D</div>
       </div>
-    `;
 
-    // ======================
-    // NASCONDI LISTA NOTIFICHE
-    // ======================
-    const list = document.getElementById("requestsPopup");
-    if (list) list.style.display = "none";
+      <div
+        class="mini-calendar-grid"
+        id="miniGridFrom"
+      ></div>
 
-    // ======================
-    // APRI POPUP
-    // ======================
-    popup.style.display = "flex";
+    </div>
 
-    // ======================
-    // SALVA ID
-    // ======================
-    popup.dataset.requestId = requestId;
-    popup.dataset.notifId = notifId;
+    <!-- GIORNO DA RICEVERE -->
+    <label>Giorno da ricevere</label>
 
-  } catch (err) {
-    console.error(err);
-    alert("ERRORE: " + err.message);
-  }
-};
-window.closeRequestActionPopup = function () {
+    <div
+      class="calendar-selector"
+      onclick="toggleMiniCalendar('to')"
+    >
+      <span id="selectedToText">
+        Seleziona giorno
+      </span>
+    </div>
 
-  const popup = document.getElementById("requestActionPopup");
+    <div
+      id="changeCalendarTo"
+      class="mini-calendar hidden-calendar"
+    >
 
-  if (popup) {
-    popup.style.display = "none";
-  }
+      <div class="mini-weekdays">
+        <div>L</div>
+        <div>Ma</div>
+        <div>Me</div>
+        <div>G</div>
+        <div>V</div>
+        <div>S</div>
+        <div>D</div>
+      </div>
 
-  // riapri lista notifiche
-  document.getElementById("requestsPopup").style.display = "flex";
-};
-// ======================
-// CALENDAR
-// ======================
-function renderCalendar(){
+      <div
+        class="mini-calendar-grid"
+        id="miniGridTo"
+      ></div>
 
-  console.log("renderCalendar eseguita");
+    </div>
 
-  calendar.innerHTML = "";
+    <!-- INVIA -->
+    <button
+      class="save-btn"
+      onclick="sendChangeRequest()"
+    >
+      Invia Richiesta
+    </button>
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  </div>
 
-  monthTitle.innerText =
-    monthNames[month] + " " + year;
+</div>
+<!-- POPUP RICHIESTE -->
+<div class="popup" id="requestsPopup">
 
-  const firstDay =
-    new Date(year, month, 1).getDay();
+  <div class="popup-content">
 
-  const daysInMonth =
-    new Date(year, month + 1, 0).getDate();
+    <div class="popup-header">
 
-  let startDay = firstDay - 1;
+      <h2>Notifiche Cambio Reperibilità</h2>
 
-  if(startDay < 0){
-    startDay = 6;
-  }
+      <button class="close-btn" onclick="closeRequestsPopup()">
+        ✕
+      </button>
 
+    </div>
 
+    <div id="requestsList"></div>
 
-  // CELLE VUOTE
-  for(let i=0;i<startDay;i++){
+  </div>
 
-    const empty =
-      document.createElement("div");
+</div>
+<!-- POPUP AZIONE RICHIESTA -->
+<div id="requestActionPopup" class="popup" style="display:none;">
 
-    empty.classList.add("empty-day");
+  <div class="popup-content">
 
-    calendar.appendChild(empty);
-  }
+    <div class="popup-header">
 
+      <h2>Gestione richiesta</h2>
 
+      <button
+        class="close-btn"
+        onclick="closeRequestActionPopup()">
+        ✕
+      </button>
 
-  // GIORNI
-  for(let day=1; day<=daysInMonth; day++){
+    </div>
 
-    const dayBox =
-      document.createElement("div");
+    <div id="requestDetails"></div>
 
-    dayBox.classList.add("day");
-
-
-
-    const formatted =
-      `${year}-${
-        String(month + 1).padStart(2,"0")
-      }-${
-        String(day).padStart(2,"0")
-      }`;
-
-// FESTIVI ITALIANI
-const holidays = [
-  "1-1",
-  "6-1",
-  "25-4",
-  "1-5",
-  "2-6",
-  "15-8",
-  "1-11",
-  "8-12",
-  "25-12",
-  "26-12"
-];
-
-const currentDay =
-  new Date(year, month, day);
-
-const isSunday =
-  currentDay.getDay() === 0;
-
-const isHoliday =
-  holidays.includes(
-    `${day}-${month + 1}`
-  );
-
-if(isSunday || isHoliday){
-
-  dayBox.classList.add("holiday-day");
-
-}
-
-    // CLICK GIORNO
-  dayBox.addEventListener("click", () => {
-
-  if (!window.IS_ADMIN) return;
-
-  editingIndex = null;
-  openPopup();
-
-  document.getElementById("startDate").value = formatted;
-  document.getElementById("endDate").value = formatted;
-});
-
-
-    // NUMERO
-    const num =
-      document.createElement("div");
-
-    num.classList.add("day-number");
-
-    num.innerText = day;
-
-    dayBox.appendChild(num);
-
-
-
-    // EVENTI
-    const selectedEmployee =
-      document.getElementById("employeeFilter").value;
-
-
-const events =
-      savedEvents.filter(e =>
-
-        e.date === formatted &&
-
-        (
-          selectedEmployee === "ALL" ||
-          e.employee === selectedEmployee
-        )
-
-      );
-
-
-
-    events.forEach(event => {
-
-      const div =
-        document.createElement("div");
-
-      div.classList.add("event");
-
-if(selectedEmployee !== "ALL"){
-
-  if(
-    event.shift === "REC" ||
-    event.shift === "LIC"
-  ){
-    div.classList.add("shift-yellow");
-  }
-
-  if(
-    event.shift === "CFI" ||
-    event.shift === "CFI/REP"
-  ){
-    div.classList.add("shift-green");
-  }
-
-  if(
-    event.shift === "REP" ||
-    event.shift === "FREP"
-  ){
-    div.classList.add("shift-pink");
-  }
-
-}
-else{
-
-  if(event.employee === "Dipendente D"){
-    div.classList.add("dipendente-d");
-  }
-
-  if(event.employee === "Dipendente C"){
-    div.classList.add("dipendente-c");
-  }
-
-  if(event.employee === "DIPENDENTE B"){
-    div.classList.add("dipendente-b");
-  }
-
-  if(event.employee === "DIPENDENTE A"){
-    div.classList.add("dipendente-a");
-  }
-
-}
-
-      if(event.employee === "Dipendente D"){
-        div.classList.add("dipendente-d");
-      }
-
-      if(event.employee === "Dipendente C"){
-        div.classList.add("dipendente-c");
-      }
-
-      if(event.employee === "DIPENDENTE B"){
-        div.classList.add("dipendente-b");
-      }
-
-      if(event.employee === "DIPENDENTE A"){
-        div.classList.add("dipendente-a");
-      }
-
-
-
-      div.innerHTML = `
-        <div class="event-shift">
-          ${event.shift}
-        </div>
-      `;
-
-
-
-      // MODIFICA
-      div.addEventListener("click", (e) => {
-
-  e.stopPropagation();
-
-  // 🔴 BLOCCO USER
-  if (!window.IS_ADMIN) return;
-
-  editingIndex = savedEvents.indexOf(event);
-
-  document.getElementById("employee").value =
-    event.employee;
-
-  document.getElementById("startDate").value =
-    event.date;
-
-  document.getElementById("endDate").value =
-    event.date;
-
-  document.getElementById("shift").value =
-    event.shift;
-
-  openPopup();
-});
-
-      dayBox.appendChild(div);
-
-    });
-
-
-
-    calendar.appendChild(dayBox);
-  }
-}
-
-
-
-// ======================
-// CAMBIO TURNO
-// ======================
-window.loadChangeDays = function (){
-
- const fromEmployee =
-  window.CURRENT_EMPLOYEE;
-
-  const toEmployee =
-    document.getElementById("changeTo").value;
-
-  const selectedShift =
-    document.getElementById("changeShift").value;
-
-  const calFrom =
-    document.getElementById("miniGridFrom");
-
-  const calTo =
-    document.getElementById("miniGridTo");
-
-  calFrom.innerHTML = "";
-  calTo.innerHTML = "";
-
-  const year =
-    currentDate.getFullYear();
-
-  const month =
-    currentDate.getMonth();
-
-  const daysInMonth =
-    new Date(year, month + 1, 0).getDate();
-
-
-  const fromEvents =
-    savedEvents.filter(ev =>
-      ev.employee === fromEmployee &&
-      ev.shift === selectedShift
-    );
-
-  const toEvents =
-    savedEvents.filter(ev =>
-      ev.employee === toEmployee &&
-      ev.shift === selectedShift
-    );
-
-  let selectedFrom = null;
-  let selectedTo = null;
-
-
-  function buildCalendar(container, events, isFrom){
-
-    container.innerHTML = "";
-
-
-
-    const firstDay =
-      new Date(year, month, 1).getDay();
-
-    let startDay = firstDay - 1;
-
-    if(startDay < 0){
-      startDay = 6;
-    }
-
-
-
-    // CELLE VUOTE
-    for(let i=0;i<startDay;i++){
-
-      const empty =
-        document.createElement("div");
-
-      empty.classList.add("mini-day");
-      empty.classList.add("disabled");
-
-      container.appendChild(empty);
-    }
-
-
-
-    // GIORNI
-    for(let d=1; d<=daysInMonth; d++){
-
-      const iso =
-        `${year}-${
-          String(month + 1).padStart(2,"0")
-        }-${
-          String(d).padStart(2,"0")
-        }`;
-
-
-
-      const div =
-        document.createElement("div");
-
-      div.classList.add("mini-day");
-
-      div.innerText = d;
-
-
-
-      const hasEvent =
-        events.some(ev => ev.date === iso);
-
-
-
-      if(!hasEvent){
-
-        div.classList.add("disabled");
-      }
-
-
-
-      div.addEventListener("click",()=>{
-
-        if(!hasEvent) return;
-
-
-
-        container
-          .querySelectorAll(".mini-day")
-          .forEach(el => {
-
-            el.classList.remove("selected");
-
-          });
-
-
-
-        div.classList.add("selected");
-
-
-
-        if(isFrom){
-
-          selectedFrom = iso;
-
-          document.getElementById(
-            "selectedFromText"
-          ).innerText = iso;
-
-
-
-          document
-            .getElementById("changeCalendarFrom")
-            .classList.add("hidden-calendar");
-
-        }else{
-
-          selectedTo = iso;
-
-          document.getElementById(
-            "selectedToText"
-          ).innerText = iso;
-
-
-
-          document
-            .getElementById("changeCalendarTo")
-            .classList.add("hidden-calendar");
-        }
-
-      });
-
-
-
-      container.appendChild(div);
-    }
-  }
-
-
-
-  // COSTRUISCI CALENDARI
-  buildCalendar(
-    calFrom,
-    fromEvents,
-    true
-  );
-
-
-
-  buildCalendar(
-    calTo,
-    toEvents,
-    false
-  );
-
-
-
-  // SALVA DATE
-  window._changeData = {
-
-    getFromDate: ()=>selectedFrom,
-
-    getToDate: ()=>selectedTo
-
-  };
-
-}
-
-// ======================
-// TOGGLE MINI CALENDARI
-// ======================
-window.toggleMiniCalendar = function(type){
-
-  const fromCal =
-    document.getElementById(
-      "changeCalendarFrom"
-    );
-
-  const toCal =
-    document.getElementById(
-      "changeCalendarTo"
-    );
-
-
-
-  if(type === "from"){
-
-    fromCal.classList.toggle(
-      "hidden-calendar"
-    );
-
-    toCal.classList.add(
-      "hidden-calendar"
-    );
-  }
-
-
-
-  if(type === "to"){
-
-    toCal.classList.toggle(
-      "hidden-calendar"
-    );
-
-    fromCal.classList.add(
-      "hidden-calendar"
-    );
-  }
-}
-
-
-
-// ======================
-// POPUP
-// ======================
-window.openPopup = function () {
-
-  popup.style.display = "flex";
-}
-
-window.closePopup = function () {
-
-  popup.style.display = "none";
-}
-
-
-
-// ======================
-// POPUP CAMBIO TURNO
-// ======================
-window.openChangePopup = function () {
-
-  const popup = document.getElementById("changePopup");
-  popup.style.display = "flex";
-
-  const currentUser = window.currentUser;
-  loadEmployeesDropdown(currentUser);
-
-  loadChangeDays();
-}
-
-window.closeChangePopup = function () {
-  document.getElementById("changePopup").style.display = "none";
-}
-
-
-// ======================
-// POPUP RICHIESTE CAMBIO
-// ======================
-window.openRequestsPopup = function () {
-  document.getElementById("requestsPopup").style.display = "flex";
-
-  // opzionale ma consigliato: ricarica sempre le richieste quando apri
-  // loadRequests();
-}
-
-window.closeRequestsPopup = function () {
-  document.getElementById("requestsPopup").style.display = "none";
-}
-
-// ======================
-// SAVE SHIFT
-// ======================
-window.saveShift = async function () {
-
-  const employee =
-    document.getElementById("employee").value;
-
-  const start =
-    document.getElementById("startDate").value;
-
-  const end =
-    document.getElementById("endDate").value;
-
-  const shift =
-    document.getElementById("shift").value;
-
-
-
-  if(!start || !end){
-
-    alert("Seleziona le date");
-
-    return;
-  }
-
-
-
-  const startParts = start.split("-");
-  const endParts = end.split("-");
-
-
-
-  let current = new Date(
-
-    Number(startParts[0]),
-    Number(startParts[1]) - 1,
-    Number(startParts[2])
-
-  );
-
-
-
-  let stop = new Date(
-
-    Number(endParts[0]),
-    Number(endParts[1]) - 1,
-    Number(endParts[2])
-
-  );
-
-
-
-  while(current <= stop){
-
-    const y =
-      current.getFullYear();
-
-    const m =
-      String(
-        current.getMonth() + 1
-      ).padStart(2,"0");
-
-    const d =
-      String(
-        current.getDate()
-      ).padStart(2,"0");
-
-
-
-    const date =
-  `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
-
-
-    const day =
-      current.getDay();
-
-    const month =
-      current.getMonth()+1;
-
-    const dayNumber =
-      current.getDate();
-
-
-
-    // FESTIVI
-    const holidays = [
-      "1-1",
-      "6-1",
-      "25-4",
-      "1-5",
-      "2-6",
-      "15-8",
-      "1-11",
-      "8-12",
-      "25-12",
-      "26-12"
-    ];
-
-
-
-    const isHoliday =
-      holidays.includes(
-        `${dayNumber}-${month}`
-      );
-
-
-
-    const isSunday =
-      day === 0;
-
-
-
-    const isFestive =
-      isSunday || isHoliday;
-
-
-
-    // ======================
-    // BLOCCO REP
-    // ======================
-    if(shift === "REP"){
-
-     if(isFestive){
-
-        alert(
-          "REP non consentito la domenica"
-        );
-
-        return;
-      }
-
-
-
-      const repCount =
-        savedEvents.filter(ev => {
-
-          const parts =
-            ev.date.split("-");
-
-          const evMonth =
-            Number(parts[1]) - 1;
-
-          const evYear =
-            Number(parts[0]);
-
-
-
-          return (
-
-            ev.employee === employee &&
-            ev.shift === "REP" &&
-
-            evMonth === current.getMonth() &&
-            evYear === current.getFullYear()
-
-          );
-
-        }).length;
-
-
-
-      if(repCount >= 6){
-
-        alert(
-          "Massimo 6 REP al mese"
-        );
-
-        return;
-      }
-    }
-
-
-
-    // ======================
-    // BLOCCO FREP
-    // ======================
-    if(shift === "FREP"){
-
-      if(!isFestive){
-
-        alert(
-          "FREP solo domenica e festivi"
-        );
-
-        return;
-      }
-
-
-
-      const frepCount =
-        savedEvents.filter(ev => {
-
-          const parts =
-            ev.date.split("-");
-
-          const evMonth =
-            Number(parts[1]) - 1;
-
-          const evYear =
-            Number(parts[0]);
-
-
-
-          return (
-
-            ev.employee === employee &&
-            ev.shift === "FREP" &&
-
-            evMonth === current.getMonth() &&
-            evYear === current.getFullYear()
-
-          );
-
-        }).length;
-
-
-
-      if(frepCount >= 2){
-
-        alert(
-          "Massimo 2 FREP al mese"
-        );
-
-        return;
-      }
-    }
-    // ======================
-    // UN SOLO TURNO AL GIORNO
-    // ======================
-    const alreadyExists =
-  savedEvents.some(ev =>
-
-    ev.employee === employee &&
-    ev.date === date &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
-
-  );
-
-
-    if(alreadyExists){
-
-      alert(
-        "Questo dipendente ha già un turno in questo giorno"
-      );
-
-      return;
-    }
-
-
-    // ======================
-    // UN SOLO REP AL GIORNO
-    // ======================
-    if(shift === "REP"){
-
-      const repExists =
-  savedEvents.some(ev =>
-
-    ev.date === date &&
-    ev.shift === "REP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
-
-  );
-
-
-
-      if(repExists){
-
-        alert(
-          "Esiste già un REP in questo giorno"
-        );
-
-        return;
-      }
-    }
-
-
-
-    // ======================
-    // UN SOLO FREP AL GIORNO
-    // ======================
-    if(shift === "FREP"){
-
-      const frepExists =
-  savedEvents.some(ev =>
-
-    ev.date === date &&
-    ev.shift === "FREP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
-
-  );
-
-
-
-      if(frepExists){
-
-        alert(
-          "Esiste già un FREP in questo giorno"
-        );
-
-        return;
-      }
-    }
-
-   // ======================
-// SALVA / MODIFICA
-// ======================
-if(editingIndex !== null){
-
-  const oldEvent =
-    savedEvents[editingIndex];
-
-  await window.firebaseFirestore.updateDoc(
-
-    window.firebaseFirestore.doc(
-      window.db,
-      "events",
-      oldEvent.firebaseId
-    ),
-
-    {
-      employee,
-      date,
-      shift
-    }
-
-  );
-
-}else{
-
-  await window.firebaseFirestore.addDoc(
-
-    window.firebaseFirestore.collection(
-      window.db,
-      "events"
-    ),
-
-    {
-      employee,
-      date,
-      shift
-    }
-
-  );
-
-}
-
-
-    current.setDate(
-      current.getDate()+1
-    );
-  }
-
-
-
-  closePopup();
-}
-
-
-
-// ======================
-// DELETE SHIFT
-// ======================
-window.deleteShift = async function (){
-
-  if(editingIndex === null)
-    return;
-
-
-
-  const ev =
-    savedEvents[editingIndex];
-
-
-
-  if(ev.firebaseId){
-
-    await window.firebaseFirestore.deleteDoc(
-
-      window.firebaseFirestore.doc(
-        window.db,
-        "events",
-        ev.firebaseId
-      )
-
-    );
-  }
-
-
-
-  closePopup();
-}
-
-
-
-// ======================
-// CAMBIO TURNO
-// ======================
-window.sendChangeRequest = async function () {
-
-  const fromEmployee = window.CURRENT_EMPLOYEE;
-  const toEmployee = document.getElementById("changeTo").value;
-  const shift = document.getElementById("changeShift").value;
-
-  const fromDate = window._changeData.getFromDate();
-  const toDate = window._changeData.getToDate();
-
-  if (!fromDate || !toDate) {
-    alert("Seleziona entrambe le date");
-    return;
-  }
-
-// ======================
-// CREA REQUEST
-// ======================
-const requestRef = await window.firebaseFirestore.addDoc(
-  window.firebaseFirestore.collection(window.db, "changeRequests"),
-  {
-    fromEmployee,
-    toEmployee,
-    fromDate,
-    toDate,
-    shift,
-
-    status: "PENDING_EMPLOYEE",
-
-    createdAt: Date.now()
-  }
-);
-
-// ======================
-// EMAIL MAP
-// ======================
-const userEmails = {
-  "DIPENDENTE A": "paolosantillo@yahoo.it",
-  "Dipendente B": "dipb.planner@gmail.com",
-  "Dipendente C": "dipc.planner@gmail.com",
-  "Dipendente D": "dipd.planner@gmail.com"
-};
-
-// ======================
-// NOTIFICA DESTINATARIO
-// ======================
-await window.firebaseFirestore.addDoc(
-  window.firebaseFirestore.collection(window.db, "notifications"),
-  {
-    to: userEmails[toEmployee],
-    message: `Richiesta cambio da ${fromEmployee}`,
-    type: "CHANGE_REQUEST",
-    requestId: requestRef.id,
-    read: false,
-    createdAt: Date.now()
-  }
-);
-
-alert("Richiesta inviata");
-closeChangePopup();
-};
-// ======================
-// NAV
-// ======================
-window.nextMonth = function () {
-
-  currentDate.setMonth(
-    currentDate.getMonth()+1
-  );
-
-  renderCalendar();
-}
-window.prevMonth = function () {
-
-  currentDate.setMonth(
-    currentDate.getMonth()-1
-  );
-
-  renderCalendar();
-}
-
-
-// ======================
-// GENERA PDF
-// ======================
-window.generatePDF = async function () {
-
-
-
-
-
-  // ======================
-  // CONTROLLO COPERTURA
-  // ======================
-
-  const year =
-    currentDate.getFullYear();
-
-  const month =
-    currentDate.getMonth();
-
-  const daysCheck =
-    new Date(
-      year,
-      month + 1,
-      0
-    ).getDate();
-
-
-
-  // FESTIVI
-  const holidays = [
-    "1-1",
-    "6-1",
-    "25-4",
-    "1-5",
-    "2-6",
-    "15-8",
-    "1-11",
-    "8-12",
-    "25-12",
-    "26-12"
-  ];
-
-
-
-  let missingMessages = [];
-
-
-
-  // TUTTE LE CELLE
-
-
-
-
-  for(let d=1; d<=daysCheck; d++){
-
-    const date =
-      `${year}-${
-        String(month + 1).padStart(2,"0")
-      }-${
-        String(d).padStart(2,"0")
-      }`;
-
-
-
-    // CONTROLLO COPERTURA
-    const hasCoverage =
-      savedEvents.some(ev =>
-
-        ev.date === date &&
-
-        (
-          ev.shift === "REP" ||
-          ev.shift === "FREP" ||
-          ev.shift === "CFI/REP"
-        )
-
-      );
-
-
-
-    // GIORNO SCOPERTO
-    if(!hasCoverage){
-
-      missingMessages.push(
-        `${d} → nessuna reperibilità`
-      );  
-    }
-  }
-
-
-
-  // AVVISO
-  if(missingMessages.length > 0){
-
-    const proceed = confirm(
-
-      "ATTENZIONE\n\n" +
-
-      missingMessages.join("\n") +
-
-      "\n\nVuoi inviare comunque il mensile?"
-
-    );
-
-
-
-    // ANNULLA
-    if(!proceed){
-
-      return;
-    }
-  }
-
-
-
-  const { jsPDF } = window.jspdf;
-  const pdf =
-    new jsPDF(
-      "landscape",
-      "mm",
-      "a4"
-    );
-
-
-
-  // TITOLO
-  pdf.setFontSize(16);
-
-  pdf.text(
-
-    `Reperibilità Specialisti PLF - ${
-      monthNames[currentDate.getMonth()]
-    } ${
-      currentDate.getFullYear()
-    }`,
-
-    148,
-
-    15,
-
-    { align:"center" }
-
-  );
-
-
-
-  // DIMENSIONI
-  const startX = 15;
-  const startY = 28;
-
-  const nameW = 30;
-  const cellW = 7;
-const headerH = 6;
-const cellH = 10;
-
-
-
-  const employees = [
-
-    "Dipendente D",
-    "Dipendente C",
-    "Dipendente B",
-    "DIPENDENTE A"
-
-  ];
-
-
-
-  const daysInMonth =
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth()+1,
-      0
-    ).getDate();
-
-
-
-  // HEADER GIORNI
-for(let d=1; d<=daysInMonth; d++){
-
-  const x =
-    startX + nameW + ((d-1)*cellW);
-
-  const current =
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      d
-    );
-
-  const dayWeek =
-    current.getDay();
-
-let dayLetter = "";
-
-// LUN-MAR-MER-GIO-VEN-SAB-DOM
-if(dayWeek === 1) dayLetter = "L";
-if(dayWeek === 2) dayLetter = "Ma";
-if(dayWeek === 3) dayLetter = "Me";
-if(dayWeek === 4) dayLetter = "G";
-if(dayWeek === 5) dayLetter = "V";
-if(dayWeek === 6) dayLetter = "S";
-if(dayWeek === 0) dayLetter = "D";
-
-
-  // ======================
-// COLORE HEADER GIORNI
-// ======================
-
-// FESTIVI ITALIANI
-const holidays = [
-  "1-1",
-  "6-1",
-  "25-4",
-  "1-5",
-  "2-6",
-  "15-8",
-  "1-11",
-  "8-12",
-  "25-12",
-  "26-12"
-];
-
-const isHoliday =
-  holidays.includes(
-    `${d}-${currentDate.getMonth() + 1}`
-  );
-
-// SABATO
-if(dayWeek === 6){
-
-  pdf.setFillColor(
-    247,
-    178,
-    103
-  );
-
-// DOMENICA O FESTIVO
-}else if(dayWeek === 0 || isHoliday){
-
-  pdf.setFillColor(
-    255,
-    107,
-    107
-  );
-
-// GIORNI NORMALI
-}else{
-
-  pdf.setFillColor(
-    255,
-    255,
-    255
-  );
-}
-
-
-// CELLA HEADER
-pdf.rect(
-  x,
-  startY,
-  cellW,
-  headerH,
-  "FD"
-);
-
-// LINEA DIVISORIA
-pdf.line(
-  x,
-  startY + 3,
-  x + cellW,
-  startY + 3
-);
-
-// TESTO NERO
-pdf.setTextColor(0,0,0);
-
-
-
-// LETTERA GIORNO
-pdf.setFontSize(5);
-
-pdf.text(
-  dayLetter,
-  x + 2,
-  startY + 2.2
-);
-
-
-
-// NUMERO GIORNO
-pdf.setFontSize(7);
-
-pdf.text(
-  String(d),
-  x + 1.6,
-  startY + 5.2
-);
-}
-
-
-
-  // RIGHE DIPENDENTI
-  employees.forEach((emp,row)=>{
-
- const y =
-  startY + headerH + (row*cellH);
-
-
-    // NOME
-    pdf.setFillColor(255,255,255);
-
-    pdf.rect(
-      startX,
-      y,
-      nameW,
-      cellH,
-      "FD"
-    );
-
-    pdf.setFontSize(7);
-
-    pdf.text(
-      emp,
-      startX + 2,
-      y + 6
-    );
-
-
-
-    // GIORNI
-    for(let d=1; d<=daysInMonth; d++){
-
-      const x =
-        startX + nameW + ((d-1)*cellW);
-
-
-
-      const date =
-        `${currentDate.getFullYear()}-${
-          String(
-            currentDate.getMonth()+1
-          ).padStart(2,"0")
-        }-${
-          String(d).padStart(2,"0")
-        }`;
-
-
-
-      const ev =
-        savedEvents.find(e =>
-
-          e.employee === emp &&
-          e.date === date
-
-        );
-
-
-
-     // ======================
-// CONTROLLO COPERTURA
-// ======================
-
-const hasCoverage =
-  savedEvents.some(e =>
-
-    e.date === date &&
-
-    (
-      e.shift === "REP" ||
-      e.shift === "FREP" ||
-      e.shift === "CFI/REP"
-    )
-
-  );
-
-
-
-// GIORNO SCOPERTO
-if(!hasCoverage){
-
-  // VIOLA
-  pdf.setFillColor(
-    178,
-    102,
-    255
-  );
-
-}
-
-else if(ev){
-
-  // REP
-  if(ev.shift === "REP"){
-
-    pdf.setFillColor(
-      231,
-      193,
-      181
-    );
-
-  }
-
-  // FREP
-  else if(ev.shift === "FREP"){
-
-    pdf.setFillColor(
-      216,
-      176,
-      163
-    );
-
-  }
-
-  // CFI
-  else if(ev.shift === "CFI"){
-
-    pdf.setFillColor(
-      159,
-      190,
-      114
-    );
-
-  }
-
-  // CFI/REP
-  else if(ev.shift === "CFI/REP"){
-
-    pdf.setFillColor(
-      183,
-      207,
-      138
-    );
-
-  }
-
-  // LIC / REC
-  else if(
-    ev.shift === "LIC" ||
-    ev.shift === "REC"
-  ){
-
-    pdf.setFillColor(
-      232,
-      199,
-      107
-    );
-
-  }
-
-  else{
-
-    pdf.setFillColor(
-      240,
-      240,
-      240
-    );
-  }
-
-}else{
-
-  pdf.setFillColor(
-    255,
-    255,
-    255
-  );
-}
-
-      // CELLA
-      pdf.rect(
-        x,
-        y,
-        cellW,
-        cellH,
-        "FD"
-      );
-
-
-
-      // TESTO
-      if(ev){
-
-        pdf.setFontSize(5);
-
-        pdf.text(
-          ev.shift,
-          x + 0.8,
-          y + 6
-        );
-      }
-    }
-  });
-
-
-
-  // DOWNLOAD
-  pdf.save(
-
-    `Reperibilita_${
-      monthNames[currentDate.getMonth()]
-    }_${
-      currentDate.getFullYear()
-    }.pdf`
-
-  );
-}
-// ======================
-// LOAD REQUESTS
-// ======================
-function loadRequests(){
-
-  if(
-    !window.firebaseFirestore ||
-    !window.db
-  ) return;
-
-  window.firebaseFirestore.onSnapshot(
-
-    window.firebaseFirestore.collection(
-      window.db,
-      "changeRequests"
-    ),
-
-    (snapshot) => {
-
-      const container =
-        document.getElementById("requestsList");
-
-      if(!container) return;
-
-      container.innerHTML = "";
-
-      snapshot.forEach(docSnap => {
-
-        const req = docSnap.data();
-
-        const div =
-          document.createElement("div");
-
-        div.classList.add("request-item");
-
-        div.innerHTML = `
-          <div>
-            ${req.fromEmployee}
-            ➜
-            ${req.toEmployee}
-            <br>
-            ${req.fromDate}
-            ⇄
-            ${req.toDate}
-            <br>
-            Stato: ${req.status}
-          </div>
-
-          <button onclick="handleChangeRequest(
-  '${docSnap.id}',
-  'ACCEPT',
-  '${n.id}'
-)">
-  Accetta
+    
+  <button
+  class="save-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'ACCEPT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ✅ Accetta
 </button>
-<button onclick="handleChangeRequest(
-  '${docSnap.id}',
-  'REJECT',
-  '${n.id}'
-)">
-  Rifiuta
+
+  <button
+  class="delete-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'REJECT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ❌ Rifiuta
 </button>
-        `;
+  </div>
 
-        container.appendChild(div);
+</div>
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-      });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    }
-  );
-}
-// ======================
-// ACCETTA / RIFIUTA CAMBIO
-// ======================
-window.handleChangeRequest = async function(requestId, action, notifId){
+<!-- FIREBASE -->
+<script type="module">
 
-  try {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
-    const reqRef = window.firebaseFirestore.doc(
-      window.db,
-      "changeRequests",
-      requestId
-    );
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+  getDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-    const reqSnap = await window.firebaseFirestore.getDoc(reqRef);
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-    if(!reqSnap.exists()){
-      alert("Richiesta non trovata");
-      return;
-    }
+const firebaseConfig = {
 
-    const req = reqSnap.data();
+  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
 
-    // ======================
-    // 👤 STEP 1: DIPENDENTE
-    // ======================
+  authDomain: "calendario-rep.firebaseapp.com",
 
-    if(req.status === "PENDING_EMPLOYEE"){
+  projectId: "calendario-rep",
 
-      if(action === "REJECT"){
+  storageBucket: "calendario-rep.firebasestorage.app",
 
-        await window.firebaseFirestore.updateDoc(reqRef, {
-          status: "REJECTED_EMPLOYEE"
-        });
+  messagingSenderId: "1067128179274",
 
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: req.fromEmployee,
-            message: "❌ Cambio rifiutato dal dipendente",
-            type: "error",
-            read: false,
-            createdAt: Date.now()
-          }
-        );
-
-        if(notifId){
-          await window.firebaseFirestore.deleteDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "notifications",
-              notifId
-            )
-          );
-        }
-
-        closeRequestActionPopup();
-        return;
-      }
-
-      if(action === "ACCEPT"){
-
-        await window.firebaseFirestore.updateDoc(reqRef, {
-          status: "PENDING_ADMIN"
-        });
-
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: "paolosantillo@yahoo.it",
-            message: "⚠️ Nuova richiesta da approvare",
-            type: "info",
-            read: false,
-            requestId: reqRef.id,
-            createdAt: Date.now()
-          }
-        );
-
-        if(notifId){
-          await window.firebaseFirestore.deleteDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "notifications",
-              notifId
-            )
-          );
-        }
-
-        closeRequestActionPopup();
-        return;
-      }
-    }
-
-    // ======================
-    // 👑 STEP 2: ADMIN
-    // ======================
-
-    if(window.currentUserRole === "ADMIN"){
-
-      if(action === "REJECT"){
-
-        await window.firebaseFirestore.updateDoc(reqRef, {
-          status: "REJECTED_ADMIN"
-        });
-
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: req.fromEmployee,
-            message: "❌ Admin ha rifiutato il cambio",
-            type: "error",
-            read: false,
-            createdAt: Date.now()
-          }
-        );
-
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: req.toEmployee,
-            message: "❌ Admin ha rifiutato il cambio",
-            type: "error",
-            read: false,
-            createdAt: Date.now()
-          }
-        );
-
-        if(notifId){
-          await window.firebaseFirestore.deleteDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "notifications",
-              notifId
-            )
-          );
-        }
-
-        closeRequestActionPopup();
-        return;
-      }
-
-      if(action === "ACCEPT"){
-
-        await window.firebaseFirestore.updateDoc(reqRef, {
-          status: "ACCEPTED_ADMIN"
-        });
-
-        const eventA = savedEvents.find(e =>
-          e.employee === req.fromEmployee &&
-          e.date === req.fromDate &&
-          e.shift === req.shift
-        );
-
-        const eventB = savedEvents.find(e =>
-          e.employee === req.toEmployee &&
-          e.date === req.toDate &&
-          e.shift === req.shift
-        );
-
-        if(eventA && eventB){
-
-          await window.firebaseFirestore.updateDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "events",
-              eventA.firebaseId
-            ),
-            {
-              employee: req.toEmployee
-            }
-          );
-
-          await window.firebaseFirestore.updateDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "events",
-              eventB.firebaseId
-            ),
-            {
-              employee: req.fromEmployee
-            }
-          );
-        }
-
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: req.fromEmployee,
-            message: "✅ Admin ha APPROVATO il cambio",
-            type: "success",
-            read: false,
-            createdAt: Date.now()
-          }
-        );
-
-        await window.firebaseFirestore.addDoc(
-          window.firebaseFirestore.collection(window.db, "notifications"),
-          {
-            to: req.toEmployee,
-            message: "🔁 Cambio approvato dall'admin",
-            type: "success",
-            read: false,
-            createdAt: Date.now()
-          }
-        );
-
-        if(notifId){
-          await window.firebaseFirestore.deleteDoc(
-            window.firebaseFirestore.doc(
-              window.db,
-              "notifications",
-              notifId
-            )
-          );
-        }
-
-        closeRequestActionPopup();
-        return;
-      }
-    }
-
-  } catch(err){
-    console.error(err);
-    alert("ERRORE: " + err.message);
-  }
+  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
-// ======================
-// DROPDOWN DIPENDENTI
-// ======================
-function loadEmployeesDropdown(currentUser) {
 
-  const select = document.getElementById("changeTo");
+const app = initializeApp(firebaseConfig);
 
-  const allEmployees = [
-    "DIPENDENTE A",
-    "Dipendente B",
-    "Dipendente C",
-    "Dipendente D"
-  ];
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  select.innerHTML = "";
+window.db = db;
+window.auth = auth;
 
-  allEmployees.forEach(emp => {
+window.firebaseFirestore = {
+  collection,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+  doc,
+  getDoc
+};
 
-    if (emp === currentUser) return;
+</script>
 
-    const option = document.createElement("option");
-    option.value = emp;
-    option.textContent = emp;
+<script type="module" src="app.js"></script>
 
-    select.appendChild(option);
-  });
-}
+</body>
+</html>
