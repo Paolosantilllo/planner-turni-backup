@@ -1961,7 +1961,7 @@ window.handleChangeRequest = async function(requestId, action, notifId){
         await window.firebaseFirestore.addDoc(
           window.firebaseFirestore.collection(window.db, "notifications"),
           {
-            to: "Dipendente A",
+            to: "paolosantillo@yahoo.it",
             message: "⚠️ Nuova richiesta da approvare",
             type: "info",
             read: false,
