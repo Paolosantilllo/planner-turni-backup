@@ -29,7 +29,7 @@ function getEmployeeFromEmail(email){
   const users = {
 
     "paolosantillo@yahoo.it": {
-      employee: "Dipendente A",
+      employee: "SANTILLO",
       role: "ADMIN"
     },
 
@@ -514,7 +514,7 @@ else{
     div.classList.add("dipendente-b");
   }
 
-  if(event.employee === "Dipendente A"){
+  if(event.employee === "SANTILLO"){
     div.classList.add("dipendente-a");
   }
 
@@ -532,7 +532,7 @@ else{
         div.classList.add("dipendente-b");
       }
 
-      if(event.employee === "Dipendente A"){
+      if(event.employee === "SANTILLO"){
         div.classList.add("dipendente-a");
       }
 
@@ -1321,7 +1321,7 @@ const requestRef = await window.firebaseFirestore.addDoc(
 // EMAIL MAP
 // ======================
 const userEmails = {
-  "Dipendente A": "paolosantillo@yahoo.it",
+  "SANTILLO": "paolosantillo@yahoo.it",
   "Dipendente B": "dipb.planner@gmail.com",
   "Dipendente C": "dipc.planner@gmail.com",
   "Dipendente D": "dipd.planner@gmail.com"
@@ -1528,7 +1528,7 @@ const cellH = 10;
     "Dipendente D",
     "Dipendente C",
     "Dipendente B",
-    "Dipendente A"
+    "SANTILLO"
 
   ];
 
@@ -2117,7 +2117,7 @@ function loadEmployeesDropdown(currentUser) {
   const select = document.getElementById("changeTo");
 
   const allEmployees = [
-    "Dipendente A",
+    "SANTILLO",
     "Dipendente B",
     "Dipendente C",
     "Dipendente D"
