@@ -464,11 +464,17 @@ const events =
           selectedEmployee === "ALL" ||
 
           e.employee === selectedEmployee ||
+(
+  selectedEmployee === "SANTILLO" &&
+  e.employee === "Dipendente A"
+)
 
-          (
-            selectedEmployee === "SANTILLO" &&
-            e.employee === "Dipendente A"
-          )
+||
+
+(
+  selectedEmployee === "MANUNTA" &&
+  e.employee === "Dipendente B"
+)
         )
 
       );
@@ -516,9 +522,12 @@ else{
         div.classList.add("dipendente-c");
       }
 
-      if(event.employee === "Dipendente B"){
-        div.classList.add("dipendente-b");
-      }
+      if(
+  event.employee === "Dipendente B" ||
+  event.employee === "MANUNTA"
+){
+  div.classList.add("dipendente-b");
+}
 
       if(
   event.employee === "Dipendente A" ||
