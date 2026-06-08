@@ -476,7 +476,49 @@ const events =
 
       div.classList.add("event");
 
+if(selectedEmployee !== "ALL"){
 
+  if(
+    event.shift === "REC" ||
+    event.shift === "LIC"
+  ){
+    div.classList.add("shift-yellow");
+  }
+
+  if(
+    event.shift === "CFI" ||
+    event.shift === "CFI/REP"
+  ){
+    div.classList.add("shift-green");
+  }
+
+  if(
+    event.shift === "REP" ||
+    event.shift === "FREP"
+  ){
+    div.classList.add("shift-pink");
+  }
+
+}
+else{
+
+  if(event.employee === "Dipendente D"){
+    div.classList.add("dipendente-d");
+  }
+
+  if(event.employee === "Dipendente C"){
+    div.classList.add("dipendente-c");
+  }
+
+  if(event.employee === "Dipendente B"){
+    div.classList.add("dipendente-b");
+  }
+
+  if(event.employee === "Dipendente A"){
+    div.classList.add("dipendente-a");
+  }
+
+}
 
       if(event.employee === "Dipendente D"){
         div.classList.add("dipendente-d");
