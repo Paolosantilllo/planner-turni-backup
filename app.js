@@ -98,18 +98,29 @@ onAuthStateChanged(window.auth, async (user) => {
   // 👇 TOKEN NOTIFICHE
   try {
 
-    const token = await getToken(window.messaging, {
-      vapidKey: "LA_TUA_VAPID_KEY"
-    });
+  const token = await getToken(window.messaging, {
+    vapidKey: "LA_TUA_VAPID_KEY"
+  });
 
-    console.log("TOKEN DISPOSITIVO:", token);
+  console.log("TOKEN DISPOSITIVO:", token);
 
-    // 🔥 QUI POTRAI SALVARLO DOPO (STEP SUCCESSIVO)
-    // await saveTokenToFirestore(token);
+  // 🔥 SALVA SU FIRESTORE
+  await window.firebaseFirestore.setDoc(
+    window.firebaseFirestore.doc(window.db, "users", user.email),
+    {
+      email: user.email,
+      employee: userData.employee,
+      role: userData.role,
+      token: token
+    },
+    { merge: true } // 👈 IMPORTANTISSIMO
+  );
 
-  } catch (err) {
-    console.error("Errore token:", err);
-  }
+  console.log("✔ Token salvato su Firestore");
+
+} catch (err) {
+  console.error("Errore token:", err);
+}
 
 });
 // ======================
