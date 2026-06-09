@@ -1021,31 +1021,25 @@ window.saveShift = async function () {
 
 
       const repCount =
-        savedEvents.filter(ev => {
+  savedEvents.filter(ev => {
 
-          const parts =
-            ev.date.split("-");
+    const isSameEmployee =
+      ev.employee === employee ||
+      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+      (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-          const evMonth =
-            Number(parts[1]) - 1;
+    const parts = ev.date.split("-");
+    const evMonth = Number(parts[1]) - 1;
+    const evYear = Number(parts[0]);
 
-          const evYear =
-            Number(parts[0]);
+    return (
+      isSameEmployee &&
+      ev.shift === "REP" &&
+      evMonth === current.getMonth() &&
+      evYear === current.getFullYear()
+    );
 
-
-
-          return (
-
-            ev.employee === employee &&
-            ev.shift === "REP" &&
-
-            evMonth === current.getMonth() &&
-            evYear === current.getFullYear()
-
-          );
-
-        }).length;
-
+  }).length;
 
 
       if(repCount >= 6){
@@ -1077,30 +1071,25 @@ window.saveShift = async function () {
 
 
       const frepCount =
-        savedEvents.filter(ev => {
+  savedEvents.filter(ev => {
 
-          const parts =
-            ev.date.split("-");
+    const isSameEmployee =
+      ev.employee === employee ||
+      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+      (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-          const evMonth =
-            Number(parts[1]) - 1;
+    const parts = ev.date.split("-");
+    const evMonth = Number(parts[1]) - 1;
+    const evYear = Number(parts[0]);
 
-          const evYear =
-            Number(parts[0]);
+    return (
+      isSameEmployee &&
+      ev.shift === "FREP" &&
+      evMonth === current.getMonth() &&
+      evYear === current.getFullYear()
+    );
 
-
-
-          return (
-
-            ev.employee === employee &&
-            ev.shift === "FREP" &&
-
-            evMonth === current.getMonth() &&
-            evYear === current.getFullYear()
-
-          );
-
-        }).length;
+  }).length;
 
 
 
