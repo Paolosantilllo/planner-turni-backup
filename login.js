@@ -40,14 +40,9 @@ window.login = async function(){
 
   try{
 
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    await signInWithEmailAndPassword(auth, email, password);
 
-    window.location.href =
-      "index.html";
+window.location.replace("index.html");
 
   }catch(error){
 
