@@ -121,24 +121,18 @@ onAuthStateChanged(window.auth, async (user) => {
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
   console.log("Admin:", window.IS_ADMIN);
 
+  // 🔥 NASCONDI LOGIN OVERLAY (se esiste nella stessa pagina)
+  const loginContainer = document.querySelector(".login-container");
+  if (loginContainer) {
+    loginContainer.style.display = "none";
+  }
 
- // 🔥 NASCONDI LOGIN BOX (CORRETTO)
-const loginContainer = document.querySelector(".login-container");
-
-if (loginContainer) {
-  loginContainer.style.display = "none";
-}
-
-
-  // 🔥 MOSTRA APP SOLO DOPO LOGIN
+  // 🔥 MOSTRA APP
   if (appDiv) {
     appDiv.style.display = "block";
   }
 
-});
-
-
-  // 🔥 TOKEN NOTIFICHE
+  // 🔥 TOKEN NOTIFICHE (SOLO DOPO LOGIN)
   try {
 
     const token = await getToken(window.messaging, {
@@ -147,15 +141,15 @@ if (loginContainer) {
 
     console.log("TOKEN:", token);
 
-    // ⚠️ FIX IMPORTANTE: NON setDoc → usa updateDoc del tuo HTML
-    await window.firebaseFirestore.updateDoc(
+    await window.firebaseFirestore.setDoc(
       window.firebaseFirestore.doc(window.db, "users", user.email),
       {
         email: user.email,
         employee: userData.employee,
         role: userData.role,
         token: token
-      }
+      },
+      { merge: true }
     );
 
     console.log("✔ Token salvato su Firestore");
