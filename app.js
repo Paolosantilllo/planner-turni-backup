@@ -68,7 +68,7 @@ const appDiv = document.querySelector(".app");
 // 🔥 NASCONDE SUBITO L'APP (evita flash)
 if (appDiv) appDiv.style.display = "none";
 
-onAuthStateChanged(window.auth, (user) => {
+onAuthStateChanged(window.auth, async (user) => {
 
   // 🔴 NON LOGGATO
   if (!user) {
@@ -88,24 +88,28 @@ onAuthStateChanged(window.auth, (user) => {
   }
 
   CURRENT_USER = user.email;
-
   window.CURRENT_EMPLOYEE = userData.employee;
   window.IS_ADMIN = userData.role === "ADMIN";
 
- console.log("Utente:", CURRENT_USER);
-console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-console.log("Admin:", window.IS_ADMIN);
+  console.log("Utente:", CURRENT_USER);
+  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
+  console.log("Admin:", window.IS_ADMIN);
 
-// 👇 TOKEN NOTIFICHE
-getToken(messaging, {
-  vapidKey: "LA_TUA_VAPID_KEY"
-}).then((token) => {
+  // 👇 TOKEN NOTIFICHE
+  try {
 
-  console.log("TOKEN DISPOSITIVO:", token);
+    const token = await getToken(window.messaging, {
+      vapidKey: "LA_TUA_VAPID_KEY"
+    });
 
-}).catch((err) => {
-  console.error("Errore token:", err);
-});
+    console.log("TOKEN DISPOSITIVO:", token);
+
+    // 🔥 QUI POTRAI SALVARLO DOPO (STEP SUCCESSIVO)
+    // await saveTokenToFirestore(token);
+
+  } catch (err) {
+    console.error("Errore token:", err);
+  }
 
 });
 // ======================
