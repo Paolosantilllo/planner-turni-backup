@@ -89,9 +89,20 @@ onAuthStateChanged(window.auth, (user) => {
   window.CURRENT_EMPLOYEE = userData.employee;
   window.IS_ADMIN = userData.role === "ADMIN";
 
-  console.log("Utente:", CURRENT_USER);
-  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-  console.log("Admin:", window.IS_ADMIN);
+ console.log("Utente:", CURRENT_USER);
+console.log("Dipendente:", window.CURRENT_EMPLOYEE);
+console.log("Admin:", window.IS_ADMIN);
+
+// 👇 QUI INCOLLI IL TOKEN
+getToken(messaging, {
+  vapidKey: "LA_TUA_VAPID_KEY"
+}).then((token) => {
+
+  console.log("TOKEN DISPOSITIVO:", token);
+
+}).catch((err) => {
+  console.error("Errore token:", err);
+});
 // ======================
 // PUSH NOTIFICATIONS
 // ======================
