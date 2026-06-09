@@ -60,6 +60,9 @@ function getEmployeeFromEmail(email){
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
+import { getToken } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+
 const appDiv = document.querySelector(".app");
 
 // 🔥 NASCONDE SUBITO L'APP (evita flash)
