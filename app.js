@@ -122,11 +122,12 @@ onAuthStateChanged(window.auth, async (user) => {
   console.log("Admin:", window.IS_ADMIN);
 
 
-  // 🔥 NASCONDI LOGIN BOX (IMPORTANTE)
-  const loginBox = document.getElementById("loginBox");
-  if (loginBox) {
-    loginBox.style.display = "none";
-  }
+ // 🔥 NASCONDI LOGIN BOX (CORRETTO)
+const loginContainer = document.querySelector(".login-container");
+
+if (loginContainer) {
+  loginContainer.style.display = "none";
+}
 
 
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
