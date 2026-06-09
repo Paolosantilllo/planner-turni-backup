@@ -93,7 +93,7 @@ onAuthStateChanged(window.auth, (user) => {
 console.log("Dipendente:", window.CURRENT_EMPLOYEE);
 console.log("Admin:", window.IS_ADMIN);
 
-// 👇 QUI INCOLLI IL TOKEN
+// 👇 TOKEN NOTIFICHE
 getToken(messaging, {
   vapidKey: "LA_TUA_VAPID_KEY"
 }).then((token) => {
@@ -102,6 +102,8 @@ getToken(messaging, {
 
 }).catch((err) => {
   console.error("Errore token:", err);
+});
+
 });
 // ======================
 // PUSH NOTIFICATIONS
