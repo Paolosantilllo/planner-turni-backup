@@ -122,10 +122,19 @@ onAuthStateChanged(window.auth, async (user) => {
   console.log("Admin:", window.IS_ADMIN);
 
 
+  // 🔥 NASCONDI LOGIN BOX (IMPORTANTE)
+  const loginBox = document.getElementById("loginBox");
+  if (loginBox) {
+    loginBox.style.display = "none";
+  }
+
+
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
     appDiv.style.display = "block";
   }
+
+});
 
 
   // 🔥 TOKEN NOTIFICHE
