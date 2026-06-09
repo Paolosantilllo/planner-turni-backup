@@ -1,8 +1,56 @@
 
+/* ======================
+   IMPORT FIREBASE (DEVONO STARE SEMPRE IN CIMA)
+====================== */
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import { getFirestore } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+import { getMessaging, getToken } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+
+/* ======================
+   ELEMENTI DOM
+====================== */
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
+const appDiv = document.querySelector(".app");
 
+
+/* ======================
+   FIREBASE INIT
+====================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+  authDomain: "calendario-rep.firebaseapp.com",
+  projectId: "calendario-rep",
+  storageBucket: "calendario-rep.firebasestorage.app",
+  messagingSenderId: "1067128179274",
+  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const messaging = getMessaging(app);
+
+
+/* ======================
+   GLOBAL WINDOW EXPORTS
+====================== */
+window.db = db;
+window.messaging = messaging;
+
+
+/* ======================
+   VARIABILI APP
+====================== */
 let currentDate = new Date();
 
 const monthNames = [
@@ -13,116 +61,43 @@ const monthNames = [
 let savedEvents = [];
 let editingIndex = null;
 
-/* ======================
-   UTENTE LOGGATO
-====================== */
 let CURRENT_USER = null;
 
+
+/* ======================
+   LOG
+====================== */
 console.log("APP JS CARICATO");
 console.log("AUTH =", window.auth);
 console.log("DB =", window.db);
+
+
 /* ======================
    MAPPA UTENTI
 ====================== */
 function getEmployeeFromEmail(email){
 
   const users = {
-
     "paolosantillo@yahoo.it": {
       employee: "SANTILLO",
       role: "ADMIN"
     },
-
     "dipb.planner@gmail.com": {
       employee: "Dipendente B",
       role: "USER"
     },
-
     "dipc.planner@gmail.com": {
       employee: "Dipendente C",
       role: "USER"
     },
-
     "dipd.planner@gmail.com": {
       employee: "Dipendente D",
       role: "USER"
     }
-
   };
 
   return users[email] || null;
 }
-
-/* ======================
-   FIREBASE AUTH
-====================== */
-
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-import { getToken } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
-
-const appDiv = document.querySelector(".app");
-
-// 🔥 NASCONDE SUBITO L'APP (evita flash)
-if (appDiv) appDiv.style.display = "none";
-
-onAuthStateChanged(window.auth, async (user) => {
-
-  // 🔴 NON LOGGATO
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  // 🟢 LOGGATO
-  const userData = getEmployeeFromEmail(user.email);
-
-  // ❌ UTENTE NON AUTORIZZATO
-  if (!userData) {
-    alert("Utente non autorizzato");
-    window.auth.signOut();
-    window.location.href = "login.html";
-    return;
-  }
-
-  CURRENT_USER = user.email;
-  window.CURRENT_EMPLOYEE = userData.employee;
-  window.IS_ADMIN = userData.role === "ADMIN";
-
-  console.log("Utente:", CURRENT_USER);
-  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-  console.log("Admin:", window.IS_ADMIN);
-
-  // 👇 TOKEN NOTIFICHE
-  try {
-
-  const token = await getToken(window.messaging, {
-    vapidKey: "LA_TUA_VAPID_KEY"
-  });
-
-  console.log("TOKEN DISPOSITIVO:", token);
-
-  // 🔥 SALVA SU FIRESTORE
-  await window.firebaseFirestore.setDoc(
-    window.firebaseFirestore.doc(window.db, "users", user.email),
-    {
-      email: user.email,
-      employee: userData.employee,
-      role: userData.role,
-      token: token
-    },
-    { merge: true } // 👈 IMPORTANTISSIMO
-  );
-
-  console.log("✔ Token salvato su Firestore");
-
-} catch (err) {
-  console.error("Errore token:", err);
-}
-
-});
 // ======================
 // PUSH NOTIFICATIONS
 // ======================
