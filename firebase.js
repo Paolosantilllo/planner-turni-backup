@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { getMessaging } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+import * as firebaseFirestore from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
@@ -16,6 +17,8 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 window.db = db;
+
+window.firebaseFirestore = firebaseFirestore;
 
 const messaging = getMessaging(app);
 window.messaging = messaging;
