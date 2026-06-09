@@ -1,6 +1,6 @@
 
 /* ======================
-   IMPORT FIREBASE (DEVONO STARE SEMPRE IN CIMA)
+   IMPORT FIREBASE (SEMPRE IN CIMA)
 ====================== */
 import { initializeApp } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
@@ -42,7 +42,7 @@ const messaging = getMessaging(app);
 
 
 /* ======================
-   GLOBAL WINDOW EXPORTS
+   ESPORTA GLOBALI
 ====================== */
 window.db = db;
 window.messaging = messaging;
@@ -62,14 +62,6 @@ let savedEvents = [];
 let editingIndex = null;
 
 let CURRENT_USER = null;
-
-
-/* ======================
-   LOG
-====================== */
-console.log("APP JS CARICATO");
-console.log("AUTH =", window.auth);
-console.log("DB =", window.db);
 
 
 /* ======================
@@ -98,6 +90,70 @@ function getEmployeeFromEmail(email){
 
   return users[email] || null;
 }
+
+
+/* ======================
+   AUTH LOGIN + TOKEN
+====================== */
+onAuthStateChanged(window.auth, async (user) => {
+
+  // ❌ NON LOGGATO
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // ❌ UTENTE NON AUTORIZZATO
+  const userData = getEmployeeFromEmail(user.email);
+
+  if (!userData) {
+    alert("Utente non autorizzato");
+    window.auth.signOut();
+    window.location.href = "login.html";
+    return;
+  }
+
+  // ✅ LOGIN OK
+  CURRENT_USER = user.email;
+  window.CURRENT_EMPLOYEE = userData.employee;
+  window.IS_ADMIN = userData.role === "ADMIN";
+
+  console.log("Utente:", CURRENT_USER);
+  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
+  console.log("Admin:", window.IS_ADMIN);
+
+  // 🔥 MOSTRA APP SOLO DOPO LOGIN
+  if (appDiv) {
+    appDiv.style.display = "block";
+  }
+
+  // 🔥 TOKEN NOTIFICHE
+  try {
+
+    const token = await getToken(window.messaging, {
+      vapidKey: "LA_TUA_VAPID_KEY"
+    });
+
+    console.log("TOKEN:", token);
+
+    await window.firebaseFirestore.setDoc(
+      window.firebaseFirestore.doc(window.db, "users", user.email),
+      {
+        email: user.email,
+        employee: userData.employee,
+        role: userData.role,
+        token: token
+      },
+      { merge: true }
+    );
+
+    console.log("✔ Token salvato su Firestore");
+
+  } catch (err) {
+    console.error("Errore token:", err);
+  }
+
+});
 // ======================
 // PUSH NOTIFICATIONS
 // ======================
