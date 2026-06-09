@@ -1,7 +1,3 @@
-
-/* ======================
-   IMPORT FIREBASE (SEMPRE IN CIMA)
-====================== */
 import { initializeApp } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
@@ -16,7 +12,7 @@ from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 
 /* ======================
-   ELEMENTI DOM
+   DOM
 ====================== */
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
@@ -40,120 +36,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
 
-
 /* ======================
-   ESPORTA GLOBALI
+   GLOBAL
 ====================== */
 window.db = db;
 window.messaging = messaging;
 
+/* ⚠️ IMPORTANTE: NON esiste più firebaseFirestore nel tuo HTML
+   quindi lo useremo SOLO se lo hai definito lì */
 
-/* ======================
-   VARIABILI APP
-====================== */
-let currentDate = new Date();
+let CURRENT_USER = null;
+let savedEvents = [];
+let editingIndex = null;
 
 const monthNames = [
   "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
   "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
-
-let savedEvents = [];
-let editingIndex = null;
-
-let CURRENT_USER = null;
-
-
-/* ======================
-   MAPPA UTENTI
-====================== */
-function getEmployeeFromEmail(email){
-
-  const users = {
-    "paolosantillo@yahoo.it": {
-      employee: "SANTILLO",
-      role: "ADMIN"
-    },
-    "dipb.planner@gmail.com": {
-      employee: "Dipendente B",
-      role: "USER"
-    },
-    "dipc.planner@gmail.com": {
-      employee: "Dipendente C",
-      role: "USER"
-    },
-    "dipd.planner@gmail.com": {
-      employee: "Dipendente D",
-      role: "USER"
-    }
-  };
-
-  return users[email] || null;
-}
-
-
-/* ======================
-   AUTH LOGIN + TOKEN
-====================== */
-onAuthStateChanged(window.auth, async (user) => {
-
-  // ❌ NON LOGGATO
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  // ❌ UTENTE NON AUTORIZZATO
-  const userData = getEmployeeFromEmail(user.email);
-
-  if (!userData) {
-    alert("Utente non autorizzato");
-    window.auth.signOut();
-    window.location.href = "login.html";
-    return;
-  }
-
-  // ✅ LOGIN OK
-  CURRENT_USER = user.email;
-  window.CURRENT_EMPLOYEE = userData.employee;
-  window.IS_ADMIN = userData.role === "ADMIN";
-
-  console.log("Utente:", CURRENT_USER);
-  console.log("Dipendente:", window.CURRENT_EMPLOYEE);
-  console.log("Admin:", window.IS_ADMIN);
-
-  // 🔥 MOSTRA APP SOLO DOPO LOGIN
-  if (appDiv) {
-    appDiv.style.display = "block";
-  }
-
-  // 🔥 TOKEN NOTIFICHE
-  try {
-
-    const token = await getToken(window.messaging, {
-      vapidKey: "LA_TUA_VAPID_KEY"
-    });
-
-    console.log("TOKEN:", token);
-
-    await window.firebaseFirestore.setDoc(
-      window.firebaseFirestore.doc(window.db, "users", user.email),
-      {
-        email: user.email,
-        employee: userData.employee,
-        role: userData.role,
-        token: token
-      },
-      { merge: true }
-    );
-
-    console.log("✔ Token salvato su Firestore");
-
-  } catch (err) {
-    console.error("Errore token:", err);
-  }
-
-});
 // ======================
 // PUSH NOTIFICATIONS
 // ======================
