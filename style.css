@@ -1114,3 +1114,17 @@ button:disabled{
   background:#F8CCD0;
   color:#000;
 }
+#loginBox{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #f2f2f7;
+  z-index: 9999;
+}
+
+.hidden{
+  display: none !important;
+}
