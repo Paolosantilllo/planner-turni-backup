@@ -92,7 +92,20 @@ onAuthStateChanged(window.auth, (user) => {
   console.log("Utente:", CURRENT_USER);
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
   console.log("Admin:", window.IS_ADMIN);
+// ======================
+// PUSH NOTIFICATIONS
+// ======================
+if ("serviceWorker" in navigator) {
 
+  navigator.serviceWorker.register("./firebase-messaging-sw.js")
+    .then(() => {
+      console.log("Service Worker registrato");
+    })
+    .catch(err => {
+      console.error("Errore SW:", err);
+    });
+
+}
   // 🔥 MOSTRA APP SOLO DOPO LOGIN
   if (appDiv) {
     appDiv.style.display = "block";
