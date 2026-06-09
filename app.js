@@ -121,7 +121,7 @@ onAuthStateChanged(window.auth, async (user) => {
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
   console.log("Admin:", window.IS_ADMIN);
 
-  // 🔥 NASCONDI LOGIN OVERLAY (se esiste nella stessa pagina)
+  // 🔥 NASCONDI LOGIN OVERLAY (se presente)
   const loginContainer = document.querySelector(".login-container");
   if (loginContainer) {
     loginContainer.style.display = "none";
