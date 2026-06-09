@@ -107,7 +107,7 @@ onAuthStateChanged(window.auth, async (user) => {
   // ❌ NON AUTORIZZATO
   if (!userData) {
     alert("Utente non autorizzato");
-    window.auth.signOut();
+    await window.auth.signOut();
     window.location.href = "login.html";
     return;
   }
@@ -121,16 +121,24 @@ onAuthStateChanged(window.auth, async (user) => {
   console.log("Dipendente:", window.CURRENT_EMPLOYEE);
   console.log("Admin:", window.IS_ADMIN);
 
-  // 🔥 NASCONDI LOGIN OVERLAY (se presente)
+  // 🔥 RIMUOVI COMPLETAMENTE IL LOGIN (FIX BUG UI)
+  const loginBox = document.getElementById("loginBox");
+  if (loginBox) {
+    loginBox.remove(); // 💣 FIX IMPORTANTE
+  }
+
   const loginContainer = document.querySelector(".login-container");
   if (loginContainer) {
-    loginContainer.style.display = "none";
+    loginContainer.remove(); // 💣 doppia sicurezza
   }
 
   // 🔥 MOSTRA APP
+  const appDiv = document.getElementById("app");
   if (appDiv) {
     appDiv.style.display = "block";
   }
+
+  document.body.style.overflow = "auto";
 
   // 🔥 TOKEN NOTIFICHE (SOLO DOPO LOGIN)
   try {
@@ -159,7 +167,6 @@ onAuthStateChanged(window.auth, async (user) => {
   }
 
 });
-
 
 /* ======================
    SERVICE WORKER
