@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-import { getMessaging, getToken } 
+import { getMessaging } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -13,8 +13,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
+const db = getFirestore(app);
 window.db = db;
 
 const messaging = getMessaging(app);
