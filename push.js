@@ -1,8 +1,4 @@
 
-/* ======================
-   PUSH NOTIFICATIONS SETUP
-====================== */
-
 import { messaging, db, firestore } from "./firebase.js";
 
 import {
@@ -11,17 +7,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
 
 /* ======================
-   RICHIEDI PERMESSO + TOKEN
+   INIT PUSH NOTIFICATIONS
 ====================== */
 
-export async function initPush(user){
+export async function initPush(user) {
 
   try {
 
     const permission = await Notification.requestPermission();
 
-    if(permission !== "granted"){
-      console.log("Notifiche negate");
+    if (permission !== "granted") {
+      console.log("❌ Notifiche negate");
       return;
     }
 
@@ -29,35 +25,43 @@ export async function initPush(user){
       vapidKey: "LA_TUA_VAPID_KEY"
     });
 
-    console.log("PUSH TOKEN:", token);
+    console.log("🔥 PUSH TOKEN:", token);
 
-    // salva token su Firestore
-    await firestore.setDoc(
-      firestore.doc(db, "users", user.email),
-      {
-        email: user.email,
-        token: token
-      },
-      { merge: true }
-    );
+    // 🔥 SALVATAGGIO TOKEN UTENTE SU FIRESTORE
+    if (user?.email) {
+
+      await firestore.setDoc(
+        firestore.doc(db, "users", user.email),
+        {
+          email: user.email,
+          token: token,
+          lastUpdate: new Date()
+        },
+        { merge: true }
+      );
+
+    }
 
   } catch (err) {
-    console.error("Errore push:", err);
+    console.error("❌ Errore push:", err);
   }
 
 }
 
 /* ======================
-   NOTIFICHE A APP APERTA
+   NOTIFICHE APP APERTA
 ====================== */
 
-export function listenForegroundNotifications(){
+export function listenForegroundNotifications() {
 
   onMessage(messaging, (payload) => {
 
-    console.log("NOTIFICA IN APP:", payload);
+    console.log("📩 NOTIFICA APP APERTA:", payload);
 
-    alert(payload.notification.title + "\n" + payload.notification.body);
+    const title = payload.notification?.title || "Nuova notifica";
+    const body = payload.notification?.body || "";
+
+    alert(`${title}\n\n${body}`);
 
   });
 
