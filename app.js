@@ -110,12 +110,12 @@ window.renderCalendar = function(){
 ====================== */
 
 window.nextMonth = function(){
-  currentDate.setMonth(currentDate.getMonth() + 1);
+  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
   renderCalendar();
 };
 
 window.prevMonth = function(){
-  currentDate.setMonth(currentDate.getMonth() - 1);
+  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
   renderCalendar();
 };
 
