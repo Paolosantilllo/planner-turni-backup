@@ -48,3 +48,49 @@ messaging.onBackgroundMessage(function(payload) {
   });
 
 });
+self.addEventListener("notificationclick", function(event) {
+
+  console.log("🔔 Notifica cliccata:", event);
+
+  event.notification.close();
+
+  const data = event.notification.data || {};
+
+  const requestId = data.requestId;
+
+  event.waitUntil(
+
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(clientList) {
+
+      // se app già aperta
+      for (let client of clientList) {
+
+        if (client.url.includes("/index.html") && "focus" in client) {
+
+          client.focus();
+
+          client.postMessage({
+            type: "OPEN_REQUEST",
+            requestId: requestId
+          });
+
+          return;
+
+        }
+
+      }
+
+      // se app chiusa → apri nuova finestra
+      if (clients.openWindow) {
+
+        return clients.openWindow(
+          "/index.html?requestId=" + requestId
+        );
+
+      }
+
+    })
+
+  );
+
+});
