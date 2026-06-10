@@ -1,8 +1,32 @@
+/* ======================
+   FIREBASE CORE INIT
+====================== */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-import { getMessaging } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
-import * as firebaseFirestore from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+import {
+  getMessaging
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+
+/* ======================
+   CONFIG FIREBASE
+====================== */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
@@ -13,12 +37,40 @@ const firebaseConfig = {
   appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
 };
 
+/* ======================
+   INIT APP FIREBASE
+====================== */
+
 const app = initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+/* ======================
+   SERVIZI CORE
+====================== */
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const messaging = getMessaging(app);
+
+/* ======================
+   FIRESTORE API WRAPPER (IMPORTANTE)
+====================== */
+
+export const firestore = {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  doc,
+  getDoc,
+  setDoc
+};
+
+/* ======================
+   (OPTIONAL) GLOBAL WINDOW PER COMPATIBILITÀ
+====================== */
+
+window.auth = auth;
 window.db = db;
-
-window.firebaseFirestore = firebaseFirestore;
-
-const messaging = getMessaging(app);
 window.messaging = messaging;
+window.firebaseFirestore = firestore;
