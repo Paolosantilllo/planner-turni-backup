@@ -681,34 +681,28 @@ window.loadChangeDays = function (){
     currentDate.getMonth();
 
   const daysInMonth =
-    new Date(year, month + 1, 0).getDate();
+  new Date(year, month + 1, 0).getDate();
 
+/* ======================
+   FROM EVENTS
+====================== */
+const fromEvents =
+  savedEvents.filter(ev =>
+    ev.employeeId === fromEmployee &&
+    ev.shift === selectedShift
+  );
 
-  const fromEvents =
-  savedEvents.filter(ev => (
-
-    ev.employee === fromEmployee ||
-
-    (fromEmployee === "SANTILLO" && ev.employee === "Dipendente A") ||
-
-    (fromEmployee === "MANUNTA" && ev.employee === "Dipendente B")
-
-  ) && ev.shift === selectedShift);
-
-
+/* ======================
+   TO EVENTS
+====================== */
 const toEvents =
-  savedEvents.filter(ev => (
+  savedEvents.filter(ev =>
+    ev.employeeId === toEmployee &&
+    ev.shift === selectedShift
+  );
 
-    ev.employee === toEmployee ||
-
-    (toEmployee === "SANTILLO" && ev.employee === "Dipendente A") ||
-
-    (toEmployee === "MANUNTA" && ev.employee === "Dipendente B")
-
-  ) && ev.shift === selectedShift);
-
-  let selectedFrom = null;
-  let selectedTo = null;
+let selectedFrom = null;
+let selectedTo = null;
 
 
   function buildCalendar(container, events, isFrom){
