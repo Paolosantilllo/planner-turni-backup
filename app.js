@@ -79,7 +79,9 @@ window.renderCalendar = function(){
     const box = document.createElement("div");
     box.classList.add("day");
 
-    const events = savedEvents.filter(e => e.date === date);
+   box.onclick = () => openPopupWithDate(date);
+     
+     const events = savedEvents.filter(e => e.date === date);
 
     // numero giorno
     const num = document.createElement("div");
