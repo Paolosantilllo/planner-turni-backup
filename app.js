@@ -1065,9 +1065,7 @@ window.saveShift = async function () {
 
 let finalShift = shift;
 
-if (shift === "REP" && isFestive) {
-  finalShift = "FREP";
-}
+
 
 //======================
 //  LOGICA AUTOMATICA REP / FREP
@@ -1120,10 +1118,19 @@ if (shift === "REP") {
 
 
 
-    // ======================
+   // ======================
 // BLOCCO FREP
 // ======================
 if(finalShift === "FREP"){
+
+  if(!isFestive){
+
+    alert(
+      "FREP solo domenica e festivi"
+    );
+
+    return;
+  }
 
   const frepCount =
     savedEvents.filter(ev => {
