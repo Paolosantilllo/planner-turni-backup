@@ -117,6 +117,11 @@ events.forEach(ev => {
 });
 
 calendar.appendChild(box);
+
+  }
+
+};
+
 /* ======================
    NAVIGAZIONE MESI
 ====================== */
