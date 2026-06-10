@@ -1129,26 +1129,29 @@ button:disabled{
   display: none !important;
 }
 .icon-btn {
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 75px;
 
-  border-radius: 18px;
+  border-radius: 22px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 28px;
+  font-size: 34px; /* 👈 icona più grande */
 
   background: #34c759;
   color: white;
 
-  box-shadow: 0 8px 20px rgba(52,199,89,0.25);
+  box-shadow: 0 12px 30px rgba(52,199,89,0.35);
 
   border: none;
   cursor: pointer;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .icon-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
+  box-shadow: 0 6px 15px rgba(52,199,89,0.25);
 }
