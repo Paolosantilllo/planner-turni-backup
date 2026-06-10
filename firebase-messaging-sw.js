@@ -17,78 +17,36 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 /* ======================
-   NOTIFICHE APP CHIUSA
+   NOTIFICHE BACKGROUND
 ====================== */
 
 messaging.onBackgroundMessage((payload) => {
 
-  console.log("📩 Background message:", payload);
+  console.log("📩 Background message ricevuto:", payload);
 
   const notification = payload.notification || {};
+  const data = payload.data || {};
 
-  self.registration.showNotification(
-    notification.title || "Planner REP",
-    {
-      body: notification.body || "",
-      icon: "/logo.png",
-      badge: "/logo.png",
-      vibrate: [200, 100, 200],
+  const title = notification.title || "Planner REP";
+  const body = notification.body || "";
 
-      data: payload.data || {},
+  self.registration.showNotification(title, {
 
-      actions: [
-        {
-          action: "open",
-          title: "Apri"
-        }
-      ]
-    }
-  );
+    body: body,
+    icon: "/logo.png",
+    badge: "/logo.png",
 
-});
+    // 🔥 IMPORTANTISSIMO: dati per click
+    data: data,
 
-/* ======================
-   CLICK NOTIFICA
-====================== */
+    vibrate: [200, 100, 200],
 
-self.addEventListener("notificationclick", (event) => {
-
-  event.notification.close();
-
-  const data = event.notification.data || {};
-  const requestId = data.requestId || "";
-
-  event.waitUntil(
-
-    clients.matchAll({
-      type: "window",
-      includeUncontrolled: true
-    }).then((clientList) => {
-
-      for (const client of clientList) {
-
-        if ("focus" in client) {
-
-          client.focus();
-
-          client.postMessage({
-            type: "OPEN_REQUEST",
-            requestId
-          });
-
-          return;
-        }
+    actions: [
+      {
+        action: "open",
+        title: "Apri"
       }
-
-      if (clients.openWindow) {
-
-        return clients.openWindow(
-          "/index.html?requestId=" + requestId
-        );
-      }
-
-    })
-
-  );
+    ]
+  });
 
 });
