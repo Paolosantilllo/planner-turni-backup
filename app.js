@@ -22,7 +22,15 @@ const monthTitle = document.getElementById("monthTitle");
 const popup = document.getElementById("popup");
 const appDiv = document.querySelector(".app");
 
-
+/* ======================
+   MAPPATURA DIPENDENTI
+====================== */
+const employeeMap = {
+  A: "SANTILLO",
+  B: "MANUNTA",
+  C: "Dipendente C",
+  D: "Dipendente D"
+};
 /* ======================
    FIREBASE INIT
 ====================== */
