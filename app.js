@@ -141,3 +141,20 @@ if (requestIdFromUrl) {
   openRequestFromNotification(requestIdFromUrl);
 
 }
+function openRequestFromNotification(requestId) {
+
+  if (!requestId) return;
+
+  console.log("📩 Apertura notifica:", requestId);
+
+  const event = savedEvents.find(e => e.id === requestId);
+
+  if (!event) {
+    console.log("❌ Evento non trovato");
+    return;
+  }
+
+  document.getElementById("popup").style.display = "flex";
+
+  console.log("📌 Evento aperto:", event);
+}
