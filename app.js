@@ -87,24 +87,36 @@ window.renderCalendar = function(){
     num.innerText = day;
     box.appendChild(num);
 
-    // eventi
-    events.forEach(ev => {
+  // eventi
+events.forEach(ev => {
 
-      const el = document.createElement("div");
-      el.classList.add("event");
+  const el = document.createElement("div");
 
-      el.innerText = ev.shift;
+  el.classList.add("event");
 
-      box.appendChild(el);
-
-    });
-
-    calendar.appendChild(box);
-
+  if (ev.employee === "A") {
+    el.classList.add("dipendente-santillo");
   }
 
-};
+  if (ev.employee === "B") {
+    el.classList.add("dipendente-b");
+  }
 
+  if (ev.employee === "C") {
+    el.classList.add("dipendente-c");
+  }
+
+  if (ev.employee === "D") {
+    el.classList.add("dipendente-d");
+  }
+
+  el.innerText = ev.shift;
+
+  box.appendChild(el);
+
+});
+
+calendar.appendChild(box);
 /* ======================
    NAVIGAZIONE MESI
 ====================== */
