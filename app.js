@@ -1033,21 +1033,24 @@ window.saveShift = async function () {
 
     // FESTIVI
     const holidays = [
-  "01-01",
-  "06-01",
-  "25-04",
-  "01-05",
-  "02-06",
-  "15-08",
-  "01-11",
-  "08-12",
-  "25-12",
-  "26-12"
-];
+      "1-1",
+      "6-1",
+      "25-4",
+      "1-5",
+      "2-6",
+      "15-8",
+      "1-11",
+      "8-12",
+      "25-12",
+      "26-12"
+    ];
 
 
-      const key = `${dayNumber}-${String(month).padStart(2,"0")}`;
-      const isHoliday = holidays.includes(key);
+
+    const isHoliday =
+      holidays.includes(
+        `${dayNumber}-${month}`
+      );
 
 
 
@@ -1062,11 +1065,11 @@ window.saveShift = async function () {
 
 let finalShift = shift;
 
-/* ======================
-   LOGICA AUTOMATICA REP / FREP
-====================== */
+//======================
+//  LOGICA AUTOMATICA REP / FREP
+//====================== 
 
-// 🔥 SOLO se l’utente sta facendo inserimento "REP"
+
 if (shift === "REP") {
 
   if (isFestive) {
@@ -1079,34 +1082,50 @@ if (shift === "REP") {
     // ======================
     // BLOCCO REP
     // ======================
-    if (shift === "REP") {
+    if(shift === "REP"){
 
-  const repCount =
-    savedEvents.filter(ev => {
+     if(isFestive){
 
-      const isSameEmployee =
-        ev.employee === employee ||
-        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-        (employee === "MANUNTA" && ev.employee === "Dipendente B");
+        alert(
+          "REP non consentito la domenica"
+        );
 
-      const parts = ev.date.split("-");
-      const evMonth = Number(parts[1]) - 1;
-      const evYear = Number(parts[0]);
+        return;
+      }
 
-      return (
-        isSameEmployee &&
-        ev.shift === "REP" &&
-        evMonth === current.getMonth() &&
-        evYear === current.getFullYear()
-      );
 
-    }).length;
 
-  if (repCount >= 6) {
-    alert("Massimo 6 REP al mese");
-    return;
-  }
-}
+      const repCount =
+  savedEvents.filter(ev => {
+
+    const isSameEmployee =
+      ev.employee === employee ||
+      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+      (employee === "MANUNTA" && ev.employee === "Dipendente B");
+
+    const parts = ev.date.split("-");
+    const evMonth = Number(parts[1]) - 1;
+    const evYear = Number(parts[0]);
+
+    return (
+      isSameEmployee &&
+      ev.shift === "REP" &&
+      evMonth === current.getMonth() &&
+      evYear === current.getFullYear()
+    );
+
+  }).length;
+
+
+      if(repCount >= 6){
+
+        alert(
+          "Massimo 6 REP al mese"
+        );
+
+        return;
+      }
+    }
 
 
 
@@ -1185,54 +1204,69 @@ if (shift === "REP") {
     }
 
 
-  // ======================
-// UN SOLO REP AL GIORNO
-// ======================
-if(finalShift === "REP"){
+    // ======================
+    // UN SOLO REP AL GIORNO
+    // ======================
+    if(shift === "REP"){
 
-  const repExists =
-    savedEvents.some(ev =>
+      const repExists =
+  savedEvents.some(ev =>
 
-      ev.date === date &&
-      ev.shift === "REP" &&
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
+    ev.date === date &&
+    ev.shift === "REP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
 
-    );
-
-  if(repExists){
-    alert("Esiste già un REP in questo giorno");
-    return;
-  }
-}
+  );
 
 
 
-    if(finalShift === "FREP"){
+      if(repExists){
 
-  const frepExists =
-    savedEvents.some(ev =>
+        alert(
+          "Esiste già un REP in questo giorno"
+        );
 
-      ev.date === date &&
-      ev.shift === "FREP" &&
-      ev.firebaseId !== (
-        editingIndex !== null
-          ? savedEvents[editingIndex].firebaseId
-          : null
-      )
+        return;
+      }
+    }
 
-    );
 
-  if(frepExists){
-    alert("Esiste già un FREP in questo giorno");
-    return;
-  }
-}
 
-// ======================
+    // ======================
+    // UN SOLO FREP AL GIORNO
+    // ======================
+    if(shift === "FREP"){
+
+      const frepExists =
+  savedEvents.some(ev =>
+
+    ev.date === date &&
+    ev.shift === "FREP" &&
+    ev.firebaseId !== (
+      editingIndex !== null
+        ? savedEvents[editingIndex].firebaseId
+        : null
+    )
+
+  );
+
+
+
+      if(frepExists){
+
+        alert(
+          "Esiste già un FREP in questo giorno"
+        );
+
+        return;
+      }
+    }
+
+   // ======================
 // SALVA / MODIFICA
 // ======================
 if(editingIndex !== null){
@@ -1251,7 +1285,7 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift: finalShift
+      shift
     }
 
   );
@@ -1268,18 +1302,24 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift: finalShift
+      shift
     }
 
   );
 
 }
 
-current.setDate(
-  current.getDate() + 1
-);
 
-closePopup();
+    current.setDate(
+      current.getDate()+1
+    );
+  }
+
+
+
+  closePopup();
+}
+
 
 
 // ======================
