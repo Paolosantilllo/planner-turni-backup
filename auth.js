@@ -85,6 +85,11 @@ export function initAuth(onReady) {
       admin: IS_ADMIN
     });
 
+    /* 🔥 MOSTRA APP (FONDAMENTALE PER EVITARE SCHERMO BIANCO) */
+    const app = document.getElementById("app");
+    if (app) app.style.display = "block";
+
+    /* 🚀 AVVIO APP */
     if (typeof onReady === "function") {
       onReady(user);
     }
@@ -102,11 +107,13 @@ export async function logout() {
   try {
 
     await signOut(auth);
+
     window.location.href = "login.html";
 
   } catch (err) {
 
     console.error("Logout error:", err);
+
     alert("Errore logout");
 
   }
