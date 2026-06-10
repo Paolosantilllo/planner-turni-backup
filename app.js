@@ -1006,32 +1006,24 @@ window.saveShift = async function () {
 
 
 
-//======================
-//  LOGICA AUTOMATICA REP / FREP
-//====================== 
-
+// ======================
+// LOGICA AUTOMATICA REP / FREP
+// ======================
 
 if (shift === "REP") {
-
-  if (isFestive) {
-    finalShift = "FREP";
-  } else {
-    finalShift = "REP";
-  }
-
+  finalShift = isFestive ? "FREP" : "REP";
 }
-    // ======================
-    // BLOCCO REP
-    // ======================
-   if(finalShift === "REP"){
+
+// ======================
+// BLOCCO REP
+// ======================
+if (finalShift === "REP") {
 
   const repCount =
     savedEvents.filter(ev => {
 
       const isSameEmployee =
-        ev.employee === employee ||
-        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-        (employee === "MANUNTA" && ev.employee === "Dipendente B");
+        ev.employeeId === employeeId;
 
       const parts = ev.date.split("-");
       const evMonth = Number(parts[1]) - 1;
@@ -1046,28 +1038,19 @@ if (shift === "REP") {
 
     }).length;
 
-  if(repCount >= 6){
-
+  if (repCount >= 6) {
     alert("Massimo 6 REP al mese");
     return;
-
   }
-
 }
 
-
-
-   // ======================
+// ======================
 // BLOCCO FREP
 // ======================
-if(finalShift === "FREP"){
+if (finalShift === "FREP") {
 
-  if(!isFestive){
-
-    alert(
-      "FREP solo domenica e festivi"
-    );
-
+  if (!isFestive) {
+    alert("FREP solo domenica e festivi");
     return;
   }
 
@@ -1075,9 +1058,7 @@ if(finalShift === "FREP"){
     savedEvents.filter(ev => {
 
       const isSameEmployee =
-        ev.employee === employee ||
-        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-        (employee === "MANUNTA" && ev.employee === "Dipendente B");
+        ev.employeeId === employeeId;
 
       const parts = ev.date.split("-");
       const evMonth = Number(parts[1]) - 1;
@@ -1092,13 +1073,10 @@ if(finalShift === "FREP"){
 
     }).length;
 
-  if(frepCount >= 2){
-
+  if (frepCount >= 2) {
     alert("Massimo 2 FREP al mese");
     return;
-
   }
-
 }
 
     // ======================
