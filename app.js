@@ -150,6 +150,17 @@ window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
 
+// 👇 QUI LO INCOLLI
+window.openPopupWithDate = function(date){
+
+  const popup = document.getElementById("popup");
+
+  document.getElementById("startDate").value = date;
+  document.getElementById("endDate").value = date;
+
+  popup.style.display = "flex";
+};
+
 window.saveShift = async function () {
 
   const employee = document.getElementById("employee").value;
