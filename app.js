@@ -632,7 +632,7 @@ const events = savedEvents.filter(e => {
 
       dayBox.appendChild(div);
 
-    });
+    };
 
 
 
