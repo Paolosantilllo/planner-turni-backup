@@ -1033,24 +1033,23 @@ window.saveShift = async function () {
 
     // FESTIVI
     const holidays = [
-      "1-1",
-      "6-1",
-      "25-4",
-      "1-5",
-      "2-6",
-      "15-8",
-      "1-11",
-      "8-12",
-      "25-12",
-      "26-12"
-    ];
+  "1-01",
+  "6-01",
+  "25-04",
+  "1-05",
+  "2-06",
+  "15-08",
+  "1-11",
+  "8-12",
+  "25-12",
+  "26-12"
+];
 
 
 
     const isHoliday =
-      holidays.includes(
-        `${dayNumber}-${month}`
-      );
+      const key = `${dayNumber}-${String(month).padStart(2,"0")}`;
+      const isHoliday = holidays.includes(key);
 
 
 
