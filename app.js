@@ -1065,7 +1065,11 @@ window.saveShift = async function () {
 
 let finalShift = shift;
 
-// 🔥 LOGICA AUTOMATICA REP SETTIMANALE
+/* ======================
+   LOGICA AUTOMATICA REP / FREP
+====================== */
+
+// 🔥 SOLO se l’utente sta facendo inserimento "REP"
 if (shift === "REP") {
 
   if (isFestive) {
