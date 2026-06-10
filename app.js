@@ -1082,102 +1082,74 @@ if (shift === "REP") {
     // ======================
     // BLOCCO REP
     // ======================
-    if(shift === "REP"){
+   if(finalShift === "REP"){
 
-     if(isFestive){
+  const repCount =
+    savedEvents.filter(ev => {
 
-        alert(
-          "REP non consentito la domenica"
-        );
+      const isSameEmployee =
+        ev.employee === employee ||
+        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+        (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-        return;
-      }
+      const parts = ev.date.split("-");
+      const evMonth = Number(parts[1]) - 1;
+      const evYear = Number(parts[0]);
 
+      return (
+        isSameEmployee &&
+        ev.shift === "REP" &&
+        evMonth === current.getMonth() &&
+        evYear === current.getFullYear()
+      );
 
+    }).length;
 
-      const repCount =
-  savedEvents.filter(ev => {
+  if(repCount >= 6){
 
-    const isSameEmployee =
-      ev.employee === employee ||
-      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-      (employee === "MANUNTA" && ev.employee === "Dipendente B");
+    alert("Massimo 6 REP al mese");
+    return;
 
-    const parts = ev.date.split("-");
-    const evMonth = Number(parts[1]) - 1;
-    const evYear = Number(parts[0]);
+  }
 
-    return (
-      isSameEmployee &&
-      ev.shift === "REP" &&
-      evMonth === current.getMonth() &&
-      evYear === current.getFullYear()
-    );
-
-  }).length;
-
-
-      if(repCount >= 6){
-
-        alert(
-          "Massimo 6 REP al mese"
-        );
-
-        return;
-      }
-    }
+}
 
 
 
     // ======================
     // BLOCCO FREP
     // ======================
-    if(shift === "FREP"){
+if(finalShift === "REP"){
 
-      if(!isFestive){
+  const repCount =
+    savedEvents.filter(ev => {
 
-        alert(
-          "FREP solo domenica e festivi"
-        );
+      const isSameEmployee =
+        ev.employee === employee ||
+        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+        (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-        return;
-      }
+      const parts = ev.date.split("-");
+      const evMonth = Number(parts[1]) - 1;
+      const evYear = Number(parts[0]);
 
+      return (
+        isSameEmployee &&
+        ev.shift === "REP" &&
+        evMonth === current.getMonth() &&
+        evYear === current.getFullYear()
+      );
 
+    }).length;
 
-      const frepCount =
-  savedEvents.filter(ev => {
+  if(repCount >= 6){
 
-    const isSameEmployee =
-      ev.employee === employee ||
-      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-      (employee === "MANUNTA" && ev.employee === "Dipendente B");
+    alert("Massimo 6 REP al mese");
+    return;
 
-    const parts = ev.date.split("-");
-    const evMonth = Number(parts[1]) - 1;
-    const evYear = Number(parts[0]);
+  }
 
-    return (
-      isSameEmployee &&
-      ev.shift === "FREP" &&
-      evMonth === current.getMonth() &&
-      evYear === current.getFullYear()
-    );
-
-  }).length;
-
-
-
-      if(frepCount >= 2){
-
-        alert(
-          "Massimo 2 FREP al mese"
-        );
-
-        return;
-      }
-    }
-    // ======================
+}    // ======================
     // UN SOLO TURNO AL GIORNO
     // ======================
     const alreadyExists =
@@ -1207,7 +1179,7 @@ if (shift === "REP") {
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
-    if(shift === "REP"){
+    if(finalshift === "REP"){
 
       const repExists =
   savedEvents.some(ev =>
@@ -1239,7 +1211,7 @@ if (shift === "REP") {
     // ======================
     // UN SOLO FREP AL GIORNO
     // ======================
-    if(shift === "FREP"){
+    if(finalshift === "FREP"){
 
       const frepExists =
   savedEvents.some(ev =>
@@ -1285,7 +1257,7 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift
+      shift: finalShift
     }
 
   );
@@ -1302,7 +1274,7 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift
+      shift: finalShift
     }
 
   );
