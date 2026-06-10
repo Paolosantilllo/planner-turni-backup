@@ -17,76 +17,74 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 /* ======================
-   BACKGROUND NOTIFICATION
+   NOTIFICHE APP CHIUSA
 ====================== */
 
-messaging.onBackgroundMessage(function(payload) {
+messaging.onBackgroundMessage((payload) => {
 
   console.log("📩 Background message:", payload);
 
   const notification = payload.notification || {};
-  const title = notification.title || "Nuova notifica";
-  const body = notification.body || "";
 
-  self.registration.showNotification(title, {
+  self.registration.showNotification(
+    notification.title || "Planner REP",
+    {
+      body: notification.body || "",
+      icon: "/logo.png",
+      badge: "/logo.png",
+      vibrate: [200, 100, 200],
 
-    body: body,
-    icon: "/icon.png",
+      data: payload.data || {},
 
-    /* EXTRA (consigliato) */
-    badge: "/icon.png",
-    vibrate: [200, 100, 200],
-
-    data: payload.data || {},
-
-    actions: [
-      {
-        action: "open",
-        title: "Apri"
-      }
-    ]
-  });
+      actions: [
+        {
+          action: "open",
+          title: "Apri"
+        }
+      ]
+    }
+  );
 
 });
-self.addEventListener("notificationclick", function(event) {
 
-  console.log("🔔 Notifica cliccata:", event);
+/* ======================
+   CLICK NOTIFICA
+====================== */
+
+self.addEventListener("notificationclick", (event) => {
 
   event.notification.close();
 
   const data = event.notification.data || {};
-
-  const requestId = data.requestId;
+  const requestId = data.requestId || "";
 
   event.waitUntil(
 
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(clientList) {
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true
+    }).then((clientList) => {
 
-      // se app già aperta
-      for (let client of clientList) {
+      for (const client of clientList) {
 
-  if ("focus" in client) {
+        if ("focus" in client) {
 
-    client.focus();
+          client.focus();
 
-    client.postMessage({
-      type: "OPEN_REQUEST",
-      requestId: requestId
-    });
+          client.postMessage({
+            type: "OPEN_REQUEST",
+            requestId
+          });
 
-    return;
+          return;
+        }
+      }
 
-  }
-
-}
-
-      // se app chiusa → apri nuova finestra
       if (clients.openWindow) {
 
         return clients.openWindow(
           "/index.html?requestId=" + requestId
         );
-
       }
 
     })
