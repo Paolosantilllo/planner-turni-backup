@@ -1121,11 +1121,11 @@ if (shift === "REP") {
 
 
     // ======================
-    // BLOCCO FREP
-    // ======================
-if(finalShift === "REP"){
+// BLOCCO FREP
+// ======================
+if(finalShift === "FREP"){
 
-  const repCount =
+  const frepCount =
     savedEvents.filter(ev => {
 
       const isSameEmployee =
@@ -1139,19 +1139,21 @@ if(finalShift === "REP"){
 
       return (
         isSameEmployee &&
-        ev.shift === "REP" &&
+        ev.shift === "FREP" &&
         evMonth === current.getMonth() &&
         evYear === current.getFullYear()
       );
 
     }).length;
 
-  if(repCount >= 6){
+  if(frepCount >= 2){
 
-    alert("Massimo 6 REP al mese");
+    alert("Massimo 2 FREP al mese");
     return;
 
   }
+
+}
 
 }    // ======================
     // UN SOLO TURNO AL GIORNO
