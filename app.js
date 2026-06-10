@@ -530,14 +530,13 @@ if(isSunday || isHoliday){
 
 
 
-  // ======================
+// ======================
 // EVENTI
 // ======================
 const selectedEmployee =
   document.getElementById("employeeFilter").value;
 
 const events = savedEvents.filter(e => {
-
   return (
     e.date === formatted &&
     (
@@ -545,15 +544,13 @@ const events = savedEvents.filter(e => {
       e.employeeId === selectedEmployee
     )
   );
-
 });
 
-
-    events.forEach(event => {
+events.forEach(event => {
 
   const div = document.createElement("div");
   div.classList.add("event");
-});
+
   // ======================
   // COLORI TURNI (sempre uguali)
   // ======================
@@ -589,51 +586,48 @@ const events = savedEvents.filter(e => {
     if (event.employeeId === "A") {
       div.classList.add("dipendente-santillo");
     }
-
   }
 
- // ======================
-// CONTENUTO
-// ======================
-div.innerHTML = `
-  <div class="event-shift">
-    ${event.shift}
-  </div>
-`;
+  // ======================
+  // CONTENUTO
+  // ======================
+  div.innerHTML = `
+    <div class="event-shift">
+      ${event.shift}
+    </div>
+  `;
 
-// ======================
-// MODIFICA EVENTO
-// ======================
-div.addEventListener("click", (e) => {
+  // ======================
+  // CLICK MODIFICA
+  // ======================
+  div.addEventListener("click", (e) => {
 
-  e.stopPropagation();
+    e.stopPropagation();
 
-  // 🔴 BLOCCO USER
-  if (!window.IS_ADMIN) return;
+    if (!window.IS_ADMIN) return;
 
-  editingIndex = savedEvents.indexOf(event);
+    editingIndex = savedEvents.indexOf(event);
 
-  // ⚠️ SISTEMA NUOVO: employeeId
-  document.getElementById("employee").value =
-    event.employeeId;
+    document.getElementById("employee").value =
+      event.employeeId;
 
-  document.getElementById("startDate").value =
-    event.date;
+    document.getElementById("startDate").value =
+      event.date;
 
-  document.getElementById("endDate").value =
-    event.date;
+    document.getElementById("endDate").value =
+      event.date;
 
-  document.getElementById("shift").value =
-    event.shift;
+    document.getElementById("shift").value =
+      event.shift;
 
-  openPopup();
+    openPopup();
+  });
+
+  dayBox.appendChild(div);
+
 });
 
-dayBox.appendChild(div);
-
-
-
-    calendar.appendChild(dayBox);
+calendar.appendChild(dayBox);
   }
 }
 
