@@ -999,7 +999,7 @@ window.saveShift = async function () {
 
 
 
- while(current <= stop){
+  while(current <= stop){
 
     const y =
       current.getFullYear();
@@ -1014,8 +1014,11 @@ window.saveShift = async function () {
         current.getDate()
       ).padStart(2,"0");
 
+
+
     const date =
   `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
+
 
     const day =
       current.getDay();
@@ -1025,6 +1028,8 @@ window.saveShift = async function () {
 
     const dayNumber =
       current.getDate();
+
+
 
     // FESTIVI
     const holidays = [
@@ -1040,16 +1045,24 @@ window.saveShift = async function () {
       "26-12"
     ];
 
+
+
     const isHoliday =
       holidays.includes(
         `${dayNumber}-${month}`
       );
 
+
+
     const isSunday =
       day === 0;
 
+
+
     const isFestive =
       isSunday || isHoliday;
+
+
 
     // ======================
     // BLOCCO REP
@@ -1064,6 +1077,8 @@ window.saveShift = async function () {
 
         return;
       }
+
+
 
       const repCount =
   savedEvents.filter(ev => {
@@ -1086,6 +1101,7 @@ window.saveShift = async function () {
 
   }).length;
 
+
       if(repCount >= 6){
 
         alert(
@@ -1095,6 +1111,8 @@ window.saveShift = async function () {
         return;
       }
     }
+
+
 
     // ======================
     // BLOCCO FREP
@@ -1109,6 +1127,8 @@ window.saveShift = async function () {
 
         return;
       }
+
+
 
       const frepCount =
   savedEvents.filter(ev => {
@@ -1130,6 +1150,8 @@ window.saveShift = async function () {
     );
 
   }).length;
+
+
 
       if(frepCount >= 2){
 
@@ -1156,6 +1178,7 @@ window.saveShift = async function () {
 
   );
 
+
     if(alreadyExists){
 
       alert(
@@ -1164,6 +1187,7 @@ window.saveShift = async function () {
 
       return;
     }
+
 
     // ======================
     // UN SOLO REP AL GIORNO
@@ -1183,6 +1207,8 @@ window.saveShift = async function () {
 
   );
 
+
+
       if(repExists){
 
         alert(
@@ -1192,6 +1218,8 @@ window.saveShift = async function () {
         return;
       }
     }
+
+
 
     // ======================
     // UN SOLO FREP AL GIORNO
@@ -1211,6 +1239,8 @@ window.saveShift = async function () {
 
   );
 
+
+
       if(frepExists){
 
         alert(
@@ -1220,7 +1250,97 @@ window.saveShift = async function () {
         return;
       }
     }
-Riscrivimi tutta questa parte come abbiamo detto 
+
+   // ======================
+// SALVA / MODIFICA
+// ======================
+if(editingIndex !== null){
+
+  const oldEvent =
+    savedEvents[editingIndex];
+
+  await window.firebaseFirestore.updateDoc(
+
+    window.firebaseFirestore.doc(
+      window.db,
+      "events",
+      oldEvent.firebaseId
+    ),
+
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}else{
+
+  await window.firebaseFirestore.addDoc(
+
+    window.firebaseFirestore.collection(
+      window.db,
+      "events"
+    ),
+
+    {
+      employee,
+      date,
+      shift
+    }
+
+  );
+
+}
+
+
+    current.setDate(
+      current.getDate()+1
+    );
+  }
+
+
+
+  closePopup();
+}
+
+
+
+// ======================
+// DELETE SHIFT
+// ======================
+window.deleteShift = async function (){
+
+  if(editingIndex === null)
+    return;
+
+
+
+  const ev =
+    savedEvents[editingIndex];
+
+
+
+  if(ev.firebaseId){
+
+    await window.firebaseFirestore.deleteDoc(
+
+      window.firebaseFirestore.doc(
+        window.db,
+        "events",
+        ev.firebaseId
+      )
+
+    );
+  }
+
+
+
+  closePopup();
+}
+
+
 
 // ======================
 // CAMBIO TURNO
