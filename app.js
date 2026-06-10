@@ -2235,3 +2235,24 @@ window.migrateEmployeesInsideApp = migrateEmployeesInsideApp;
 
 loadEventsFromFirebase();
 renderCalendar();
+
+
+// ======================
+// LOGOUT
+// ======================
+window.logout = async function () {
+
+  try {
+
+    await window.auth.signOut();
+
+    window.location.href = "login.html";
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Errore logout");
+
+  }
+
+};
