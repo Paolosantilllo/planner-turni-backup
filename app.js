@@ -1183,7 +1183,7 @@ if(finalShift === "REP"){
     // ======================
     // UN SOLO REP AL GIORNO
     // ======================
-    if(finalshift === "REP"){
+    if(finalShift === "REP"){
 
       const repExists =
   savedEvents.some(ev =>
@@ -1215,7 +1215,7 @@ if(finalShift === "REP"){
     // ======================
     // UN SOLO FREP AL GIORNO
     // ======================
-    if(finalshift === "FREP"){
+    if(finalShift === "FREP"){
 
       const frepExists =
   savedEvents.some(ev =>
