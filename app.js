@@ -530,35 +530,23 @@ if(isSunday || isHoliday){
 
 
 
-    // EVENTI
-    const selectedEmployee =
-      document.getElementById("employeeFilter").value;
+   // ======================
+// EVENTI
+// ======================
+const selectedEmployee =
+  document.getElementById("employeeFilter").value;
 
+const events = savedEvents.filter(e => {
 
-const events =
-      savedEvents.filter(e =>
+  return (
+    e.date === formatted &&
+    (
+      selectedEmployee === "ALL" ||
+      e.employeeId === selectedEmployee
+    )
+  );
 
-        e.date === formatted &&
-
-        (
-          selectedEmployee === "ALL" ||
-
-          e.employee === selectedEmployee ||
-(
-  selectedEmployee === "SANTILLO" &&
-  e.employee === "Dipendente A"
-)
-
-||
-
-(
-  selectedEmployee === "MANUNTA" &&
-  e.employee === "Dipendente B"
-)
-        )
-
-      );
-
+});
 
 
     events.forEach(event => {
