@@ -398,7 +398,7 @@ window.closeRequestActionPopup = function () {
 // ======================
 // CALENDAR
 // ======================
-function renderCalendar(){
+window.renderCalendar = function(){
 
   console.log("renderCalendar eseguita");
 
