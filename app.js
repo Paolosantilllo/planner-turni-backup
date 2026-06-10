@@ -138,7 +138,6 @@ if (requestIdFromUrl) {
 
   console.log("🔔 Apertura da notifica:", requestIdFromUrl);
 
-  // 👉 riusa la stessa funzione del click interno
   openRequestFromNotification(requestIdFromUrl);
 
 }
