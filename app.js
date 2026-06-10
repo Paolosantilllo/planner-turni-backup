@@ -16,6 +16,31 @@ const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 
 /* ======================
+   FESTIVI CHECK
+====================== */
+
+function isHoliday(dateStr){
+
+  const d = new Date(dateStr);
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+
+  return holidays.includes(`${day}-${month}`);
+}
+/* ======================
+   FESTIVI CHECK
+====================== */
+
+function isHoliday(dateStr){
+
+  const d = new Date(dateStr);
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+
+  return holidays.includes(`${day}-${month}`);
+}
+
+/* ======================
    AVVIO APP DOPO LOGIN
 ====================== */
 
