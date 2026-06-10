@@ -24,25 +24,95 @@ const holidays = [
   "15-8","1-11","8-12","25-12","26-12"
 ];
 
-function getDayInfo(dateStr) {
-  const d = new Date(dateStr);
-  const day = d.getDay(); // 0 domenica
-  const dayNum = d.getDate();
-  const month = d.getMonth() + 1;
+/* ======================
+   INFO GIORNO
+====================== */
 
-  const holidays = [
-    "1-1","6-1","25-4","1-5","2-6",
-    "15-8","1-11","8-12","25-12","26-12"
-  ];
+function getDayInfo(dateStr) {
+
+  const d = new Date(dateStr);
+
+  const day = d.getDay();      // 0 = domenica
+  const dayNum = d.getDate();  // giorno numero
+  const month = d.getMonth() + 1;
 
   const isHoliday = holidays.includes(`${dayNum}-${month}`);
 
   return {
     isSunday: day === 0,
     isWeekday: day >= 1 && day <= 6,
-    isHoliday
+    isHoliday: isHoliday
   };
+
 }
+
+window.validateShift = function(events, employee, date, shift) {
+
+  const info = getDayInfo(date);
+
+  const sameDayEvents = events.filter(e => e.date === date);
+
+  const alreadyTaken = sameDayEvents.some(e => e.shift === shift);
+
+  if (alreadyTaken) {
+    return {
+      ok: false,
+      message: `❌ Esiste già un ${shift} in questo giorno`
+    };
+  }
+
+  if (shift === "REP") {
+
+    if (!info.isWeekday) {
+      return {
+        ok: false,
+        message: "REP solo lunedì-sabato"
+      };
+    }
+
+    const monthlyCount = events.filter(e =>
+      e.employee === employee &&
+      e.shift === "REP" &&
+      new Date(e.date).getMonth() === new Date(date).getMonth()
+    ).length;
+
+    if (monthlyCount >= 6) {
+      return {
+        ok: false,
+        message: "Max 6 REP al mese"
+      };
+    }
+  }
+
+  if (shift === "FREP") {
+
+    if (!info.isSunday && !info.isHoliday) {
+      return {
+        ok: false,
+        message: "FREP solo domenica e festivi"
+      };
+    }
+
+    const monthlyCount = events.filter(e =>
+      e.employee === employee &&
+      e.shift === "FREP" &&
+      new Date(e.date).getMonth() === new Date(date).getMonth()
+    ).length;
+
+    if (monthlyCount >= 2) {
+      return {
+        ok: false,
+        message: "Max 2 FREP al mese"
+      };
+    }
+  }
+
+  return {
+    ok: true,
+    finalShift: shift
+  };
+};
+
 
 /* ======================
    CHECK FESTIVI
