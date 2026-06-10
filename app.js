@@ -999,175 +999,50 @@ window.saveShift = async function () {
 
 
 
-  while(current <= stop){
+  while (current <= stop) {
 
-    const y =
-      current.getFullYear();
+  const y = current.getFullYear();
 
-    const m =
-      String(
-        current.getMonth() + 1
-      ).padStart(2,"0");
+  const m = String(current.getMonth() + 1).padStart(2, "0");
 
-    const d =
-      String(
-        current.getDate()
-      ).padStart(2,"0");
+  const d = String(current.getDate()).padStart(2, "0");
 
+  const date = `${y}-${m}-${d}`;
 
+  const day = current.getDay();
+  const month = current.getMonth() + 1;
+  const dayNumber = current.getDate();
 
-    const date =
-  `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
+  // FESTIVI
+  const holidays = [
+    "1-1",
+    "6-1",
+    "25-4",
+    "1-5",
+    "2-6",
+    "15-8",
+    "1-11",
+    "8-12",
+    "25-12",
+    "26-12"
+  ];
 
+  const isHoliday = holidays.includes(`${dayNumber}-${month}`);
+  const isSunday = day === 0;
+  const isFestive = isSunday || isHoliday;
 
-    const day =
-      current.getDay();
+  // 👉 DECIDI AUTOMATICAMENTE IL TURNO
+  let shiftToSave = shift;
 
-    const month =
-      current.getMonth()+1;
+  if (shift === "REP" && isFestive) {
+    shiftToSave = "FREP";
+  }
 
-    const dayNumber =
-      current.getDate();
+  // ======================
+  // CONTROLLO DUPLICATI (BLOCCANTE)
+  // ======================
 
-
-
-    // FESTIVI
-    const holidays = [
-      "1-1",
-      "6-1",
-      "25-4",
-      "1-5",
-      "2-6",
-      "15-8",
-      "1-11",
-      "8-12",
-      "25-12",
-      "26-12"
-    ];
-
-
-
-    const isHoliday =
-      holidays.includes(
-        `${dayNumber}-${month}`
-      );
-
-
-
-    const isSunday =
-      day === 0;
-
-
-
-    const isFestive =
-      isSunday || isHoliday;
-
-
-
-    // ======================
-    // BLOCCO REP
-    // ======================
-    if(shift === "REP"){
-
-     if(isFestive){
-
-        alert(
-          "REP non consentito la domenica"
-        );
-
-        return;
-      }
-
-
-
-      const repCount =
-  savedEvents.filter(ev => {
-
-    const isSameEmployee =
-      ev.employee === employee ||
-      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-      (employee === "MANUNTA" && ev.employee === "Dipendente B");
-
-    const parts = ev.date.split("-");
-    const evMonth = Number(parts[1]) - 1;
-    const evYear = Number(parts[0]);
-
-    return (
-      isSameEmployee &&
-      ev.shift === "REP" &&
-      evMonth === current.getMonth() &&
-      evYear === current.getFullYear()
-    );
-
-  }).length;
-
-
-      if(repCount >= 6){
-
-        alert(
-          "Massimo 6 REP al mese"
-        );
-
-        return;
-      }
-    }
-
-
-
-    // ======================
-    // BLOCCO FREP
-    // ======================
-    if(shift === "FREP"){
-
-      if(!isFestive){
-
-        alert(
-          "FREP solo domenica e festivi"
-        );
-
-        return;
-      }
-
-
-
-      const frepCount =
-  savedEvents.filter(ev => {
-
-    const isSameEmployee =
-      ev.employee === employee ||
-      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-      (employee === "MANUNTA" && ev.employee === "Dipendente B");
-
-    const parts = ev.date.split("-");
-    const evMonth = Number(parts[1]) - 1;
-    const evYear = Number(parts[0]);
-
-    return (
-      isSameEmployee &&
-      ev.shift === "FREP" &&
-      evMonth === current.getMonth() &&
-      evYear === current.getFullYear()
-    );
-
-  }).length;
-
-
-
-      if(frepCount >= 2){
-
-        alert(
-          "Massimo 2 FREP al mese"
-        );
-
-        return;
-      }
-    }
-    // ======================
-    // UN SOLO TURNO AL GIORNO
-    // ======================
-    const alreadyExists =
-  savedEvents.some(ev =>
-
+  const alreadyExists = savedEvents.some(ev =>
     ev.employee === employee &&
     ev.date === date &&
     ev.firebaseId !== (
@@ -1175,82 +1050,116 @@ window.saveShift = async function () {
         ? savedEvents[editingIndex].firebaseId
         : null
     )
-
   );
 
+  if (alreadyExists) {
+    alert(`❌ ${date}: il dipendente ha già un turno assegnato`);
+    return;
+  }
 
-    if(alreadyExists){
+  const shiftExists = savedEvents.some(ev =>
+    ev.date === date &&
+    ev.shift === shiftToSave
+  );
 
-      alert(
-        "Questo dipendente ha già un turno in questo giorno"
+  if (shiftExists) {
+    alert(`❌ ${date}: esiste già un ${shiftToSave}`);
+    return;
+  }
+
+  // ======================
+  // LIMITE REP MENSILE
+  // ======================
+  if (shift === "REP") {
+
+    const repCount = savedEvents.filter(ev => {
+
+      const isSameEmployee =
+        ev.employee === employee ||
+        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+        (employee === "MANUNTA" && ev.employee === "Dipendente B");
+
+      const parts = ev.date.split("-");
+      const evMonth = Number(parts[1]) - 1;
+      const evYear = Number(parts[0]);
+
+      return (
+        isSameEmployee &&
+        ev.shift === "REP" &&
+        evMonth === current.getMonth() &&
+        evYear === current.getFullYear()
       );
 
+    }).length;
+
+    if (repCount >= 6) {
+      alert("❌ Massimo 6 REP al mese");
       return;
     }
+  }
 
+  // ======================
+  // LIMITE FREP MENSILE
+  // ======================
+  if (shiftToSave === "FREP") {
 
-    // ======================
-    // UN SOLO REP AL GIORNO
-    // ======================
-    if(shift === "REP"){
+    const frepCount = savedEvents.filter(ev => {
 
-      const repExists =
-  savedEvents.some(ev =>
+      const isSameEmployee =
+        ev.employee === employee ||
+        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+        (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-    ev.date === date &&
-    ev.shift === "REP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
+      const parts = ev.date.split("-");
+      const evMonth = Number(parts[1]) - 1;
+      const evYear = Number(parts[0]);
 
-  );
+      return (
+        isSameEmployee &&
+        ev.shift === "FREP" &&
+        evMonth === current.getMonth() &&
+        evYear === current.getFullYear()
+      );
 
+    }).length;
 
-
-      if(repExists){
-
-        alert(
-          "Esiste già un REP in questo giorno"
-        );
-
-        return;
-      }
+    if (frepCount >= 2) {
+      alert("❌ Massimo 2 FREP al mese");
+      return;
     }
+  }
 
+  // ======================
+  // SALVATAGGIO (usiamo shiftToSave)
+  // ======================
 
+  if (editingIndex !== null) {
 
-    // ======================
-    // UN SOLO FREP AL GIORNO
-    // ======================
-    if(shift === "FREP"){
+    const oldEvent = savedEvents[editingIndex];
 
-      const frepExists =
-  savedEvents.some(ev =>
-
-    ev.date === date &&
-    ev.shift === "FREP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
-
-  );
-
-
-
-      if(frepExists){
-
-        alert(
-          "Esiste già un FREP in questo giorno"
-        );
-
-        return;
+    await window.firebaseFirestore.updateDoc(
+      window.firebaseFirestore.doc(window.db, "events", oldEvent.firebaseId),
+      {
+        employee,
+        date,
+        shift: shiftToSave
       }
-    }
+    );
 
+  } else {
+
+    await window.firebaseFirestore.addDoc(
+      window.firebaseFirestore.collection(window.db, "events"),
+      {
+        employee,
+        date,
+        shift: shiftToSave
+      }
+    );
+  }
+
+  current.setDate(current.getDate() + 1);
+}
    // ======================
 // SALVA / MODIFICA
 // ======================
