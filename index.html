@@ -307,66 +307,12 @@
   </div>
 
 </div>
+
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- FIREBASE -->
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  getDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-import {
-  getAuth
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
-
-  authDomain: "calendario-rep.firebaseapp.com",
-
-  projectId: "calendario-rep",
-
-  storageBucket: "calendario-rep.firebasestorage.app",
-
-  messagingSenderId: "1067128179274",
-
-  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-window.db = db;
-window.auth = auth;
-
-window.firebaseFirestore = {
-  collection,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  doc,
-  getDoc
-};
-
-</script>
-
+<!-- APP -->
 <script type="module" src="app.js"></script>
 
 </body>
