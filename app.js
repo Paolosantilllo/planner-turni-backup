@@ -137,7 +137,9 @@ onAuthStateChanged(window.auth, async (user) => {
   if (appDiv) {
     appDiv.style.display = "block";
   }
-
+   renderCalendar();
+   loadEventsFromFirebase();
+   
   document.body.style.overflow = "auto";
 
   // 🔥 TOKEN NOTIFICHE (SOLO DOPO LOGIN)
@@ -2230,3 +2232,6 @@ async function migrateEmployeesInsideApp(){
   console.log("🔥 MIGRAZIONE COMPLETATA");
 }
 window.migrateEmployeesInsideApp = migrateEmployeesInsideApp;
+
+loadEventsFromFirebase();
+renderCalendar();
