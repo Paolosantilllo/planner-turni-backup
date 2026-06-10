@@ -1354,7 +1354,12 @@ window.sendChangeRequest = async function () {
   const fromDate = window._changeData.getFromDate();
   const toDate = window._changeData.getToDate();
 
-  if (!fromDate || !toDate) {
+  console.log("fromDate", fromDate);
+console.log("toDate", toDate);
+console.log("toEmployee", toEmployee);
+console.log("shift", shift);
+   
+   if (!fromDate || !toDate) {
     alert("Seleziona entrambe le date");
     return;
   }
