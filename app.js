@@ -1063,7 +1063,18 @@ window.saveShift = async function () {
       isSunday || isHoliday;
 
 
+let finalShift = shift;
 
+// 🔥 LOGICA AUTOMATICA REP SETTIMANALE
+if (shift === "REP") {
+
+  if (isFestive) {
+    finalShift = "FREP";
+  } else {
+    finalShift = "REP";
+  }
+
+}
     // ======================
     // BLOCCO REP
     // ======================
