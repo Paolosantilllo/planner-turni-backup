@@ -16,19 +16,16 @@ const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 
 /* ======================
-   FESTIVI CHECK
+   FESTIVI
 ====================== */
 
-function isHoliday(dateStr){
+const holidays = [
+  "1-1","6-1","25-4","1-5","2-6",
+  "15-8","1-11","8-12","25-12","26-12"
+];
 
-  const d = new Date(dateStr);
-  const day = d.getDate();
-  const month = d.getMonth() + 1;
-
-  return holidays.includes(`${day}-${month}`);
-}
 /* ======================
-   FESTIVI CHECK
+   CHECK FESTIVI
 ====================== */
 
 function isHoliday(dateStr){
@@ -78,7 +75,7 @@ function loadEvents(){
 }
 
 /* ======================
-   RENDER CALENDARIO BASE
+   RENDER CALENDARIO
 ====================== */
 
 window.renderCalendar = function(){
@@ -95,7 +92,7 @@ window.renderCalendar = function(){
 
   monthTitle.innerText = `${monthNames[month]} ${year}`;
 
-  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   for(let day = 1; day <= daysInMonth; day++){
 
@@ -104,49 +101,46 @@ window.renderCalendar = function(){
     const box = document.createElement("div");
     box.classList.add("day");
 
-   box.onclick = () => openPopupWithDate(date);
-     
-     const events = savedEvents.filter(e => e.date === date);
+    box.style.cursor = "pointer";
 
-    // numero giorno
+    box.onclick = () => openPopupWithDate(date);
+
+    const events = savedEvents.filter(e => e.date === date);
+
     const num = document.createElement("div");
     num.classList.add("day-number");
+
+    if (isHoliday(date)) {
+      num.style.color = "red";
+      num.style.fontWeight = "800";
+    }
+
     num.innerText = day;
     box.appendChild(num);
 
-  // eventi
-events.forEach(ev => {
+    events.forEach(ev => {
 
-  const el = document.createElement("div");
+      const el = document.createElement("div");
+      el.classList.add("event");
 
-  el.classList.add("event");
+      if (ev.employee === "A") el.classList.add("dipendente-santillo");
+      if (ev.employee === "B") el.classList.add("dipendente-b");
+      if (ev.employee === "C") el.classList.add("dipendente-c");
+      if (ev.employee === "D") el.classList.add("dipendente-d");
 
-  if (ev.employee === "A") {
-    el.classList.add("dipendente-santillo");
-  }
+      if (ev.shift === "LIC") {
+        el.classList.add("lic-text");
+      }
 
-  if (ev.employee === "B") {
-    el.classList.add("dipendente-b");
-  }
+      el.innerText = ev.shift;
 
-  if (ev.employee === "C") {
-    el.classList.add("dipendente-c");
-  }
+      box.appendChild(el);
 
-  if (ev.employee === "D") {
-    el.classList.add("dipendente-d");
-  }
+    });
 
-  el.innerText = ev.shift;
-
-  box.appendChild(el);
-
-});
-
-calendar.appendChild(box);
+    calendar.appendChild(box);
 
   }
-
 };
 
 /* ======================
@@ -164,7 +158,7 @@ window.prevMonth = function(){
 };
 
 /* ======================
-   POPUP BASE
+   POPUP
 ====================== */
 
 window.openPopup = function(){
@@ -175,16 +169,17 @@ window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
 
-// 👇 QUI LO INCOLLI
 window.openPopupWithDate = function(date){
-
-  const popup = document.getElementById("popup");
 
   document.getElementById("startDate").value = date;
   document.getElementById("endDate").value = date;
 
-  popup.style.display = "flex";
+  document.getElementById("popup").style.display = "flex";
 };
+
+/* ======================
+   SALVATAGGIO
+====================== */
 
 window.saveShift = async function () {
 
@@ -198,8 +193,8 @@ window.saveShift = async function () {
     return;
   }
 
-   console.log({ employee, startDate, endDate, shift });
-   
+  console.log({ employee, startDate, endDate, shift });
+
   try {
 
     await firestore.addDoc(
@@ -222,23 +217,21 @@ window.saveShift = async function () {
   }
 };
 
+/* ======================
+   NOTIFICHE
+====================== */
+
 const params = new URLSearchParams(window.location.search);
 const requestIdFromUrl = params.get("requestId");
 
 if (requestIdFromUrl) {
-
-  console.log("🔔 Apertura da notifica:", requestIdFromUrl);
-
   openRequestFromNotification(requestIdFromUrl);
-
 }
-function openRequestFromNotification(requestId) {
+
+function openRequestFromNotification(requestId){
 
   if (!requestId) return;
 
-  console.log("📩 Apertura notifica:", requestId);
-
-  // 👇 QUI VA IL CHECK
   if (!savedEvents.length) {
     console.log("⏳ Eventi non ancora caricati");
     return;
