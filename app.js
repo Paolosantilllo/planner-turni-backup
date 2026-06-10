@@ -130,3 +130,15 @@ window.openPopup = function(){
 window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
+
+const params = new URLSearchParams(window.location.search);
+const requestIdFromUrl = params.get("requestId");
+
+if (requestIdFromUrl) {
+
+  console.log("🔔 Apertura da notifica:", requestIdFromUrl);
+
+  // 👉 riusa la stessa funzione del click interno
+  openRequestFromNotification(requestIdFromUrl);
+
+}
