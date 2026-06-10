@@ -935,7 +935,7 @@ window.closeRequestsPopup = function () {
 // ======================
 window.saveShift = async function () {
 
-  const employee =
+  const employeeId =
     document.getElementById("employee").value;
 
   const start =
@@ -947,75 +947,43 @@ window.saveShift = async function () {
   const shift =
     document.getElementById("shift").value;
 
-
-
-  if(!start || !end){
-
+  if (!start || !end) {
     alert("Seleziona le date");
-
     return;
   }
-
-
 
   const startParts = start.split("-");
   const endParts = end.split("-");
 
-
-
   let current = new Date(
-
     Number(startParts[0]),
     Number(startParts[1]) - 1,
     Number(startParts[2])
-
   );
 
-
-
   let stop = new Date(
-
     Number(endParts[0]),
     Number(endParts[1]) - 1,
     Number(endParts[2])
-
   );
 
+  while (current <= stop) {
 
+    const y = current.getFullYear();
 
-  while(current <= stop){
+    const m = String(current.getMonth() + 1).padStart(2, "0");
 
-    const y =
-      current.getFullYear();
+    const d = String(current.getDate()).padStart(2, "0");
 
-    const m =
-      String(
-        current.getMonth() + 1
-      ).padStart(2,"0");
+    const date = `${y}-${m}-${d}`;
 
-    const d =
-      String(
-        current.getDate()
-      ).padStart(2,"0");
+    const day = current.getDay();
+    const month = current.getMonth() + 1;
+    const dayNumber = current.getDate();
 
-
-
-    const date =
-  `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
-
-
-    const day =
-      current.getDay();
-
-    const month =
-      current.getMonth()+1;
-
-    const dayNumber =
-      current.getDate();
-
-
-
+    // ======================
     // FESTIVI
+    // ======================
     const holidays = [
       "1-1",
       "6-1",
@@ -1029,25 +997,12 @@ window.saveShift = async function () {
       "26-12"
     ];
 
+    const isHoliday = holidays.includes(`${dayNumber}-${month}`);
+    const isSunday = day === 0;
 
+    const isFestive = isSunday || isHoliday;
 
-    const isHoliday =
-      holidays.includes(
-        `${dayNumber}-${month}`
-      );
-
-
-
-    const isSunday =
-      day === 0;
-
-
-
-    const isFestive =
-      isSunday || isHoliday;
-
-
-let finalShift = shift;
+    let finalShift = shift;
 
 
 
