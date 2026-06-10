@@ -1065,6 +1065,10 @@ window.saveShift = async function () {
 
 let finalShift = shift;
 
+if (shift === "REP" && isFestive) {
+  finalShift = "FREP";
+}
+
 //======================
 //  LOGICA AUTOMATICA REP / FREP
 //====================== 
