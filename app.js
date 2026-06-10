@@ -1188,69 +1188,54 @@ if (shift === "REP") {
     }
 
 
-    // ======================
-    // UN SOLO REP AL GIORNO
-    // ======================
-    if(shift === "REP"){
+  // ======================
+// UN SOLO REP AL GIORNO
+// ======================
+if(finalShift === "REP"){
 
-      const repExists =
-  savedEvents.some(ev =>
+  const repExists =
+    savedEvents.some(ev =>
 
-    ev.date === date &&
-    ev.shift === "REP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
+      ev.date === date &&
+      ev.shift === "REP" &&
+      ev.firebaseId !== (
+        editingIndex !== null
+          ? savedEvents[editingIndex].firebaseId
+          : null
+      )
 
-  );
+    );
 
-
-
-      if(repExists){
-
-        alert(
-          "Esiste già un REP in questo giorno"
-        );
-
-        return;
-      }
-    }
+  if(repExists){
+    alert("Esiste già un REP in questo giorno");
+    return;
+  }
+}
 
 
 
-    // ======================
-    // UN SOLO FREP AL GIORNO
-    // ======================
-    if(shift === "FREP"){
+    if(finalShift === "FREP"){
 
-      const frepExists =
-  savedEvents.some(ev =>
+  const frepExists =
+    savedEvents.some(ev =>
 
-    ev.date === date &&
-    ev.shift === "FREP" &&
-    ev.firebaseId !== (
-      editingIndex !== null
-        ? savedEvents[editingIndex].firebaseId
-        : null
-    )
+      ev.date === date &&
+      ev.shift === "FREP" &&
+      ev.firebaseId !== (
+        editingIndex !== null
+          ? savedEvents[editingIndex].firebaseId
+          : null
+      )
 
-  );
+    );
 
+  if(frepExists){
+    alert("Esiste già un FREP in questo giorno");
+    return;
+  }
+}
 
-
-      if(frepExists){
-
-        alert(
-          "Esiste già un FREP in questo giorno"
-        );
-
-        return;
-      }
-    }
-
-   // ======================
+// ======================
 // SALVA / MODIFICA
 // ======================
 if(editingIndex !== null){
@@ -1269,7 +1254,7 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift
+      shift: finalShift
     }
 
   );
@@ -1286,24 +1271,18 @@ if(editingIndex !== null){
     {
       employee,
       date,
-      shift
+      shift: finalShift
     }
 
   );
 
 }
 
+current.setDate(
+  current.getDate() + 1
+);
 
-    current.setDate(
-      current.getDate()+1
-    );
-  }
-
-
-
-  closePopup();
-}
-
+closePopup();
 
 
 // ======================
