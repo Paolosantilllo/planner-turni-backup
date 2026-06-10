@@ -147,6 +147,12 @@ function openRequestFromNotification(requestId) {
 
   console.log("📩 Apertura notifica:", requestId);
 
+  // 👇 QUI VA IL CHECK
+  if (!savedEvents.length) {
+    console.log("⏳ Eventi non ancora caricati");
+    return;
+  }
+
   const event = savedEvents.find(e => e.id === requestId);
 
   if (!event) {
