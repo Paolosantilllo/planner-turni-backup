@@ -50,3 +50,50 @@ messaging.onBackgroundMessage((payload) => {
   });
 
 });
+
+self.addEventListener("notificationclick", (event) => {
+
+  console.log("🔔 NOTIFICA CLICCATA:", event);
+
+  event.notification.close();
+
+  const data = event.notification.data || {};
+  const requestId = data.requestId || "";
+
+  event.waitUntil(
+
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true
+    }).then((clientList) => {
+
+      // 🔥 1. SE APP GIÀ APERTA
+      for (const client of clientList) {
+
+        if (client.url.includes("index.html") && "focus" in client) {
+
+          client.focus();
+
+          client.postMessage({
+            type: "OPEN_REQUEST",
+            requestId: requestId
+          });
+
+          return;
+        }
+
+      }
+
+      // 🔥 2. SE APP CHIUSA → APRI NUOVA FINESTRA
+      if (clients.openWindow) {
+
+        return clients.openWindow(
+          "/index.html?requestId=" + requestId
+        );
+      }
+
+    })
+
+  );
+
+});
