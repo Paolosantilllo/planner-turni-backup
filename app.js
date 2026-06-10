@@ -553,7 +553,7 @@ const events = savedEvents.filter(e => {
 
   const div = document.createElement("div");
   div.classList.add("event");
-
+});
   // ======================
   // COLORI TURNI (sempre uguali)
   // ======================
