@@ -25,11 +25,23 @@ const appDiv = document.querySelector(".app");
 /* ======================
    MAPPATURA DIPENDENTI
 ====================== */
-const employeeMap = {
-  A: "SANTILLO",
-  B: "MANUNTA",
-  C: "Dipendente C",
-  D: "Dipendente D"
+const employees = {
+  A: {
+    name: "SANTILLO",
+    email: "paolosantillo@yahoo.it"
+  },
+  B: {
+    name: "MANUNTA",
+    email: "dipb.planner@gmail.com"
+  },
+  C: {
+    name: "Dipendente C",
+    email: "dipc.planner@gmail.com"
+  },
+  D: {
+    name: "Dipendente D",
+    email: "dipd.planner@gmail.com"
+  }
 };
 /* ======================
    FIREBASE INIT
