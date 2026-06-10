@@ -1589,14 +1589,11 @@ const cellH = 10;
 
 
   const employees = [
-
-    "Dipendente D",
-    "Dipendente C",
-    "MANUNTA",
-    "SANTILLO"
-
-  ];
-
+  { id: "A", name: "SANTILLO" },
+  { id: "B", name: "MANUNTA" },
+  { id: "C", name: "Dipendente C" },
+  { id: "D", name: "Dipendente D" }
+];
 
 
   const daysInMonth =
@@ -2177,29 +2174,24 @@ window.handleChangeRequest = async function(requestId, action, notifId){
 // ======================
 // DROPDOWN DIPENDENTI
 // ======================
-function loadEmployeesDropdown(currentUser) {
+function loadEmployeesDropdown(currentUserId) {
 
   const select = document.getElementById("changeTo");
 
-  const allEmployees = [
-    "SANTILLO",
-    "MANUNTA",
-    "Dipendente C",
-    "Dipendente D"
-  ];
-
   select.innerHTML = "";
 
-  allEmployees.forEach(emp => {
+  employees.forEach(emp => {
 
-    if (emp === currentUser) return;
+    if (emp.id === currentUserId) return;
 
     const option = document.createElement("option");
-    option.value = emp;
-    option.textContent = emp;
+    option.value = emp.id;          // 👈 ID
+    option.textContent = emp.name;  // 👈 nome
 
     select.appendChild(option);
+
   });
+
 }
 async function migrateEmployeesInsideApp(){
 
