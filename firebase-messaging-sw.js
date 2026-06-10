@@ -65,20 +65,20 @@ self.addEventListener("notificationclick", function(event) {
       // se app già aperta
       for (let client of clientList) {
 
-        if (client.url.includes("/index.html") && "focus" in client) {
+  if ("focus" in client) {
 
-          client.focus();
+    client.focus();
 
-          client.postMessage({
-            type: "OPEN_REQUEST",
-            requestId: requestId
-          });
+    client.postMessage({
+      type: "OPEN_REQUEST",
+      requestId: requestId
+    });
 
-          return;
+    return;
 
-        }
+  }
 
-      }
+}
 
       // se app chiusa → apri nuova finestra
       if (clients.openWindow) {
