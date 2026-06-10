@@ -551,66 +551,57 @@ const events = savedEvents.filter(e => {
 
     events.forEach(event => {
 
-      const div =
-        document.createElement("div");
+  const div = document.createElement("div");
+  div.classList.add("event");
 
-      div.classList.add("event");
-
-if(selectedEmployee !== "ALL"){
-
-  if(
-    event.shift === "REC" ||
-    event.shift === "LIC"
-  ){
+  // ======================
+  // COLORI TURNI (sempre uguali)
+  // ======================
+  if (event.shift === "REC" || event.shift === "LIC") {
     div.classList.add("shift-yellow");
   }
 
-  if(
-    event.shift === "CFI" ||
-    event.shift === "CFI/REP"
-  ){
+  if (event.shift === "CFI" || event.shift === "CFI/REP") {
     div.classList.add("shift-green");
   }
 
-  if(
-    event.shift === "REP" ||
-    event.shift === "FREP"
-  ){
+  if (event.shift === "REP" || event.shift === "FREP") {
     div.classList.add("shift-pink");
   }
 
-}
-else{
+  // ======================
+  // COLORI DIPENDENTI (SOLO ALL)
+  // ======================
+  if (selectedEmployee === "ALL") {
 
-      if(event.employee === "Dipendente D"){
-        div.classList.add("dipendente-d");
-      }
+    if (event.employeeId === "D") {
+      div.classList.add("dipendente-d");
+    }
 
-      if(event.employee === "Dipendente C"){
-        div.classList.add("dipendente-c");
-      }
+    if (event.employeeId === "C") {
+      div.classList.add("dipendente-c");
+    }
 
-      if(
-  event.employee === "Dipendente B" ||
-  event.employee === "MANUNTA"
-){
-  div.classList.add("dipendente-b");
-}
+    if (event.employeeId === "B") {
+      div.classList.add("dipendente-b");
+    }
 
-      if(
-  event.employee === "Dipendente A" ||
-  event.employee === "SANTILLO"
-){
-  div.classList.add("dipendente-santillo");
+    if (event.employeeId === "A") {
+      div.classList.add("dipendente-santillo");
+    }
+
   }
 
-}
+  // ======================
+  // CONTENUTO
+  // ======================
+  div.innerHTML = `
+    <div class="event-shift">
+      ${event.shift}
+    </div>
+  `;
 
-      div.innerHTML = `
-        <div class="event-shift">
-          ${event.shift}
-        </div>
-      `;
+});
 
 
 
