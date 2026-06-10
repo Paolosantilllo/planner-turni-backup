@@ -1082,50 +1082,34 @@ if (shift === "REP") {
     // ======================
     // BLOCCO REP
     // ======================
-    if(shift === "REP"){
+    if (shift === "REP") {
 
-     if(isFestive){
+  const repCount =
+    savedEvents.filter(ev => {
 
-        alert(
-          "REP non consentito la domenica"
-        );
+      const isSameEmployee =
+        ev.employee === employee ||
+        (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
+        (employee === "MANUNTA" && ev.employee === "Dipendente B");
 
-        return;
-      }
+      const parts = ev.date.split("-");
+      const evMonth = Number(parts[1]) - 1;
+      const evYear = Number(parts[0]);
 
+      return (
+        isSameEmployee &&
+        ev.shift === "REP" &&
+        evMonth === current.getMonth() &&
+        evYear === current.getFullYear()
+      );
 
+    }).length;
 
-      const repCount =
-  savedEvents.filter(ev => {
-
-    const isSameEmployee =
-      ev.employee === employee ||
-      (employee === "SANTILLO" && ev.employee === "Dipendente A") ||
-      (employee === "MANUNTA" && ev.employee === "Dipendente B");
-
-    const parts = ev.date.split("-");
-    const evMonth = Number(parts[1]) - 1;
-    const evYear = Number(parts[0]);
-
-    return (
-      isSameEmployee &&
-      ev.shift === "REP" &&
-      evMonth === current.getMonth() &&
-      evYear === current.getFullYear()
-    );
-
-  }).length;
-
-
-      if(repCount >= 6){
-
-        alert(
-          "Massimo 6 REP al mese"
-        );
-
-        return;
-      }
-    }
+  if (repCount >= 6) {
+    alert("Massimo 6 REP al mese");
+    return;
+  }
+}
 
 
 
