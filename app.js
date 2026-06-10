@@ -148,6 +148,42 @@ window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
 
+window.saveShift = async function () {
+
+  const employee = document.getElementById("employee").value;
+  const startDate = document.getElementById("startDate").value;
+  const endDate = document.getElementById("endDate").value;
+  const shift = document.getElementById("shift").value;
+
+  if (!employee || !startDate || !shift) {
+    alert("Compila tutti i campi");
+    return;
+  }
+
+   console.log({ employee, startDate, endDate, shift });
+   
+  try {
+
+    await firestore.addDoc(
+      firestore.collection(db, "events"),
+      {
+        employee,
+        date: startDate,
+        endDate: endDate,
+        shift,
+        createdAt: new Date()
+      }
+    );
+
+    closePopup();
+
+    console.log("✔ Salvataggio completato");
+
+  } catch (err) {
+    console.error("Errore salvataggio:", err);
+  }
+};
+
 const params = new URLSearchParams(window.location.search);
 const requestIdFromUrl = params.get("requestId");
 
