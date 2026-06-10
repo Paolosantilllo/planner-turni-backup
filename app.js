@@ -592,21 +592,19 @@ const events = savedEvents.filter(e => {
 
   }
 
-  // ======================
-  // CONTENUTO
-  // ======================
-  div.innerHTML = `
-    <div class="event-shift">
-      ${event.shift}
-    </div>
-  `;
+ // ======================
+// CONTENUTO
+// ======================
+div.innerHTML = `
+  <div class="event-shift">
+    ${event.shift}
+  </div>
+`;
 
-});
-
-
-
-      // MODIFICA
-      div.addEventListener("click", (e) => {
+// ======================
+// MODIFICA EVENTO
+// ======================
+div.addEventListener("click", (e) => {
 
   e.stopPropagation();
 
@@ -615,8 +613,9 @@ const events = savedEvents.filter(e => {
 
   editingIndex = savedEvents.indexOf(event);
 
+  // ⚠️ SISTEMA NUOVO: employeeId
   document.getElementById("employee").value =
-    event.employee;
+    event.employeeId;
 
   document.getElementById("startDate").value =
     event.date;
@@ -630,9 +629,7 @@ const events = savedEvents.filter(e => {
   openPopup();
 });
 
-      dayBox.appendChild(div);
-
-    });
+dayBox.appendChild(div);
 
 
 
