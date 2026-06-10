@@ -1128,3 +1128,27 @@ button:disabled{
 .hidden{
   display: none !important;
 }
+.icon-btn {
+  width: 60px;
+  height: 60px;
+
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 28px;
+
+  background: #34c759;
+  color: white;
+
+  box-shadow: 0 8px 20px rgba(52,199,89,0.25);
+
+  border: none;
+  cursor: pointer;
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
