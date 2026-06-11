@@ -375,7 +375,7 @@ if (employeeEvents.length > 0) {
   // ❌ blocco tutto tranne REP + REC
   if (!isAllowedCombo) {
 
-    alert(`❌ ${employee} ha già un turno in ${dateStr}`);
+    alert(`❌ ${employee} ha già un REP in ${dateStr}`);
 
     return;
   }
