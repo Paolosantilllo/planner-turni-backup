@@ -242,26 +242,35 @@ for (let day = 1; day <= daysInMonth; day++) {
   box.appendChild(num);
 
   events.forEach(ev => {
-    const el = document.createElement("div");
-    el.classList.add("event");
 
-    if (ev.employee === "A") el.classList.add("dipendente-santillo");
-    if (ev.employee === "B") el.classList.add("dipendente-b");
-    if (ev.employee === "C") el.classList.add("dipendente-c");
-    if (ev.employee === "D") el.classList.add("dipendente-d");
+  const el = document.createElement("div");
+  el.classList.add("event");
 
-    if (
-  ev.shift === "FREP" ||
-  ev.shift === "CFI/REP" ||
-  ev.shift === "MAL"
-) {
-  el.classList.add("frep-text");
-}
-     el.innerText = ev.shift;
-    box.appendChild(el);
-  });
+  if (ev.employee === "A") el.classList.add("dipendente-santillo");
+  if (ev.employee === "B") el.classList.add("dipendente-b");
+  if (ev.employee === "C") el.classList.add("dipendente-c");
+  if (ev.employee === "D") el.classList.add("dipendente-d");
 
-  calendar.appendChild(box);
+  // 🔴 Rosso solo se è domenica o festivo
+  if (
+    (dayInfo.isSunday || dayInfo.isHoliday) &&
+    (
+      ev.shift === "FREP" ||
+      ev.shift === "CFI/REP" ||
+      ev.shift === "MAL" ||
+      ev.shift === "LIC"
+    )
+  ) {
+    el.classList.add("frep-text");
+  }
+
+  el.innerText = ev.shift;
+
+  box.appendChild(el);
+
+});
+
+calendar.appendChild(box);
 }
 };
 
