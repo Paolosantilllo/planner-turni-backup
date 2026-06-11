@@ -618,3 +618,16 @@ function generatePDF() {
   const blobUrl = pdf.output("bloburl");
   window.open(blobUrl, "_blank");
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("pdfBtn");
+
+  if (!btn) {
+    console.error("pdfBtn non trovato");
+    return;
+  }
+
+  btn.addEventListener("click", generatePDF);
+
+});
