@@ -254,7 +254,14 @@ for (let day = 1; day <= daysInMonth; day++) {
       el.classList.add("lic-text");
     }
 
-    el.innerText = ev.shift;
+    if (ev.shift === "FREP") {
+  el.classList.add("frep-text");
+}
+
+if (ev.shift === "REP") {
+  el.classList.add("rep-text");
+}
+     el.innerText = ev.shift;
     box.appendChild(el);
   });
 
