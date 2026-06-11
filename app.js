@@ -351,6 +351,80 @@ window.saveShift = async function () {
         return;
       }
 
+      batchWrites.push(
+        firestore.addDoc(
+          firestore.collection(db, "events"),
+          {
+            employee,
+            date: dateStr,
+            shift,
+            createdAt: new Date()
+          }
+        )
+      );
+    }
+
+    await Promise.all(batchWrites);
+
+    closePopup();
+    console.log("✔ Salvataggio completato");
+
+  } catch (err) {
+    console.error("Errore salvataggio:", err);
+  }
+};
+
+
+
+// ======================
+// 🗑️ NUOVA FUNZIONE DELETE SHIFT
+// ======================
+
+window.deleteShift = async function () {
+
+  const employee = document.getElementById("employee").value;
+  const startDate = document.getElementById("startDate").value;
+  const endDate = document.getElementById("endDate").value;
+
+  if (!employee || !startDate) {
+    alert("Seleziona dipendente e data");
+    return;
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate || startDate);
+
+  try {
+
+    const toDelete = [];
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+
+      const dateStr = d.toISOString().split("T")[0];
+
+      savedEvents
+        .filter(e => e.date === dateStr && e.employee === employee)
+        .forEach(e => {
+          toDelete.push(
+            firestore.deleteDoc(
+              firestore.doc(db, "events", e.id)
+            )
+          );
+        });
+
+    }
+
+    await Promise.all(toDelete);
+
+    closePopup();
+
+    console.log("✔ Eliminazione completata");
+
+  } catch (err) {
+    console.error("Errore eliminazione:", err);
+  }
+};
+
       // ======================
       // REP RULES
       // ======================
