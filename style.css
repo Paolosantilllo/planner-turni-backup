@@ -858,11 +858,13 @@ body{
   color:white !important;
 
 }
-.calendar,
-.calendar * {
-  color: #111 !important;
+.calendar {
+  color: #111;
 }
 
+.calendar * {
+  color: inherit;
+}
 @media print {
   .day {
     box-shadow: none !important;
