@@ -310,54 +310,106 @@ window.saveShift = async function () {
   const endDate = document.getElementById("endDate").value;
   const shift = document.getElementById("shift").value;
 
-  if (!employee || !startDate || !endDate || !shift) {
+  if (!employee || !startDate || !shift) {
     alert("Compila tutti i campi");
     return;
   }
 
-  console.log({ employee, startDate, endDate, shift });
+  const start = new Date(startDate);
+  const end = new Date(endDate || startDate);
 
   try {
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    let batchWrites = [];
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
 
-      const current = d.toISOString().split("T")[0];
+      const dateStr = d.toISOString().split("T")[0];
+      const info = getDayInfo(dateStr);
 
-      const info = getDayInfo(current);
+      const sameDay = savedEvents.filter(e => e.date === dateStr);
 
-      let shiftToSave = shift;
+      const hasREP = sameDay.some(e => e.shift === "REP");
+      const hasFREP = sameDay.some(e => e.shift === "FREP");
 
-      // REP diventa automaticamente FREP nei festivi e domeniche
-      if (shift === "REP" && (info.isSunday || info.isHoliday)) {
-        shiftToSave = "FREP";
-      }
+      const hasLIC = sameDay.some(e => e.shift === "LIC");
+      const hasREC = sameDay.some(e => e.shift === "REC");
 
-      const check = validateShift(
-        savedEvents,
-        employee,
-        current,
-        shiftToSave
-      );
-
-      if (!check.ok) {
-        alert(check.message + " (" + current + ")");
+      // ❌ BLOCCO DUPLICATO STESSO DIPENDENTE
+      const alreadyExists = sameDay.some(e => e.employee === employee && e.shift === shift);
+      if (alreadyExists) {
+        alert(`❌ ${employee} ha già ${shift} in data ${dateStr}`);
         return;
       }
 
-      await firestore.addDoc(
-        firestore.collection(db, "events"),
-        {
-          employee,
-          date: current,
-          shift: shiftToSave,
-          createdAt: new Date()
-        }
-      );
+      // ======================
+      // REP RULES
+      // ======================
+      if (shift === "REP") {
 
+        if (!info.isWeekday) {
+          alert("REP solo dal lunedì al sabato");
+          return;
+        }
+
+        if (hasREP) {
+          alert("❌ Esiste già un REP in questo giorno");
+          return;
+        }
+      }
+
+      // ======================
+      // FREP RULES
+      // ======================
+      if (shift === "FREP") {
+
+        if (!info.isSunday && !info.isHoliday) {
+          alert("FREP solo domenica e festivi");
+          return;
+        }
+
+        if (hasFREP) {
+          alert("❌ Esiste già un FREP in questo giorno");
+          return;
+        }
+      }
+
+      // ======================
+      // LIC RULES
+      // ======================
+      if (shift === "LIC") {
+
+        if (hasREP || hasFREP) {
+          alert("❌ Non puoi mettere LIC se c’è REP o FREP");
+          return;
+        }
+      }
+
+      // ======================
+      // REC RULES
+      // ======================
+      if (shift === "REC") {
+
+        if (info.isSunday || info.isHoliday) {
+          alert("REC non valido nei festivi o domeniche");
+          return;
+        }
+      }
+
+      batchWrites.push(
+        firestore.addDoc(
+          firestore.collection(db, "events"),
+          {
+            employee,
+            date: dateStr,
+            shift,
+            createdAt: new Date()
+          }
+        )
+      );
     }
+
+    await Promise.all(batchWrites);
 
     closePopup();
     console.log("✔ Salvataggio completato");
