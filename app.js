@@ -350,7 +350,7 @@ window.saveShift = async function () {
 
   try {
 
-    let batchWrites = [];
+    const writes = [];
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
 
@@ -359,20 +359,71 @@ window.saveShift = async function () {
 
       const sameDay = savedEvents.filter(e => e.date === dateStr);
 
-      const hasREP = sameDay.some(e => e.shift === "REP");
-      const hasFREP = sameDay.some(e => e.shift === "FREP");
+      const repExists = sameDay.some(e => e.shift === "REP");
+      const frepExists = sameDay.some(e => e.shift === "FREP");
 
-      const hasLIC = sameDay.some(e => e.shift === "LIC");
-      const hasREC = sameDay.some(e => e.shift === "REC");
+      const sameEmployeeShift = sameDay.some(e =>
+        e.employee === employee && e.shift === shift
+      );
 
-      // ❌ BLOCCO DUPLICATO STESSO DIPENDENTE
-      const alreadyExists = sameDay.some(e => e.employee === employee && e.shift === shift);
-      if (alreadyExists) {
-        alert(`❌ ${employee} ha già ${shift} in data ${dateStr}`);
+      // ❌ blocco duplicato dipendente
+      if (sameEmployeeShift) {
+        alert(`❌ ${employee} ha già ${shift} in ${dateStr}`);
         return;
       }
 
-      batchWrites.push(
+      // ❌ blocco REP/FREP stesso giorno
+      if (shift === "REP" && frepExists) {
+        alert("❌ C’è già FREP in questo giorno");
+        return;
+      }
+
+      if (shift === "FREP" && repExists) {
+        alert("❌ C’è già REP in questo giorno");
+        return;
+      }
+
+      // 🔴 REP RULES
+      if (shift === "REP") {
+
+        if (!info.isWeekday) {
+          alert("REP solo lun–sab");
+          return;
+        }
+
+        const monthly = savedEvents.filter(e =>
+          e.employee === employee &&
+          e.shift === "REP" &&
+          new Date(e.date).getMonth() === d.getMonth()
+        ).length;
+
+        if (monthly >= 6) {
+          alert("Max 6 REP al mese");
+          return;
+        }
+      }
+
+      // 🔵 FREP RULES
+      if (shift === "FREP") {
+
+        if (!info.isSunday && !info.isHoliday) {
+          alert("FREP solo domenica e festivi");
+          return;
+        }
+
+        const monthly = savedEvents.filter(e =>
+          e.employee === employee &&
+          e.shift === "FREP" &&
+          new Date(e.date).getMonth() === d.getMonth()
+        ).length;
+
+        if (monthly >= 2) {
+          alert("Max 2 FREP al mese");
+          return;
+        }
+      }
+
+      writes.push(
         firestore.addDoc(
           firestore.collection(db, "events"),
           {
@@ -385,13 +436,13 @@ window.saveShift = async function () {
       );
     }
 
-    await Promise.all(batchWrites);
+    await Promise.all(writes);
 
     closePopup();
     console.log("✔ Salvataggio completato");
 
   } catch (err) {
-    console.error("Errore salvataggio:", err);
+    console.error(err);
   }
 };
 
