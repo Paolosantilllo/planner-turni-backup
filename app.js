@@ -225,7 +225,7 @@ for(let day = 1; day <= daysInMonth; day++){
 
     box.style.cursor = "pointer";
 
-    box.onclick = () => openPopupWithDate(date);
+    box.onclick = () => openPopupWithDate(date, events);
 
     const events = savedEvents.filter(e => e.date === date);
 
