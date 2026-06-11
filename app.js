@@ -291,10 +291,19 @@ window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
 
-window.openPopupWithDate = function(date){
+window.openPopupWithDate = function(date, events = []) {
 
   document.getElementById("startDate").value = date;
   document.getElementById("endDate").value = date;
+
+  const employeeSelect = document.getElementById("employee");
+
+  // se c’è un solo evento → autoselezione dipendente
+  if (events.length === 1) {
+    employeeSelect.value = events[0].employee;
+  } else {
+    employeeSelect.value = "";
+  }
 
   document.getElementById("popup").style.display = "flex";
 };
