@@ -517,7 +517,6 @@ window.deleteShift = async function () {
 //  📤 PDF EXPORT
 // ======================
 
-
 function generatePDF() {
 
   const missingMessages = [];
@@ -568,7 +567,7 @@ function generatePDF() {
   }
 
   // ======================
-  // 📄 GENERAZIONE PDF
+  // 📄 GENERAZIONE PDF (NUOVO SISTEMA COLLEGATO ALL'APP)
   // ======================
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF("landscape", "mm", "a4");
@@ -602,15 +601,57 @@ function generatePDF() {
   );
 
   // ======================
-  // 📐 BASE TABELLA (ancora vuota per ora)
+  // 📊 STAFF (COLLEGATO ALL'APP)
   // ======================
-  const startX = 15;
-  const startY = 28;
+  // ⚠️ QUI DEVE ESISTERE NEL TUO FILE
+  // esempio:
+  // let staff = [{grado:"LGT.", nome:"..."}, ...]
 
-  const nameW = 30;
-  const cellW = 7;
-  const headerH = 6;
-  const cellH = 10;
+  // ======================
+  // 📊 GENERAZIONE TABELLA DINAMICA
+  // ======================
+  const giorni = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const head = [["Grado", "Nominativi", ...giorni]];
+
+  const body = staff.map(persona => {
+
+    const row = [
+      persona.grado,
+      persona.nome
+    ];
+
+    for (let d = 1; d <= daysInMonth; d++) {
+
+      const date =
+        `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+      const ev = savedEvents.find(e =>
+        e.date === date &&
+        e.persona === persona.nome
+      );
+
+      row.push(ev ? ev.shift : "");
+    }
+
+    return row;
+  });
+
+  autoTable(pdf, {
+    head,
+    body,
+    startY: 28,
+    theme: "grid",
+
+    styles: {
+      fontSize: 7,
+      cellPadding: 2,
+      halign: "center",
+      valign: "middle"
+    },
+
+    tableWidth: "auto"
+  });
 
   // ======================
   // 👀 ANTEPRIMA PDF
