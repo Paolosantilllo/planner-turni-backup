@@ -663,6 +663,19 @@ const blobUrl = URL.createObjectURL(blob);
 const win = window.open(blobUrl, "_blank");
 
 if (!win) {
-  // fallback iOS blocco popup
-  window.location.href = blobUrl;
+// fallback iOS blocco popup
+window.location.href = blobUrl;
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("pdfBtn");
+
+  if (!btn) {
+    console.error("pdfBtn non trovato");
+    return;
+  }
+
+  btn.addEventListener("click", generatePDF);
+
+});
