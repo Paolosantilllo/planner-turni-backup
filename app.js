@@ -518,14 +518,53 @@ window.deleteShift = async function () {
 
 function generatePDF() {
 
-  alert("PDF cliccato");
+  const missingMessages = [];
 
-  console.log("📤 PDF click funzionante");
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-}
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
 
-const pdfBtn = document.getElementById("pdfBtn");
+  for(let d = 1; d <= daysInMonth; d++){
 
-if (pdfBtn) {
-  pdfBtn.addEventListener("click", generatePDF);
+    const date =
+      `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+    const hasCoverage =
+      savedEvents.some(ev =>
+        ev.date === date &&
+        (
+          ev.shift === "REP" ||
+          ev.shift === "FREP" ||
+          ev.shift === "CFI/REP"
+        )
+      );
+
+    if(!hasCoverage){
+
+      missingMessages.push(
+        `${String(d).padStart(2,"0")}/${String(month+1).padStart(2,"0")}/${String(year).slice(-2)}`
+      );
+
+    }
+
+  }
+
+  if(missingMessages.length > 0){
+
+    const proceed = confirm(
+      "⚠️ Mancano le seguenti reperibilità:\n\n" +
+      missingMessages.join("\n") +
+      "\n\nVuoi inviare comunque il PDF?"
+    );
+
+    if(!proceed){
+      return;
+    }
+
+  }
+
+  alert("Qui partirà la generazione PDF");
+
 }
