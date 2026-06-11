@@ -512,4 +512,10 @@ window.deleteShift = async function () {
   }
 };
 
-     
+/* ======================
+   📤 PDF EXPORT
+====================== */
+
+window.generatePDF = function () {
+  console.log("PDF click funzionante");
+};
