@@ -653,18 +653,11 @@ function generatePDF() {
     tableWidth: "auto"
   });
 
-// ======================
-// 👀 ANTEPRIMA PDF (FIX)
-/// ======================
-
-const blob = pdf.output("blob");
-const blobUrl = URL.createObjectURL(blob);
-
-const win = window.open(blobUrl, "_blank");
-
-if (!win) {
-// fallback iOS blocco popup
-window.location.href = blobUrl;
+  // ======================
+  // 👀 ANTEPRIMA PDF
+  // ======================
+  const blobUrl = pdf.output("bloburl");
+  window.open(blobUrl, "_blank");
 }
 
 window.addEventListener("DOMContentLoaded", () => {
