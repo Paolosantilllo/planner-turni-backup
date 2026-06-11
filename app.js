@@ -406,17 +406,23 @@ if (employeeEvents.length > 0) {
   // 🔴 REP RULES
   if (finalShift === "REP") {
 
-    const monthly = savedEvents.filter(e =>
-      e.employee === employee &&
-      e.shift === "REP" &&
-      new Date(e.date).getMonth() === d.getMonth()
-    ).length;
+  const month = d.getMonth();
 
-    if (monthly >= 6) {
-      alert("Max 6 REP al mese");
-      return;
-    }
+  const existing = savedEvents.filter(e =>
+    e.employee === employee &&
+    e.shift === "REP" &&
+    new Date(e.date).getMonth() === month
+  ).length;
+
+  const total = existing + repCount;
+
+  if (total >= 6) {
+    alert("Max 6 REP al mese");
+    return;
   }
+
+  repCount++;
+}
 
   // 🔵 FREP RULES
   if (finalShift === "FREP") {
