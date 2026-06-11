@@ -290,7 +290,7 @@ window.saveShift = async function () {
   const endDate = document.getElementById("endDate").value;
   const shift = document.getElementById("shift").value;
 
-  if (!employee || !startDate || !shift) {
+  if (!employee || !startDate || !endDate || !shift) {
     alert("Compila tutti i campi");
     return;
   }
@@ -299,19 +299,47 @@ window.saveShift = async function () {
 
   try {
 
-    await firestore.addDoc(
-      firestore.collection(db, "events"),
-      {
-        employee,
-        date: startDate,
-        endDate: endDate,
-        shift,
-        createdAt: new Date()
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+
+      const current = d.toISOString().split("T")[0];
+
+      const info = getDayInfo(current);
+
+      let shiftToSave = shift;
+
+      // REP diventa automaticamente FREP nei festivi e domeniche
+      if (shift === "REP" && (info.isSunday || info.isHoliday)) {
+        shiftToSave = "FREP";
       }
-    );
+
+      const check = validateShift(
+        savedEvents,
+        employee,
+        current,
+        shiftToSave
+      );
+
+      if (!check.ok) {
+        alert(check.message + " (" + current + ")");
+        return;
+      }
+
+      await firestore.addDoc(
+        firestore.collection(db, "events"),
+        {
+          employee,
+          date: current,
+          shift: shiftToSave,
+          createdAt: new Date()
+        }
+      );
+
+    }
 
     closePopup();
-
     console.log("✔ Salvataggio completato");
 
   } catch (err) {
