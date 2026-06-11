@@ -333,88 +333,88 @@ window.saveShift = async function () {
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
 
-      const dateStr = d.toISOString().split("T")[0];
-      const info = getDayInfo(dateStr);
+  const dateStr = d.toISOString().split("T")[0];
+  const info = getDayInfo(dateStr);
 
-      const sameDay = savedEvents.filter(e => e.date === dateStr);
+  const sameDay = savedEvents.filter(e => e.date === dateStr);
 
-      const repExists = sameDay.some(e => e.shift === "REP");
-      const frepExists = sameDay.some(e => e.shift === "FREP");
+  const repExists = sameDay.some(e => e.shift === "REP");
+  const frepExists = sameDay.some(e => e.shift === "FREP");
 
-      const sameEmployeeShift = sameDay.some(e =>
-        e.employee === employee && e.shift === shift
-      );
+  const sameEmployeeShift = sameDay.some(e =>
+    e.employee === employee && e.shift === shift
+  );
 
-      // ❌ blocco duplicato dipendente
-      if (sameEmployeeShift) {
-        alert(`❌ ${employee} ha già ${shift} in ${dateStr}`);
-        return;
-      }
+  // ❌ blocco duplicato dipendente
+  if (sameEmployeeShift) {
+    alert(`❌ ${employee} ha già ${shift} in ${dateStr}`);
+    return;
+  }
 
-      // ❌ blocco REP/FREP stesso giorno
-      if (shift === "REP" && frepExists) {
-        alert("❌ C’è già FREP in questo giorno");
-        return;
-      }
+  // ❌ blocco REP/FREP stesso giorno
+  if (shift === "REP" && frepExists) {
+    alert("❌ C’è già FREP in questo giorno");
+    return;
+  }
 
-      if (shift === "FREP" && repExists) {
-        alert("❌ C’è già REP in questo giorno");
-        return;
-      }
+  if (shift === "FREP" && repExists) {
+    alert("❌ C’è già REP in questo giorno");
+    return;
+  }
 
-      // 🔴 REP RULES
-      if (shift === "REP") {
+  // =========================
+  // 🔥 AUTO CONVERSIONE REP → FREP
+  // =========================
+  let finalShift = shift;
 
-        if (!info.isWeekday) {
-          alert("REP solo lun–sab");
-          return;
-        }
-
-        const monthly = savedEvents.filter(e =>
-          e.employee === employee &&
-          e.shift === "REP" &&
-          new Date(e.date).getMonth() === d.getMonth()
-        ).length;
-
-        if (monthly >= 6) {
-          alert("Max 6 REP al mese");
-          return;
-        }
-      }
-
-      // 🔵 FREP RULES
-      if (shift === "FREP") {
-
-        if (!info.isSunday && !info.isHoliday) {
-          alert("FREP solo domenica e festivi");
-          return;
-        }
-
-        const monthly = savedEvents.filter(e =>
-          e.employee === employee &&
-          e.shift === "FREP" &&
-          new Date(e.date).getMonth() === d.getMonth()
-        ).length;
-
-        if (monthly >= 2) {
-          alert("Max 2 FREP al mese");
-          return;
-        }
-      }
-
-      writes.push(
-        firestore.addDoc(
-          firestore.collection(db, "events"),
-          {
-            employee,
-            date: dateStr,
-            shift,
-            createdAt: new Date()
-          }
-        )
-      );
+  if (shift === "REP") {
+    if (!info.isWeekday || info.isHoliday) {
+      finalShift = "FREP";
     }
+  }
 
+  // 🔴 REP RULES
+  if (finalShift === "REP") {
+
+    const monthly = savedEvents.filter(e =>
+      e.employee === employee &&
+      e.shift === "REP" &&
+      new Date(e.date).getMonth() === d.getMonth()
+    ).length;
+
+    if (monthly >= 6) {
+      alert("Max 6 REP al mese");
+      return;
+    }
+  }
+
+  // 🔵 FREP RULES
+  if (finalShift === "FREP") {
+
+    const monthly = savedEvents.filter(e =>
+      e.employee === employee &&
+      e.shift === "FREP" &&
+      new Date(e.date).getMonth() === d.getMonth()
+    ).length;
+
+    if (monthly >= 2) {
+      alert("Max 2 FREP al mese");
+      return;
+    }
+  }
+
+  writes.push(
+    firestore.addDoc(
+      firestore.collection(db, "events"),
+      {
+        employee,
+        date: dateStr,
+        shift: finalShift,   // 👈 IMPORTANTE
+        createdAt: new Date()
+      }
+    )
+  );
+}
     await Promise.all(writes);
 
     closePopup();
