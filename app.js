@@ -523,3 +523,9 @@ function generatePDF() {
   console.log("📤 PDF click funzionante");
 
 }
+
+const pdfBtn = document.getElementById("pdfBtn");
+
+if (pdfBtn) {
+  pdfBtn.addEventListener("click", generatePDF);
+}
