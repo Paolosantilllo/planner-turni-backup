@@ -517,17 +517,9 @@ window.deleteShift = async function () {
 ====================== */
 
 function generatePDF() {
+
+  alert("PDF cliccato");
+
   console.log("📤 PDF click funzionante");
+
 }
-document.addEventListener("DOMContentLoaded", () => {
-
-  const btn = document.getElementById("pdfBtn");
-
-  if (!btn) {
-    console.error("❌ pdfBtn non trovato");
-    return;
-  }
-
-  btn.addEventListener("click", generatePDF);
-
-});
