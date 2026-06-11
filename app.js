@@ -512,10 +512,6 @@ window.deleteShift = async function () {
   }
 };
 
-/* ======================
-   📤 PDF EXPORT
-====================== */
-
 function generatePDF() {
 
   const missingMessages = [];
@@ -568,3 +564,6 @@ function generatePDF() {
   alert("Qui partirà la generazione PDF");
 
 }
+
+/* 🔥 QUESTA È LA RIGA FONDAMENTALE */
+window.generatePDF = generatePDF;
