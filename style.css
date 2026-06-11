@@ -1155,3 +1155,7 @@ button:disabled{
   transform: scale(0.92);
   box-shadow: 0 6px 15px rgba(52,199,89,0.25);
 }
+.day-red {
+  color: red;
+  font-weight: 800;
+}
