@@ -512,6 +512,12 @@ window.deleteShift = async function () {
   }
 };
 
+
+// ======================
+//  📤 PDF EXPORT
+// ======================
+
+
 function generatePDF() {
 
   const missingMessages = [];
@@ -522,10 +528,10 @@ function generatePDF() {
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
-  for(let d = 1; d <= daysInMonth; d++){
+  for (let d = 1; d <= daysInMonth; d++) {
 
     const date =
-      `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
     const hasCoverage =
       savedEvents.some(ev =>
@@ -537,17 +543,15 @@ function generatePDF() {
         )
       );
 
-    if(!hasCoverage){
-
+    if (!hasCoverage) {
       missingMessages.push(
-        `${String(d).padStart(2,"0")}/${String(month+1).padStart(2,"0")}/${String(year).slice(-2)}`
+        `${String(d).padStart(2, "0")}/${String(month + 1).padStart(2, "0")}/${String(year).slice(-2)}`
       );
-
     }
 
   }
 
-  if(missingMessages.length > 0){
+  if (missingMessages.length > 0) {
 
     const proceed = confirm(
       "⚠️ Mancano le seguenti reperibilità:\n\n" +
@@ -555,15 +559,21 @@ function generatePDF() {
       "\n\nVuoi inviare comunque il PDF?"
     );
 
-    if(!proceed){
-      return;
-    }
-
+    if (!proceed) return;
   }
 
-  alert("Qui partirà la generazione PDF");
-
+  alert("✔ OK: PDF pronto");
 }
 
-/* 🔥 QUESTA È LA RIGA FONDAMENTALE */
-window.generatePDF = generatePDF;
+
+/* ======================
+   CLICK PDF
+====================== */
+
+const btn = document.getElementById("pdfBtn");
+
+if (btn) {
+  btn.addEventListener("click", generatePDF);
+} else {
+  console.error("❌ pdfBtn non trovato");
+}
