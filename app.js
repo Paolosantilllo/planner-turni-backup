@@ -656,8 +656,11 @@ function generatePDF() {
   // ======================
   // 👀 ANTEPRIMA PDF
   // ======================
-  const blobUrl = pdf.output("bloburl");
+
+  const blobUrl = doc.output("bloburl");
+
   window.open(blobUrl, "_blank");
+
 }
 
 window.addEventListener("DOMContentLoaded", () => {
