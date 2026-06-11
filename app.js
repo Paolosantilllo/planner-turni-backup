@@ -653,22 +653,15 @@ function generatePDF() {
     tableWidth: "auto"
   });
 
-  // ======================
-  // 👀 ANTEPRIMA PDF
-  // ======================
-  const blobUrl = pdf.output("bloburl");
-  window.open(blobUrl, "_blank");
-}
+// ======================
+// 👀 ANTEPRIMA PDF (FIX)
+/// ======================
 
-window.addEventListener("DOMContentLoaded", () => {
+const blob = pdf.output("blob");
+const blobUrl = URL.createObjectURL(blob);
 
-  const btn = document.getElementById("pdfBtn");
-
-  if (!btn) {
-    console.error("pdfBtn non trovato");
-    return;
-  }
-
-  btn.addEventListener("click", generatePDF);
-
-});
+// apertura compatibile iOS + desktop
+const a = document.createElement("a");
+a.href = blobUrl;
+a.target = "_blank";
+a.click();
