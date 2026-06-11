@@ -250,16 +250,12 @@ for (let day = 1; day <= daysInMonth; day++) {
     if (ev.employee === "C") el.classList.add("dipendente-c");
     if (ev.employee === "D") el.classList.add("dipendente-d");
 
-    if (ev.shift === "LIC") {
-      el.classList.add("lic-text");
-    }
-
-    if (ev.shift === "FREP") {
+    if (
+  ev.shift === "FREP" ||
+  ev.shift === "CFI/REP" ||
+  ev.shift === "MAL"
+) {
   el.classList.add("frep-text");
-}
-
-if (ev.shift === "REP") {
-  el.classList.add("rep-text");
 }
      el.innerText = ev.shift;
     box.appendChild(el);
