@@ -341,6 +341,21 @@ window.saveShift = async function () {
 
   const dateStr = d.toISOString().split("T")[0];
   const info = getDayInfo(dateStr);
+     
+       // Domenica o festivo
+if (info.isSunday || info.isHoliday) {
+
+  const allowed = ["FREP", "CFI/REP", "MAL"];
+
+  if (!allowed.includes(shift)) {
+
+    alert(
+      "Nei festivi e nelle domeniche puoi inserire solo FREP, CFI/REP o MAL"
+    );
+
+    return;
+  }
+}
 
   const sameDay = savedEvents.filter(e => e.date === dateStr);
 
