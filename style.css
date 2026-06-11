@@ -1159,16 +1159,16 @@ button:disabled{
   font-weight: 900;
 }
 .monthly-send-btn {
-  width: 55px;
-  height: 55px;
+  width: 28px;
+  height: 28px;
 
   border: none;
-  border-radius: 16px;
+  border-radius: 10px;
 
   background: #007aff;
   color: white;
 
-  font-size: 26px;
+  font-size: 14px;
 
   display: flex;
   align-items: center;
@@ -1176,12 +1176,12 @@ button:disabled{
 
   cursor: pointer;
 
-  box-shadow: 0 8px 18px rgba(0,122,255,0.25);
+  box-shadow: 0 4px 10px rgba(0,122,255,0.2);
 
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .monthly-send-btn:active {
   transform: scale(0.92);
-  box-shadow: 0 4px 12px rgba(0,122,255,0.18);
+  box-shadow: 0 2px 6px rgba(0,122,255,0.15);
 }
