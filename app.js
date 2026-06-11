@@ -215,54 +215,51 @@ for(let i = 0; i < startOffset; i++){
 
 }
 
-for(let day = 1; day <= daysInMonth; day++){
-    const date = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+for (let day = 1; day <= daysInMonth; day++) {
 
-    const box = document.createElement("div");
-    box.classList.add("day");
+  const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-    box.style.cursor = "pointer";
+  const events = savedEvents.filter(e => e.date === date);
 
-    box.onclick = () => openPopupWithDate(date, events);
+  const box = document.createElement("div");
+  box.classList.add("day");
+  box.style.cursor = "pointer";
 
-    const events = savedEvents.filter(e => e.date === date);
+  box.onclick = () => openPopupWithDate(date, events);
 
- const num = document.createElement("div");
-num.classList.add("day-number");
+  const num = document.createElement("div");
+  num.classList.add("day-number");
 
-const dayInfo = getDayInfo(date);
+  const dayInfo = getDayInfo(date);
 
-// 🔴 domeniche + festivi
-if (dayInfo.isSunday || isHoliday(date)) {
-  num.classList.add("day-red");
-}
-
-    num.innerText = day;
-    box.appendChild(num);
-
-    events.forEach(ev => {
-
-      const el = document.createElement("div");
-      el.classList.add("event");
-
-      if (ev.employee === "A") el.classList.add("dipendente-santillo");
-      if (ev.employee === "B") el.classList.add("dipendente-b");
-      if (ev.employee === "C") el.classList.add("dipendente-c");
-      if (ev.employee === "D") el.classList.add("dipendente-d");
-
-      if (ev.shift === "LIC") {
-        el.classList.add("lic-text");
-      }
-
-      el.innerText = ev.shift;
-
-      box.appendChild(el);
-
-    });
-
-    calendar.appendChild(box);
-
+  // 🔴 domeniche + festivi
+  if (dayInfo.isSunday || isHoliday(date)) {
+    num.classList.add("day-red");
   }
+
+  num.innerText = day;
+
+  box.appendChild(num);
+
+  events.forEach(ev => {
+    const el = document.createElement("div");
+    el.classList.add("event");
+
+    if (ev.employee === "A") el.classList.add("dipendente-santillo");
+    if (ev.employee === "B") el.classList.add("dipendente-b");
+    if (ev.employee === "C") el.classList.add("dipendente-c");
+    if (ev.employee === "D") el.classList.add("dipendente-d");
+
+    if (ev.shift === "LIC") {
+      el.classList.add("lic-text");
+    }
+
+    el.innerText = ev.shift;
+    box.appendChild(el);
+  });
+
+  calendar.appendChild(box);
+}
 };
 
 /* ======================
