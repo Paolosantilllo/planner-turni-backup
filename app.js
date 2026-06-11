@@ -52,14 +52,30 @@ window.validateShift = function(events, employee, date, shift) {
 
   const sameDayEvents = events.filter(e => e.date === date);
 
-  const alreadyTaken = sameDayEvents.some(e => e.shift === shift);
+  // ======================
+  // BLOCCO DUPLICATO GIORNO (REP / FREP)
+  // ======================
 
-  if (alreadyTaken) {
+  const repExists = sameDayEvents.some(e => e.shift === "REP");
+  const frepExists = sameDayEvents.some(e => e.shift === "FREP");
+
+  if (shift === "REP" && repExists) {
     return {
       ok: false,
-      message: `❌ Esiste già un ${shift} in questo giorno`
+      message: "❌ Esiste già un REP in questo giorno"
     };
   }
+
+  if (shift === "FREP" && frepExists) {
+    return {
+      ok: false,
+      message: "❌ Esiste già un FREP in questo giorno"
+    };
+  }
+
+  // ======================
+  // REP RULES
+  // ======================
 
   if (shift === "REP") {
 
@@ -83,6 +99,10 @@ window.validateShift = function(events, employee, date, shift) {
       };
     }
   }
+
+  // ======================
+  // FREP RULES
+  // ======================
 
   if (shift === "FREP") {
 
