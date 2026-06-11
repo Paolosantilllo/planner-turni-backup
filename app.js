@@ -182,10 +182,22 @@ window.renderCalendar = function(){
 
   monthTitle.innerText = `${monthNames[month]} ${year}`;
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  for(let day = 1; day <= daysInMonth; day++){
+const firstDay = new Date(year, month, 1).getDay();
 
+const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+for(let i = 0; i < startOffset; i++){
+
+  const empty = document.createElement("div");
+  empty.classList.add("day", "empty-day");
+
+  calendar.appendChild(empty);
+
+}
+
+for(let day = 1; day <= daysInMonth; day++){
     const date = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
 
     const box = document.createElement("div");
