@@ -660,8 +660,9 @@ function generatePDF() {
 const blob = pdf.output("blob");
 const blobUrl = URL.createObjectURL(blob);
 
-// apertura compatibile iOS + desktop
-const a = document.createElement("a");
-a.href = blobUrl;
-a.target = "_blank";
-a.click();
+const win = window.open(blobUrl, "_blank");
+
+if (!win) {
+  // fallback iOS blocco popup
+  window.location.href = blobUrl;
+}
