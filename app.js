@@ -227,15 +227,14 @@ for(let day = 1; day <= daysInMonth; day++){
 
     const events = savedEvents.filter(e => e.date === date);
 
-    const num = document.createElement("div");
+ const num = document.createElement("div");
 num.classList.add("day-number");
 
 const dayInfo = getDayInfo(date);
 
 // 🔴 domeniche + festivi
 if (dayInfo.isSunday || isHoliday(date)) {
-  num.style.color = "red";
-  num.style.fontWeight = "800";
+  num.classList.add("day-red");
 }
 
     num.innerText = day;
