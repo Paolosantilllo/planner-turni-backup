@@ -1158,3 +1158,30 @@ button:disabled{
   color: #ff3b30 !important;
   font-weight: 900;
 }
+ .monthly-send-btn {
+  width: 90px;
+  height: 90px;
+
+  border: none;
+  border-radius: 22px;
+
+  background: #007aff;
+  color: white;
+
+  font-size: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 25px rgba(0,122,255,0.3);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.monthly-send-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 5px 15px rgba(0,122,255,0.2);
+}
