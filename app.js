@@ -528,6 +528,9 @@ function generatePDF() {
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
+  // ======================
+  // 🔍 CONTROLLO COPERTURA
+  // ======================
   for (let d = 1; d <= daysInMonth; d++) {
 
     const date =
@@ -548,32 +551,70 @@ function generatePDF() {
         `${String(d).padStart(2, "0")}/${String(month + 1).padStart(2, "0")}/${String(year).slice(-2)}`
       );
     }
-
   }
 
+  // ======================
+  // ⚠️ AVVISO MANCANZE
+  // ======================
   if (missingMessages.length > 0) {
 
     const proceed = confirm(
       "⚠️ Mancano le seguenti reperibilità:\n\n" +
       missingMessages.join("\n") +
-      "\n\nVuoi inviare comunque il PDF?"
+      "\n\nVuoi comunque generare il PDF?"
     );
 
     if (!proceed) return;
   }
 
-  alert("✔ OK: PDF pronto");
-}
+  // ======================
+  // 📄 GENERAZIONE PDF
+  // ======================
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("landscape", "mm", "a4");
 
+  const monthNames = [
+    "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+    "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
+  ];
 
-/* ======================
-   CLICK PDF
-====================== */
+  // ======================
+  // 🧾 INTITOLAZIONE PDF
+  // ======================
+  pdf.setFontSize(16);
+  pdf.setFont("helvetica", "bold");
 
-const btn = document.getElementById("pdfBtn");
+  pdf.text(
+    `Reperibilità Specialisti PLF - ${monthNames[month]} ${year}`,
+    148,
+    15,
+    { align: "center" }
+  );
 
-if (btn) {
-  btn.addEventListener("click", generatePDF);
-} else {
-  console.error("❌ pdfBtn non trovato");
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
+
+  pdf.text(
+    "Documento mensile reperibilità - generato automaticamente",
+    148,
+    21,
+    { align: "center" }
+  );
+
+  // ======================
+  // 📐 BASE TABELLA (ancora vuota per ora)
+  // ======================
+  const startX = 15;
+  const startY = 28;
+
+  const nameW = 30;
+  const cellW = 7;
+  const headerH = 6;
+  const cellH = 10;
+
+  // ======================
+  // 👀 ANTEPRIMA PDF
+  // ======================
+  const blobUrl = pdf.output("bloburl");
+  window.open(blobUrl, "_blank");
 }
