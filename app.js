@@ -308,6 +308,27 @@ window.openPopupWithDate = function(date, events = []) {
   document.getElementById("popup").style.display = "flex";
 };
 
+function getDayInfo(dateStr) {
+
+  const d = new Date(dateStr);
+  const day = d.getDay();      // 0 domenica
+  const dayNum = d.getDate();
+  const month = d.getMonth() + 1;
+
+  const holidays = [
+    "1-1","6-1","25-4","1-5","2-6",
+    "15-8","1-11","8-12","25-12","26-12"
+  ];
+
+  const isHoliday = holidays.includes(`${dayNum}-${month}`);
+
+  return {
+    isSunday: day === 0,
+    isWeekday: day >= 1 && day <= 6,
+    isHoliday
+  };
+}
+
 /* ======================
    SALVATAGGIO
 ====================== */
