@@ -352,15 +352,34 @@ window.saveShift = async function () {
   const repExists = sameDay.some(e => e.shift === "REP");
   const frepExists = sameDay.some(e => e.shift === "FREP");
 
-  const sameEmployeeShift = sameDay.some(e =>
-    e.employee === employee && e.shift === shift
-  );
+  // ======================
+// 🔥 CONTROLLO TURNI DIPENDENTE (NUOVA REGOLA)
+// ======================
 
-  // ❌ blocco duplicato dipendente
-  if (sameEmployeeShift) {
-    alert(`❌ ${employee} ha già ${shift} in ${dateStr}`);
+const employeeEvents = sameDay.filter(
+  e => e.employee === employee
+);
+
+// se il dipendente ha già eventi quel giorno
+if (employeeEvents.length > 0) {
+
+  const existingShifts = employeeEvents.map(e => e.shift);
+
+  const hasRep = existingShifts.includes("REP");
+  const hasRec = existingShifts.includes("REC");
+
+  const isAllowedCombo =
+    (shift === "REC" && hasRep) ||
+    (shift === "REP" && hasRec);
+
+  // ❌ blocco tutto tranne REP + REC
+  if (!isAllowedCombo) {
+
+    alert(`❌ ${employee} ha già un turno in ${dateStr}`);
+
     return;
   }
+}
 
   // ❌ blocco REP/FREP stesso giorno
   if (shift === "REP" && frepExists) {
