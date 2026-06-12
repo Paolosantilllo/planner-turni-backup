@@ -356,6 +356,9 @@ window.saveShift = async function () {
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
 
   const dateStr = d.toISOString().split("T")[0];
+
+  const month = d.getMonth();   // 👈 QUI VA MESSO
+
   const info = getDayInfo(dateStr);
      
  const sameDay = savedEvents.filter(e => e.date === dateStr);
