@@ -749,11 +749,14 @@ for (let d = 1; d <= daysInMonth; d++) {
   startY: 28,
   theme: "grid",
 
-  styles: {
-    fontSize: 7,
-    cellPadding: 2,
+  tableWidth: "auto",
+      
+      styles: {
+    fontSize: 6,
+    cellPadding: 1.5,
     halign: "center",
-    valign: "middle"
+    valign: "middle",
+   overflow: "hidden"
   },
 
   didParseCell: function (data) {
