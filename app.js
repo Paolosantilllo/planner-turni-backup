@@ -671,14 +671,14 @@ const hasCoverage = savedEvents.some(ev => {
 
   const head = [["Grado", "Nominativi", ...giorni]];
 
-  const dipendenti = ["A", "B", "C", "D"];
+  const dipendenti = Object.keys(EMPLOYEES);
 
 const body = dipendenti.map(nome => {
 
   const row = [
-    "",
-    nome
-  ];
+  "",
+  EMPLOYEES[nome].name
+];
 
   for (let d = 1; d <= daysInMonth; d++) {
 
