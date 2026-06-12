@@ -756,52 +756,35 @@ for (let d = 1; d <= daysInMonth; d++) {
     valign: "middle"
   },
 
-  didParseCell: function(data) {
+  didParseCell: function (data) {
 
-    // Salta intestazione
     if (data.section !== "body") return;
 
-    // 🟪 GIORNI SCOPERTI
-const dayNumber = data.column.index - 1;
+    const colIndex = data.column.index;
 
-if (
-  dayNumber >= 1 &&
-  uncoveredDays.includes(dayNumber)
-) {
-  data.cell.styles.fillColor = [178, 102, 255];
-  data.cell.styles.textColor = [255, 255, 255];
-}
-     
-     const value = String(data.cell.raw || "").trim();
+    if (colIndex < 2) return;
 
-    // REP = ROSA
-    if (value === "REP") {
-      data.cell.styles.fillColor = [255, 220, 230];
+    const dayNumber = colIndex - 1;
+
+    const date = new Date(year, month, dayNumber);
+    const weekday = date.getDay();
+
+    const isHoliday = holidays.includes(
+      `${dayNumber}-${month + 1}`
+    );
+
+    if (weekday === 0 || isHoliday) {
+      data.cell.styles.fillColor = [255, 80, 80];
+      data.cell.styles.textColor = [255, 255, 255];
+      return;
     }
 
-    // CFI / CFI-REP = VERDE
-    if (
-      value === "CFI" ||
-      value === "CFI/REP"
-    ) {
-      data.cell.styles.fillColor = [170, 230, 170];
+    if (weekday === 6) {
+      data.cell.styles.fillColor = [255, 149, 0];
+      data.cell.styles.textColor = [0, 0, 0];
+      return;
     }
-
-    // LIC / REC = GIALLO
-    if (
-      value === "LIC" ||
-      value === "REC"
-    ) {
-      data.cell.styles.fillColor = [255, 245, 160];
-    }
-
-    // MAL = GRIGIO
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [210, 210, 210];
-    }
-  },
-
-  tableWidth: "auto"
+  }
 });
 
   // ======================
