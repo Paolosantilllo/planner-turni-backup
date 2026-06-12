@@ -440,6 +440,11 @@ if (finalShift === "REP") {
 ====================== */
 if (finalShift === "FREP") {
 
+  if (!info.isSunday && !info.isHoliday) {
+    alert("FREP consentito solo domeniche e festivi");
+    return;
+  }
+
   const monthly = savedEvents.filter(e =>
     e.employee === employee &&
     e.shift === "FREP" &&
