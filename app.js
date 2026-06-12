@@ -762,71 +762,81 @@ for (let d = 1; d <= daysInMonth; d++) {
 
   didParseCell: function (data) {
 
-    if (data.section !== "body") return;
+  if (data.section !== "body") return;
 
-    const colIndex = data.column.index;
+  const colIndex = data.column.index;
 
-    if (colIndex < 2) return;
-
-    const dayNumber = colIndex - 1;
-
-    const date = new Date(year, month, dayNumber);
-    const weekday = date.getDay();
-
-    const isHoliday = holidays.includes(
-      `${dayNumber}-${month + 1}`
-    );
-
-// 🟢 CFI / CFI-REP = VERDE
-if (
-  data.cell.raw === "CFI" ||
-  data.cell.raw === "CFI/REP"
-) {
-  data.cell.styles.fillColor = [102, 187, 106];
-  data.cell.styles.textColor = [255, 255, 255];
-  return;
-}
-
-// 🟡 LIC / REC = GIALLO
-if (
-  data.cell.raw === "LIC" ||
-  data.cell.raw === "REC"
-) {
-  data.cell.styles.fillColor = [255, 235, 59];
-  data.cell.styles.textColor = [0, 0, 0];
-  return;
-}
-
-// ⚪ MAL = GRIGIO CHIARO (leggibile)
-if (data.cell.raw === "MAL") {
-  data.cell.styles.fillColor = [238, 238, 238]; // grigio molto chiaro
-  data.cell.styles.textColor = [80, 80, 80];     // testo grigio scuro leggibile
-  return;
-}
-
-// 🔴 DOMENICA = ROSSO
-if (weekday === 0) {
-  data.cell.styles.fillColor = [255, 59, 48];
-  data.cell.styles.textColor = [255, 255, 255];
-  return;
-}
-
-// 🟠 SABATO = ARANCIONE
-if (weekday === 6) {
-  data.cell.styles.fillColor = [255, 149, 0];
-  data.cell.styles.textColor = [0, 0, 0];
-  return;
-}
-    
-     // 🔥 FESTIVI = ROSSO (stesso colore domenica)
-if (isHoliday) {
-  data.cell.styles.fillColor = [255, 59, 48];
-  data.cell.styles.textColor = [255, 255, 255];
-  return;
-}
+  // =========================
+  // ❌ PRIME 2 COLONNE (vuote / intestazioni)
+  // =========================
+  if (colIndex < 2) {
+    data.cell.styles.fillColor = [255, 255, 255];
+    return;
   }
-});
 
+  const dayNumber = colIndex - 1;
+
+  const date = new Date(year, month, dayNumber);
+  const weekday = date.getDay();
+
+  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
+
+  const value = data.cell.raw; // 👈 fondamentale per leggere il contenuto
+
+  // =========================
+  // 🟢 TURNI (colori attività)
+  // =========================
+
+  if (value === "CFI" || value === "CFI/REP") {
+    data.cell.styles.fillColor = [102, 187, 106]; // verde
+    data.cell.styles.textColor = [255, 255, 255];
+    data.cell.styles.fontSize = 6; // 👈 evita celle che “si allargano”
+    return;
+  }
+
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255, 235, 59]; // giallo
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238, 238, 238]; // grigio chiaro
+    data.cell.styles.textColor = [80, 80, 80];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  if (value === "REP") {
+    data.cell.styles.fillColor = [255, 182, 193]; // rosa chiaro
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  // =========================
+  // 📅 GIORNI (DOMENICA / SABATO / FESTIVI)
+  // =========================
+
+  if (weekday === 0 || isHoliday) {
+    data.cell.styles.fillColor = [255, 59, 48]; // rosso
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  if (weekday === 6) {
+    data.cell.styles.fillColor = [255, 149, 0]; // arancione
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  // =========================
+  // ⚪ TUTTO IL RESTO (celle bianche)
+  // =========================
+
+  data.cell.styles.fillColor = [255, 255, 255];
+}
   // ======================
   // 👀 ANTEPRIMA PDF
   // ======================
