@@ -580,16 +580,28 @@ function generatePDF() {
     const date =
       `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-    const hasCoverage =
-      savedEvents.some(ev =>
-        ev.date === date &&
-        (
-          ev.shift === "REP" ||
-          ev.shift === "FREP" ||
-          ev.shift === "CFI/REP"
-        )
-      );
+    const info = getDayInfo(date);
 
+const hasCoverage = savedEvents.some(ev => {
+
+  if (ev.date !== date) return false;
+
+  // Domeniche e festivi
+  if (info.isSunday || info.isHoliday) {
+
+    return (
+      ev.shift === "FREP" ||
+      ev.shift === "CFI/REP"
+    );
+  }
+
+  // Lunedì-Sabato
+  return (
+    ev.shift === "REP" ||
+    ev.shift === "CFI/REP"
+  );
+
+});
     if (!hasCoverage) {
       missingMessages.push(
         `${String(d).padStart(2, "0")}/${String(month + 1).padStart(2, "0")}/${String(year).slice(-2)}`
