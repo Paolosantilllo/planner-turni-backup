@@ -770,14 +770,15 @@ for (let d = 1; d <= daysInMonth; d++) {
   startY: 28,
   theme: "grid",
 
-  tableWidth: "auto",
+  tableWidth: 277,
 
   styles: {
-    fontSize: 6,
-    cellPadding: 1,
-    halign: "center",
-    valign: "middle"
-  },
+  fontSize: 6,
+  cellPadding: 1,
+  halign: "center",
+  valign: "middle",
+  minCellHeight: 8
+},
 
   columnStyles: {
     0: { cellWidth: 45 }
