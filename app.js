@@ -695,7 +695,40 @@ const body = dipendenti.map(nome => {
 
   return row;
 });
-  pdf.autoTable({
+
+   const uncoveredDays = [];
+
+for (let d = 1; d <= daysInMonth; d++) {
+
+  const date =
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+  const info = getDayInfo(date);
+
+  const covered = savedEvents.some(ev => {
+
+    if (ev.date !== date) return false;
+
+    if (info.isSunday || info.isHoliday) {
+      return (
+        ev.shift === "FREP" ||
+        ev.shift === "CFI/REP"
+      );
+    }
+
+    return (
+      ev.shift === "REP" ||
+      ev.shift === "CFI/REP"
+    );
+
+  });
+
+  if (!covered) {
+    uncoveredDays.push(d);
+  }
+}
+   
+   pdf.autoTable({
   head,
   body,
   startY: 28,
