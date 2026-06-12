@@ -4,6 +4,7 @@
 
 import { initAuth } from "./auth.js";
 import { db, firestore } from "./firebase.js";
+import { EMPLOYEES } from "./employees.js";
 
 /* ======================
    STATO APP
