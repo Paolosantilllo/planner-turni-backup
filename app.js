@@ -275,8 +275,10 @@ for (let day = 1; day <= daysInMonth; day++) {
   // 🧾 TESTO
   // ======================
   el.innerText = ev.shift;
-     el.classList.add("event-small-text");
 
+if (ev.shift.length > 4) {
+  el.classList.add("long-shift");
+}
   box.appendChild(el);
 
 });
