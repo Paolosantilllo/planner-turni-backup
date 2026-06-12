@@ -272,35 +272,28 @@ body{
 /* CALENDARIO */
 
 .calendar{
-
   display:grid;
-
-  grid-template-columns:repeat(7,1fr);
-
-  gap:6px;
-
-}
-
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:8px;
+} 
 
 
 /* CELLE */
 
 .day{
-
   background:white;
-
   border-radius:18px;
 
-  min-height:72px;
+  min-height:95px;
 
-  padding:5px;
+  padding:6px;
 
-  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
 
   box-shadow:0 4px 15px rgba(0,0,0,0.05);
-
   transition:0.2s;
-
 }
 
 .day:hover{
@@ -340,27 +333,27 @@ body{
 /* EVENTI */
 
 .event{
-
   color:white;
 
-  padding:4px;
+  padding:3px 2px;
 
   border-radius:8px;
 
-  font-size:10px;
-
-  margin-top:3px;
+  font-size:8px;
 
   font-weight:700;
 
   text-align:center;
 
-  overflow:hidden;
+  margin-top:2px;
 
-  text-overflow:ellipsis;
+  white-space:normal;
 
-  white-space:nowrap;
+  word-break:break-word;
 
+  overflow:visible;
+
+  text-overflow:unset;
 }
 
 
@@ -1235,4 +1228,10 @@ button:disabled{
   text-overflow: unset;
   font-size: 9px;
   line-height: 10px;
+}
+/* EVENTI LUNGHI */
+
+.event.long-shift{
+  font-size:7px;
+  letter-spacing:-0.2px;
 }
