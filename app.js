@@ -249,11 +249,7 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
   );
 
 }
-
-if (!covered) {
-  box.classList.add("missing-rep");
-}
-   
+ 
   box.onclick = () => openPopupWithDate(date, events);
 
   const num = document.createElement("div");
