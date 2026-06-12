@@ -746,7 +746,18 @@ for (let d = 1; d <= daysInMonth; d++) {
     // Salta intestazione
     if (data.section !== "body") return;
 
-    const value = String(data.cell.raw || "").trim();
+    // 🟪 GIORNI SCOPERTI
+const dayNumber = data.column.index - 2;
+
+if (
+  dayNumber >= 1 &&
+  uncoveredDays.includes(dayNumber)
+) {
+  data.cell.styles.fillColor = [178, 102, 255];
+  data.cell.styles.textColor = [255, 255, 255];
+}
+     
+     const value = String(data.cell.raw || "").trim();
 
     // REP = ROSA
     if (value === "REP") {
