@@ -1190,3 +1190,27 @@ button:disabled{
   line-height: 10px;
   white-space: nowrap; /* evita spezzature */
 }
+ /* ======================
+   CALENDARIO - CELLE PIÙ ARIOSO
+====================== */
+
+.day{
+  min-height: 90px;   /* più spazio verticale */
+}
+
+/* ======================
+   EVENTI - TESTO PIÙ COMPATTO
+====================== */
+
+.event{
+  font-size: 9px;      /* più piccolo */
+  line-height: 10px;
+  padding: 3px 4px;
+}
+
+/* NON troncare CFI/REP */
+.event{
+  overflow: visible;
+  text-overflow: unset;
+  white-space: nowrap;
+}
