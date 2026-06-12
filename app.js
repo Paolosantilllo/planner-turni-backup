@@ -897,7 +897,7 @@ for (let i = 1; i <= daysInMonth; i++) {
   data.cell.styles.fillColor = [255, 255, 255];
 }
    
-    ddidDrawCell: function (data) {
+ didDrawCell: function (data) {
 
   if (data.section === "head" && data.row.index === 0) {
 
@@ -913,15 +913,11 @@ for (let i = 1; i <= daysInMonth; i++) {
   }
 }
 
-}); // 👈 QUESTO CHIUDE pdf.autoTable
-     // ======================
-  // 👀 ANTEPRIMA PDF
-  // ======================
+}); // 👈 FONDAMENTALE
 
-  const blobUrl = pdf.output("bloburl");
-
-  window.open(blobUrl, "_blank");
-
+// 👀 ANTEPRIMA PDF
+const blobUrl = pdf.output("bloburl");
+window.open(blobUrl, "_blank");
 }
 
 window.addEventListener("DOMContentLoaded", () => {
