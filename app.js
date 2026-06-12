@@ -226,12 +226,40 @@ for (let day = 1; day <= daysInMonth; day++) {
   box.classList.add("day");
   box.style.cursor = "pointer";
 
+   // ======================
+// 🟣 CONTROLLO COPERTURA
+// ======================
+
+const dayInfo = getDayInfo(date);
+
+let covered = false;
+
+if (dayInfo.isSunday || dayInfo.isHoliday) {
+
+  covered = events.some(ev =>
+    ev.shift === "FREP" ||
+    ev.shift === "CFI/REP"
+  );
+
+} else {
+
+  covered = events.some(ev =>
+    ev.shift === "REP" ||
+    ev.shift === "CFI/REP"
+  );
+
+}
+
+if (!covered) {
+  box.classList.add("missing-rep");
+}
+   
   box.onclick = () => openPopupWithDate(date, events);
 
   const num = document.createElement("div");
   num.classList.add("day-number");
 
-  const dayInfo = getDayInfo(date);
+
 
   // 🔴 domeniche + festivi
   if (dayInfo.isSunday || isHoliday(date)) {
