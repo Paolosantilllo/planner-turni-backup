@@ -871,7 +871,74 @@ didParseCell: function (data) {
 
   data.cell.styles.fillColor = [255, 255, 255];
 }
-  // ======================
+  didParseCell: function (data) {
+
+  if (data.section !== "body") return;
+
+  const colIndex = data.column.index;
+
+  // ❌ PRIME 2 COLONNE
+  if (colIndex < 2) {
+    data.cell.styles.fillColor = [255, 255, 255];
+    return;
+  }
+
+  const dayNumber = colIndex - 1;
+
+  const date = new Date(year, month, dayNumber);
+  const weekday = date.getDay();
+
+  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
+
+  const value = data.cell.raw;
+
+  // 🟢 CFI / CFI-REP
+  if (value === "CFI" || value === "CFI/REP") {
+    data.cell.styles.fillColor = [102, 187, 106];
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  // 🟡 LIC / REC
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255, 235, 59];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  // ⚪ MAL
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238, 238, 238];
+    data.cell.styles.textColor = [80, 80, 80];
+    return;
+  }
+
+  // 🌸 REP
+  if (value === "REP") {
+    data.cell.styles.fillColor = [255, 182, 193];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  // 🔴 DOMENICA / FESTIVI
+  if (weekday === 0 || isHoliday) {
+    data.cell.styles.fillColor = [255, 59, 48];
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  // 🟠 SABATO
+  if (weekday === 6) {
+    data.cell.styles.fillColor = [255, 149, 0];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  // ⚪ DEFAULT
+  data.cell.styles.fillColor = [255, 255, 255];
+}
+   });
+   // ======================
   // 👀 ANTEPRIMA PDF
   // ======================
 
