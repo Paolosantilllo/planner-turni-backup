@@ -770,15 +770,17 @@ for (let d = 1; d <= daysInMonth; d++) {
   startY: 28,
   theme: "grid",
 
-  tableWidth: "wrap",   // 🔥 BLOCCA LARGHEZZA (NO AUTO EXPAND)
+  tableWidth: "auto",
 
   styles: {
-    fontSize: 7,
-    cellPadding: 2,
+    fontSize: 6,
+    cellPadding: 1,
     halign: "center",
-    valign: "middle",
-    overflow: "hidden",     // 🔥 NON ALLARGA CELLA
-    cellWidth: "wrap"       // 🔥 FORZA TESTO ADATTATO
+    valign: "middle"
+  },
+
+  columnStyles: {
+    0: { cellWidth: 45 }
   },
 
   didParseCell: function (data) {
