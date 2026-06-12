@@ -790,17 +790,17 @@ if (weekday === 0) {
   return;
 }
 
-// 🔥 FESTIVI = ROSSO (stesso colore domenica)
-if (isHoliday) {
-  data.cell.styles.fillColor = [255, 59, 48];
-  data.cell.styles.textColor = [255, 255, 255];
-  return;
-}
-
 // 🟠 SABATO = ARANCIONE
 if (weekday === 6) {
   data.cell.styles.fillColor = [255, 149, 0];
   data.cell.styles.textColor = [0, 0, 0];
+  return;
+}
+    
+     // 🔥 FESTIVI = ROSSO (stesso colore domenica)
+if (isHoliday) {
+  data.cell.styles.fillColor = [255, 59, 48];
+  data.cell.styles.textColor = [255, 255, 255];
   return;
 }
   }
