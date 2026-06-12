@@ -247,12 +247,18 @@ for (let day = 1; day <= daysInMonth; day++) {
   const el = document.createElement("div");
   el.classList.add("event");
 
-  if (ev.employee === "A") el.classList.add("dipendente-santillo");
-  if (ev.employee === "B") el.classList.add("dipendente-b");
-  if (ev.employee === "C") el.classList.add("dipendente-c");
-  if (ev.employee === "D") el.classList.add("dipendente-d");
+  const emp = EMPLOYEES[ev.employee];
 
-  // 🔴 Rosso solo se è domenica o festivo
+  // ======================
+  // 👤 COLORI DIPENDENTE
+  // ======================
+  if (emp) {
+    el.classList.add(emp.color);
+  }
+
+  // ======================
+  // 🔴 REGOLA FESTIVI
+  // ======================
   if (
     (dayInfo.isSunday || dayInfo.isHoliday) &&
     (
@@ -265,7 +271,12 @@ for (let day = 1; day <= daysInMonth; day++) {
     el.classList.add("frep-text");
   }
 
-  el.innerText = ev.shift;
+  // ======================
+  // 🧾 TESTO
+  // ======================
+  el.innerText = emp
+    ? `${ev.shift} ${emp.name}`
+    : ev.shift;
 
   box.appendChild(el);
 
@@ -274,7 +285,6 @@ for (let day = 1; day <= daysInMonth; day++) {
 calendar.appendChild(box);
 }
 };
-
 /* ======================
    NAVIGAZIONE MESI
 ====================== */
