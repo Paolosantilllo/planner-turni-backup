@@ -776,7 +776,14 @@ for (let d = 1; d <= daysInMonth; d++) {
       `${dayNumber}-${month + 1}`
     );
 
-   // 🔴 DOMENICA = ROSSO
+// 🟢 CFI / CFI-REP = VERDE
+if (data.cell.raw === "CFI" || data.cell.raw === "CFI/REP") {
+  data.cell.styles.fillColor = [102, 187, 106]; // verde
+  data.cell.styles.textColor = [255, 255, 255];
+  return;
+}
+     
+     // 🔴 DOMENICA = ROSSO
 if (weekday === 0) {
   data.cell.styles.fillColor = [255, 59, 48];
   data.cell.styles.textColor = [255, 255, 255];
