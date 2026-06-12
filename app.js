@@ -684,24 +684,7 @@ pdf.text(
   // ======================
   // 📊 GENERAZIONE TABELLA DINAMICA
   // ======================
-  const giorni = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-  const giorniNumeri = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-const giorniSettimana = [];
-
-for (let d = 1; d <= daysInMonth; d++) {
-
-  const date =
-    `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-  const jsDay = new Date(date).getDay();
-
-  // JS: 0=Domenica ... 6=Sabato
-  const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
-
-  giorniSettimana.push(map[jsDay]);
-}
+  
 
 const head = [
   [
@@ -815,17 +798,18 @@ didParseCell: function (data) {
   // 🟢 BLOCCA TUTTO HEADER (righe sopra body)
   // =========================
   if (data.section === "head") {
-    data.cell.styles.fillColor = [255, 255, 255];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-  }
+  data.cell.styles.fillColor = [255, 255, 255];
+  data.cell.styles.textColor = [0, 0, 0];
+  data.cell.styles.fontStyle = "bold"; // 👈 QUI VA MESSO
+  return;
+}
 
   if (data.section !== "body") return;
  
   // =========================
   // ❌ PRIME 2 COLONNE (vuote / intestazioni)
   // =========================
-  if (colIndex < 2) {
+  if (colIndex === 0)
     data.cell.styles.fillColor = [255, 255, 255];
     return;
   }
