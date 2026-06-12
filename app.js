@@ -798,9 +798,18 @@ for (let i = 1; i <= daysInMonth; i++) {
       
 didParseCell: function (data) {
 
-  if (data.section !== "body") return;
-
   const colIndex = data.column.index;
+
+  // =========================
+  // 🟢 BLOCCA TUTTO HEADER (righe sopra body)
+  // =========================
+  if (data.section === "head") {
+    data.cell.styles.fillColor = [255, 255, 255];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  if (data.section !== "body") return;
  
   // =========================
   // ❌ PRIME 2 COLONNE (vuote / intestazioni)
