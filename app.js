@@ -763,6 +763,19 @@ for (let d = 1; d <= daysInMonth; d++) {
     uncoveredDays.push(d);
   }
 }
+   const columnStyles = {};
+
+// colonna nominativi
+columnStyles[0] = { cellWidth: 45 };
+
+// colonne giorni (tutte uguali e bloccate)
+for (let i = 1; i <= daysInMonth; i++) {
+  columnStyles[i] = {
+    cellWidth: 7.2,   // leggermente più stretto per evitare overflow
+    minCellWidth: 7.2,
+    overflow: "hidden"
+  };
+}
    
    pdf.autoTable({
   head,
@@ -773,18 +786,17 @@ for (let d = 1; d <= daysInMonth; d++) {
   tableWidth: 277,
 
   styles: {
-  fontSize: 6,
-  cellPadding: 1,
-  halign: "center",
-  valign: "middle",
-  minCellHeight: 8
-},
-
-  columnStyles: {
-    0: { cellWidth: 45 }
+    fontSize: 6,
+    cellPadding: 1,
+    halign: "center",
+    valign: "middle",
+    minCellHeight: 8,
+    overflow: "hidden"
   },
 
-  didParseCell: function (data) {
+  columnStyles,
+      
+didParseCell: function (data) {
 
   if (data.section !== "body") return;
 
