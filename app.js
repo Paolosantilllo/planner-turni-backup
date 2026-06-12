@@ -406,50 +406,47 @@ if (employeeEvents.length > 0) {
   // =========================
   // 🔥 AUTO CONVERSIONE REP → FREP
   // =========================
-  let finalShift = shift;
+ let finalShift = shift;
 
-  if (shift === "REP") {
-    if (!info.isWeekday || info.isHoliday) {
-      finalShift = "FREP";
-    }
+if (shift === "REP") {
+  if (!info.isWeekday || info.isHoliday) {
+    finalShift = "FREP";
   }
+}
 
-  // 🔴 REP RULES
-  if (finalShift === "REP") {
+/* ======================
+   🔴 REP RULES
+====================== */
+if (finalShift === "REP") {
 
-  const month = d.getMonth();
-
-  const existing = savedEvents.filter(e =>
+  const monthly = savedEvents.filter(e =>
     e.employee === employee &&
     e.shift === "REP" &&
-    new Date(e.date).getMonth() === month
+    new Date(e.date).getMonth() === d.getMonth()
   ).length;
 
-  const total = existing + 1;
-
-  if (total >= 6) {
+  if (monthly >= 6) {
     alert("Max 6 REP al mese");
     return;
   }
-
-  repCount++;
 }
 
-  // 🔵 FREP RULES
-  if (finalShift === "FREP") {
+/* ======================
+   🔵 FREP RULES
+====================== */
+if (finalShift === "FREP") {
 
-    const monthly = savedEvents.filter(e =>
-      e.employee === employee &&
-      e.shift === "FREP" &&
-      new Date(e.date).getMonth() === d.getMonth()
-    ).length;
+  const monthly = savedEvents.filter(e =>
+    e.employee === employee &&
+    e.shift === "FREP" &&
+    new Date(e.date).getMonth() === d.getMonth()
+  ).length;
 
-    if (monthly >= 2) {
-      alert("Max 2 FREP al mese");
-      return;
-    }
+  if (monthly >= 2) {
+    alert("Max 2 FREP al mese");
+    return;
   }
-
+}
   writes.push(
     firestore.addDoc(
       firestore.collection(db, "events"),
