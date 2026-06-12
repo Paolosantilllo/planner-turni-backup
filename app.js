@@ -665,7 +665,27 @@ const hasCoverage = savedEvents.some(ev => {
   // ======================
   const giorni = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  const head = [["Nominativi", ...giorni]];
+  const giorniNumeri = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+const giorniSettimana = [];
+
+for (let d = 1; d <= daysInMonth; d++) {
+
+  const date =
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+  const jsDay = new Date(date).getDay();
+
+  // JS: 0=Domenica ... 6=Sabato
+  const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
+
+  giorniSettimana.push(map[jsDay]);
+}
+
+const head = [
+  ["Nominativi", ...giorniNumeri],
+  ["" , ...giorniSettimana]
+];
 
   const dipendenti = Object.keys(EMPLOYEES);
 
