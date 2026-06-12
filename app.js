@@ -809,10 +809,10 @@ didParseCell: function (data) {
   // =========================
   // ❌ PRIME 2 COLONNE (vuote / intestazioni)
   // =========================
-  if (colIndex === 0)
-    data.cell.styles.fillColor = [255, 255, 255];
-    return;
-  }
+  if (colIndex === 0) {
+  data.cell.styles.fillColor = [255, 255, 255];
+  return;
+}
 
   const dayNumber = colIndex;
 
