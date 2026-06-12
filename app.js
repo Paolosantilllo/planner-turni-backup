@@ -669,14 +669,13 @@ const hasCoverage = savedEvents.some(ev => {
   // ======================
   const giorni = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  const head = [["Grado", "Nominativi", ...giorni]];
+  const head = [["Nominativi", ...giorni]];
 
   const dipendenti = Object.keys(EMPLOYEES);
 
 const body = dipendenti.map(nome => {
 
   const row = [
-  "",
   EMPLOYEES[nome].name
 ];
 
@@ -747,7 +746,7 @@ for (let d = 1; d <= daysInMonth; d++) {
     if (data.section !== "body") return;
 
     // 🟪 GIORNI SCOPERTI
-const dayNumber = data.column.index - 2;
+const dayNumber = data.column.index - 1;
 
 if (
   dayNumber >= 1 &&
