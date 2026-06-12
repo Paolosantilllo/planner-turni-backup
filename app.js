@@ -792,149 +792,132 @@ for (let i = 1; i <= daysInMonth; i++) {
 
   didParseCell: function (data) {
 
-    const colIndex = data.column.index;
-
-    // =========================
-    // 🟢 HEADER
-    // =========================
-    if (data.section === "head") {
-
   const colIndex = data.column.index;
 
-  // prima colonna (Nominativi)
-  if (colIndex === 0) {
-    data.cell.styles.fillColor = [255, 255, 255];
-    data.cell.styles.textColor = [0, 0, 0];
-    data.cell.styles.fontStyle = "bold";
-    return;
-  }
+  // =========================
+  // 🟢 HEADER
+  // =========================
+  if (data.section === "head") {
 
-  const dayNumber = colIndex;
-  const date = new Date(year, month, dayNumber);
-
-  const weekday = date.getDay();
-  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
-
-  // 🔴 DOMENICA + FESTIVI
-  if (weekday === 0 || isHoliday) {
-    data.cell.styles.fillColor = [255, 59, 48];
-    data.cell.styles.textColor = [255, 255, 255];
-    data.cell.styles.fontStyle = "bold";
-    return;
-  }
-
-  // 🟠 SABATO
-  if (weekday === 6) {
-    data.cell.styles.fillColor = [255, 149, 0];
-    data.cell.styles.textColor = [0, 0, 0];
-    data.cell.styles.fontStyle = "bold";
-    return;
-  }
-
-  // ⚪ TUTTI GLI ALTRI
-  data.cell.styles.fillColor = [255, 255, 255];
-  data.cell.styles.textColor = [0, 0, 0];
-  data.cell.styles.fontStyle = "bold";
-  return;
-}
-
-    if (data.section !== "body") return;
-
-    // =========================
-    // ❌ PRIMA COLONNA
-    // =========================
     if (colIndex === 0) {
       data.cell.styles.fillColor = [255, 255, 255];
+      data.cell.styles.textColor = [0, 0, 0];
+      data.cell.styles.fontStyle = "bold";
       return;
     }
 
     const dayNumber = colIndex;
-
     const date = new Date(year, month, dayNumber);
-    const weekday = date.getDay();
 
+    const weekday = date.getDay();
     const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
 
-    const value = data.cell.raw;
-
-    // =========================
-    // 🟢 TURNI
-    // =========================
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102, 187, 106];
-      data.cell.styles.textColor = [255, 255, 255];
-      data.cell.styles.fontSize = 6;
-      return;
-    }
-
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255, 235, 59];
-      data.cell.styles.textColor = [0, 0, 0];
-      data.cell.styles.fontSize = 6;
-      return;
-    }
-
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238, 238, 238];
-      data.cell.styles.textColor = [80, 80, 80];
-      data.cell.styles.fontSize = 6;
-      return;
-    }
-
-    if (value === "REP") {
-      data.cell.styles.fillColor = [255, 182, 193];
-      data.cell.styles.textColor = [0, 0, 0];
-      data.cell.styles.fontSize = 6;
-      return;
-    }
-
-    // =========================
-    // 📅 GIORNI
-    // =========================
     if (weekday === 0 || isHoliday) {
       data.cell.styles.fillColor = [255, 59, 48];
       data.cell.styles.textColor = [255, 255, 255];
-      return;
     }
 
-    if (weekday === 6) {
+    else if (weekday === 6) {
       data.cell.styles.fillColor = [255, 149, 0];
       data.cell.styles.textColor = [0, 0, 0];
-      return;
     }
 
-    data.cell.styles.fillColor = [255, 255, 255];
-  },
-
-  // =========================
-  // 🔥 LINEA TRA NUMERI E LETTERE
-  // =========================
-  didDrawCell: function (data) {
-
-    if (data.section === "head") {
-
-      // SOLO prima riga header (numeri)
-      if (data.row.index === 0) {
-
-        const doc = data.doc;
-
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.3);
-
-        const x = data.cell.x;
-        const y = data.cell.y + data.cell.height;
-
-        doc.line(
-          x,
-          y,
-          x + data.cell.width,
-          y
-        );
-      }
+    else {
+      data.cell.styles.fillColor = [255, 255, 255];
+      data.cell.styles.textColor = [0, 0, 0];
     }
+
+    data.cell.styles.fontStyle = "bold";
+    return;
   }
-});
-   // ======================
+
+  if (data.section !== "body") return;
+
+  // =========================
+  // ❌ PRIMA COLONNA
+  // =========================
+  if (colIndex === 0) {
+  data.cell.styles.fillColor = [255, 255, 255];
+  data.cell.styles.textColor = [0, 0, 0];
+  return;
+}
+
+  const dayNumber = colIndex;
+  const date = new Date(year, month, dayNumber);
+  const weekday = date.getDay();
+  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
+  const value = data.cell.raw;
+
+  // =========================
+  // 🟢 TURNI
+  // =========================
+  if (value === "CFI" || value === "CFI/REP") {
+    data.cell.styles.fillColor = [102, 187, 106];
+    data.cell.styles.textColor = [255, 255, 255];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255, 235, 59];
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238, 238, 238];
+    data.cell.styles.textColor = [80, 80, 80];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  if (value === "REP") {
+    data.cell.styles.fillColor = [255, 182, 193];
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontSize = 6;
+    return;
+  }
+
+  // =========================
+  // 📅 GIORNI
+  // =========================
+  if (weekday === 0 || isHoliday) {
+    data.cell.styles.fillColor = [255, 59, 48];
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  if (weekday === 6) {
+    data.cell.styles.fillColor = [255, 149, 0];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  data.cell.styles.fillColor = [255, 255, 255];
+}
+   
+    didDrawCell: function (data) {
+
+  if (data.section === "head" && data.row.index === 0) {
+
+    const doc = data.doc;
+
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+
+    const x = data.cell.x;
+    const y = data.cell.y + data.cell.height;
+
+    doc.line(
+      x,
+      y,
+      x + data.cell.width,
+      y
+    );
+  }
+} 
+     // ======================
   // 👀 ANTEPRIMA PDF
   // ======================
 
