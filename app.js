@@ -274,9 +274,7 @@ for (let day = 1; day <= daysInMonth; day++) {
   // ======================
   // 🧾 TESTO
   // ======================
-  el.innerText = emp
-    ? `${ev.shift} ${emp.name}`
-    : ev.shift;
+  el.innerText = ev.shift;
 
   box.appendChild(el);
 
