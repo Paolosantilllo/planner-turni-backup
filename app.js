@@ -638,7 +638,7 @@ const body = dipendenti.map(nome => {
 
   return row;
 });
-  autoTable(pdf, {
+  pdf.autoTable({
     head,
     body,
     startY: 28,
