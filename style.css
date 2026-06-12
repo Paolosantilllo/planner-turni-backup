@@ -1213,4 +1213,26 @@ button:disabled{
   overflow: visible;
   text-overflow: unset;
   white-space: nowrap;
+}/* ======================
+   DAY BOX OTTIMIZZATO (NO TAGLI)
+====================== */
+
+.day{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* contenitore eventi */
+.day{
+  overflow: hidden;
+}
+
+/* lista eventi più flessibile */
+.event{
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: 9px;
+  line-height: 10px;
 }
