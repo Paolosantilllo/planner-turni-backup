@@ -777,13 +777,33 @@ for (let d = 1; d <= daysInMonth; d++) {
     );
 
 // 🟢 CFI / CFI-REP = VERDE
-if (data.cell.raw === "CFI" || data.cell.raw === "CFI/REP") {
-  data.cell.styles.fillColor = [102, 187, 106]; // verde
+if (
+  data.cell.raw === "CFI" ||
+  data.cell.raw === "CFI/REP"
+) {
+  data.cell.styles.fillColor = [102, 187, 106];
   data.cell.styles.textColor = [255, 255, 255];
   return;
 }
-     
-     // 🔴 DOMENICA = ROSSO
+
+// 🟡 LIC / REC = GIALLO
+if (
+  data.cell.raw === "LIC" ||
+  data.cell.raw === "REC"
+) {
+  data.cell.styles.fillColor = [255, 235, 59];
+  data.cell.styles.textColor = [0, 0, 0];
+  return;
+}
+
+// ⚪ MAL = GRIGIO CHIARO (leggibile)
+if (data.cell.raw === "MAL") {
+  data.cell.styles.fillColor = [238, 238, 238]; // grigio molto chiaro
+  data.cell.styles.textColor = [80, 80, 80];     // testo grigio scuro leggibile
+  return;
+}
+
+// 🔴 DOMENICA = ROSSO
 if (weekday === 0) {
   data.cell.styles.fillColor = [255, 59, 48];
   data.cell.styles.textColor = [255, 255, 255];
