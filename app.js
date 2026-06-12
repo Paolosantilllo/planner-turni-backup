@@ -275,6 +275,7 @@ for (let day = 1; day <= daysInMonth; day++) {
   // 🧾 TESTO
   // ======================
   el.innerText = ev.shift;
+     el.classList.add("event-small-text");
 
   box.appendChild(el);
 
