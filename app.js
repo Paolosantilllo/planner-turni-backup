@@ -798,11 +798,45 @@ for (let i = 1; i <= daysInMonth; i++) {
     // 🟢 HEADER
     // =========================
     if (data.section === "head") {
-      data.cell.styles.fillColor = [255, 255, 255];
-      data.cell.styles.textColor = [0, 0, 0];
-      data.cell.styles.fontStyle = "bold";
-      return;
-    }
+
+  const colIndex = data.column.index;
+
+  // prima colonna (Nominativi)
+  if (colIndex === 0) {
+    data.cell.styles.fillColor = [255, 255, 255];
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontStyle = "bold";
+    return;
+  }
+
+  const dayNumber = colIndex;
+  const date = new Date(year, month, dayNumber);
+
+  const weekday = date.getDay();
+  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
+
+  // 🔴 DOMENICA + FESTIVI
+  if (weekday === 0 || isHoliday) {
+    data.cell.styles.fillColor = [255, 59, 48];
+    data.cell.styles.textColor = [255, 255, 255];
+    data.cell.styles.fontStyle = "bold";
+    return;
+  }
+
+  // 🟠 SABATO
+  if (weekday === 6) {
+    data.cell.styles.fillColor = [255, 149, 0];
+    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontStyle = "bold";
+    return;
+  }
+
+  // ⚪ TUTTI GLI ALTRI
+  data.cell.styles.fillColor = [255, 255, 255];
+  data.cell.styles.textColor = [0, 0, 0];
+  data.cell.styles.fontStyle = "bold";
+  return;
+}
 
     if (data.section !== "body") return;
 
