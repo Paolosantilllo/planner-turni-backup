@@ -1185,3 +1185,8 @@ button:disabled{
   transform: scale(0.92);
   box-shadow: 0 2px 6px rgba(0,122,255,0.15);
 }
+.event-small-text {
+  font-size: 9px;      /* riduce testo */
+  line-height: 10px;
+  white-space: nowrap; /* evita spezzature */
+}
