@@ -657,7 +657,7 @@ function generatePDF() {
   // 👀 ANTEPRIMA PDF
   // ======================
 
-  const blobUrl = doc.output("bloburl");
+  const blobUrl = pdf.output("bloburl");
 
   window.open(blobUrl, "_blank");
 
