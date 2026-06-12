@@ -786,7 +786,7 @@ for (let d = 1; d <= daysInMonth; d++) {
   if (data.section !== "body") return;
 
   const colIndex = data.column.index;
-
+ }
      });
   // =========================
   // ❌ PRIME 2 COLONNE (vuote / intestazioni)
