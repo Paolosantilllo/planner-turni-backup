@@ -897,7 +897,7 @@ for (let i = 1; i <= daysInMonth; i++) {
   data.cell.styles.fillColor = [255, 255, 255];
 }
    
-    didDrawCell: function (data) {
+    ddidDrawCell: function (data) {
 
   if (data.section === "head" && data.row.index === 0) {
 
@@ -909,14 +909,11 @@ for (let i = 1; i <= daysInMonth; i++) {
     const x = data.cell.x;
     const y = data.cell.y + data.cell.height;
 
-    doc.line(
-      x,
-      y,
-      x + data.cell.width,
-      y
-    );
+    doc.line(x, y, x + data.cell.width, y);
   }
-} 
+}
+
+}); // 👈 QUESTO CHIUDE pdf.autoTable
      // ======================
   // 👀 ANTEPRIMA PDF
   // ======================
