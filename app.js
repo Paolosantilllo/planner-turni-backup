@@ -704,8 +704,19 @@ for (let d = 1; d <= daysInMonth; d++) {
 }
 
 const head = [
-  ["Nominativi", ...giorniNumeri],
-  ["" , ...giorniSettimana]
+  [
+    "Nominativi",
+    ...Array.from({ length: daysInMonth }, (_, i) => {
+      const day = i + 1;
+
+      const date = new Date(year, month, day);
+      const jsDay = date.getDay();
+
+      const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
+
+      return `${day}\n${map[jsDay]}`;
+    })
+  ]
 ];
 
   const dipendenti = Object.keys(EMPLOYEES);
