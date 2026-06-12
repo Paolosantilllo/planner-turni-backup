@@ -643,15 +643,36 @@ const hasCoverage = savedEvents.some(ev => {
     { align: "center" }
   );
 
-  pdf.setFontSize(10);
-  pdf.setFont("helvetica", "normal");
+  // ======================
+// 📅 DATA + VERSIONE PDF
+// ======================
 
-  pdf.text(
-    "Documento mensile reperibilità - generato automaticamente",
-    148,
-    21,
-    { align: "center" }
-  );
+const now = new Date();
+
+const sendDate = now.toLocaleDateString("it-IT");
+
+if (!window.pdfVersion) {
+  window.pdfVersion = 1;
+} else {
+  window.pdfVersion++;
+}
+
+pdf.setFontSize(9);
+pdf.setFont("helvetica", "normal");
+
+pdf.text(
+  `Data invio: ${sendDate}`,
+  285,
+  10,
+  { align: "right" }
+);
+
+pdf.text(
+  `Versione: 1/${window.pdfVersion}`,
+  285,
+  15,
+  { align: "right" }
+);
 
   // ======================
   // 📊 STAFF (COLLEGATO ALL'APP)
