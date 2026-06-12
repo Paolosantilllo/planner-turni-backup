@@ -425,7 +425,7 @@ if (employeeEvents.length > 0) {
     new Date(e.date).getMonth() === month
   ).length;
 
-  const total = existing + repCount;
+  const total = existing + 1;
 
   if (total >= 6) {
     alert("Max 6 REP al mese");
