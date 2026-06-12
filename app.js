@@ -696,20 +696,54 @@ const body = dipendenti.map(nome => {
   return row;
 });
   pdf.autoTable({
-    head,
-    body,
-    startY: 28,
-    theme: "grid",
+  head,
+  body,
+  startY: 28,
+  theme: "grid",
 
-    styles: {
-      fontSize: 7,
-      cellPadding: 2,
-      halign: "center",
-      valign: "middle"
-    },
+  styles: {
+    fontSize: 7,
+    cellPadding: 2,
+    halign: "center",
+    valign: "middle"
+  },
 
-    tableWidth: "auto"
-  });
+  didParseCell: function(data) {
+
+    // Salta intestazione
+    if (data.section !== "body") return;
+
+    const value = String(data.cell.raw || "").trim();
+
+    // REP = ROSA
+    if (value === "REP") {
+      data.cell.styles.fillColor = [255, 220, 230];
+    }
+
+    // CFI / CFI-REP = VERDE
+    if (
+      value === "CFI" ||
+      value === "CFI/REP"
+    ) {
+      data.cell.styles.fillColor = [170, 230, 170];
+    }
+
+    // LIC / REC = GIALLO
+    if (
+      value === "LIC" ||
+      value === "REC"
+    ) {
+      data.cell.styles.fillColor = [255, 245, 160];
+    }
+
+    // MAL = GRIGIO
+    if (value === "MAL") {
+      data.cell.styles.fillColor = [210, 210, 210];
+    }
+  },
+
+  tableWidth: "auto"
+});
 
   // ======================
   // 👀 ANTEPRIMA PDF
