@@ -614,29 +614,30 @@ function generatePDF() {
 
   const head = [["Grado", "Nominativi", ...giorni]];
 
-  const body = staff.map(persona => {
+  const dipendenti = ["A", "B", "C", "D"];
 
-    const row = [
-      persona.grado,
-      persona.nome
-    ];
+const body = dipendenti.map(nome => {
 
-    for (let d = 1; d <= daysInMonth; d++) {
+  const row = [
+    "",
+    nome
+  ];
 
-      const date =
-        `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  for (let d = 1; d <= daysInMonth; d++) {
 
-      const ev = savedEvents.find(e =>
-        e.date === date &&
-        e.persona === persona.nome
-      );
+    const date =
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-      row.push(ev ? ev.shift : "");
-    }
+    const ev = savedEvents.find(e =>
+      e.date === date &&
+      e.employee === nome
+    );
 
-    return row;
-  });
+    row.push(ev ? ev.shift : "");
+  }
 
+  return row;
+});
   autoTable(pdf, {
     head,
     body,
