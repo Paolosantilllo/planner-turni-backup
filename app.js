@@ -797,7 +797,7 @@ for (let d = 1; d <= daysInMonth; d++) {
     return;
   }
 
-  const dayNumber = colIndex - 1;
+  const dayNumber = colIndex;
 
   const date = new Date(year, month, dayNumber);
   const weekday = date.getDay();
