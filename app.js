@@ -822,6 +822,7 @@ for (let i = 1; i <= daysInMonth; i++) {
   didParseCell: function (data) {
 
   const colIndex = data.column.index;
+  const value = data.cell.raw;
 
   // =========================
   // 🟢 HEADER
@@ -868,12 +869,22 @@ for (let i = 1; i <= daysInMonth; i++) {
   }
 
   const dayNumber = colIndex;
-  const value = data.cell.raw;
 
   // =========================
-  // 🔥 FIX IMPORTANTE: CFI/REP NON TAGLIATO
+  // 🟣 GIORNO SCOPERTO
+  // =========================
+  if (uncoveredDays.includes(dayNumber)) {
+    data.cell.styles.fillColor = [180, 120, 255];
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  // =========================
+  // 🔥 CFI/REP (NON TAGLIATO)
   // =========================
   if (value === "CFI/REP") {
+    data.cell.styles.fillColor = [102, 187, 106];
+    data.cell.styles.textColor = [255, 255, 255];
     data.cell.styles.fontSize = 4.5;
     data.cell.styles.fontStyle = "bold";
     data.cell.styles.cellPadding = 0.3;
@@ -915,69 +926,6 @@ for (let i = 1; i <= daysInMonth; i++) {
   data.cell.styles.textColor = [0, 0, 0];
 
 }
-
-
-  // =========================
-  // ❌ PRIMA COLONNA
-  // =========================
-  if (colIndex === 0) {
-  data.cell.styles.fillColor = [255, 255, 255];
-  data.cell.styles.textColor = [0, 0, 0];
-  return;
-}
-
-  const dayNumber = colIndex;
-  const date = new Date(year, month, dayNumber);
-  const weekday = date.getDay();
-  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
-  const value = data.cell.raw;
-
-  // 🟣 GIORNO SCOPERTO
-if (uncoveredDays.includes(dayNumber)) {
-
-  data.cell.styles.fillColor = [180, 120, 255];
-  data.cell.styles.textColor = [255, 255, 255];
-
-  return;
-}
-   
-  // =========================
-// 🟢 TURNI
-// =========================
-if (value === "CFI" || value === "CFI/REP") {
-  data.cell.styles.fillColor = [102, 187, 106];
-  data.cell.styles.textColor = [255, 255, 255];
-  data.cell.styles.fontSize = 6;
-  return;
-}
-
-if (value === "LIC" || value === "REC") {
-  data.cell.styles.fillColor = [255, 235, 59];
-  data.cell.styles.textColor = [0, 0, 0];
-  data.cell.styles.fontSize = 6;
-  return;
-}
-
-if (value === "MAL") {
-  data.cell.styles.fillColor = [238, 238, 238];
-  data.cell.styles.textColor = [80, 80, 80];
-  data.cell.styles.fontSize = 6;
-  return;
-}
-
-if (value === "REP") {
-  data.cell.styles.fillColor = [255, 182, 193];
-  data.cell.styles.textColor = [0, 0, 0];
-  data.cell.styles.fontSize = 6;
-  return;
-}
-
-// =========================
-// ⬜ CELLE VUOTE
-// =========================
-data.cell.styles.fillColor = [255, 255, 255];
-data.cell.styles.textColor = [0, 0, 0];
-return;
 
 }, // chiusura didParseCell
 
