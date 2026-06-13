@@ -241,6 +241,8 @@ const box = document.createElement("div");
 box.classList.add("day");
 box.style.cursor = "pointer";
 
+if (!events) events = [];
+   
    // ======================
 // 🟣 CONTROLLO COPERTURA
 // ======================
@@ -280,30 +282,39 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
   num.innerText = day;
 
   box.appendChild(num);
+   
+events.forEach(ev => {
 
-  events.forEach(ev => {
+  if (!ev || !ev.employee || !ev.shift) return;
 
   const el = document.createElement("div");
   el.classList.add("event");
 
-const emp = EMPLOYEES[ev.employee];
+  // 👤 colore dipendente (solo stile base)
+  const emp = EMPLOYEES[ev.employee];
 
-if (emp && emp.color) {
-  el.classList.add(emp.color);
-}
-// colore turno (NUOVO: usa HEX)
-const color = SHIFT_COLORS[ev.shift];
-
-if (color) {
-  el.style.backgroundColor = color;
-
-  // testo leggibile automatico
-  if (ev.shift === "CFI" || ev.shift === "CFI/REP") {
-    el.style.color = "#fff";
-  } else {
-    el.style.color = "#000";
+  if (emp && emp.color) {
+    el.classList.add(emp.color);
   }
-}
+
+  // 🎯 colore turno (prioritario)
+  const color = SHIFT_COLORS[ev.shift];
+
+  if (color) {
+    el.style.backgroundColor = color;
+
+    // testo leggibile
+    if (ev.shift === "CFI" || ev.shift === "CFI/REP") {
+      el.style.color = "#fff";
+    } else {
+      el.style.color = "#000";
+    }
+  }
+
+  el.innerText = ev.shift;
+
+  box.appendChild(el);
+});
 
   // ======================
   // 🔴 REGOLA FESTIVI
