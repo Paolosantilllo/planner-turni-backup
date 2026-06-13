@@ -770,8 +770,8 @@ const nameColWidth = 28;
 // scala automatica per adattare 30/31 giorni
 let scaleFactor = 1;
 
-if (daysInMonth === 31) scaleFactor = 0.92;
-if (daysInMonth === 30) scaleFactor = 0.96;
+if (daysInMonth === 31) scaleFactor = 0.88;
+if (daysInMonth === 30) scaleFactor = 0.93;
 
 const availableWidth = (pageWidth - nameColWidth) * scaleFactor;
 
@@ -803,13 +803,13 @@ for (let i = 1; i <= daysInMonth; i++) {
   tableLineColor: [0, 0, 0],
 
   styles: {
-    fontSize: 6,
-    cellPadding: 1,
-    halign: "center",
-    valign: "middle",
-    minCellHeight: 8,   // righe dipendenti
-    overflow: "hidden"
-  },
+  fontSize: 6,
+  cellPadding: 1,
+  halign: "center",
+  valign: "middle",
+  minCellHeight: 8,
+  overflow: "linebreak"   // 👈 CAMBIATO QUI
+},
 
   headStyles: {
     minCellHeight: 2,   // metà altezza
@@ -821,9 +821,7 @@ for (let i = 1; i <= daysInMonth; i++) {
 
   didParseCell: function (data) {
 
-    const colIndex = data.column.index;
-
-    // qui sotto rimane il tuo codice attuale
+  const colIndex = data.column.index;
 
   // =========================
   // 🟢 HEADER
@@ -846,14 +844,10 @@ for (let i = 1; i <= daysInMonth; i++) {
     if (weekday === 0 || isHoliday) {
       data.cell.styles.fillColor = [255, 59, 48];
       data.cell.styles.textColor = [255, 255, 255];
-    }
-
-    else if (weekday === 6) {
+    } else if (weekday === 6) {
       data.cell.styles.fillColor = [255, 149, 0];
       data.cell.styles.textColor = [0, 0, 0];
-    }
-
-    else {
+    } else {
       data.cell.styles.fillColor = [255, 255, 255];
       data.cell.styles.textColor = [0, 0, 0];
     }
@@ -863,6 +857,65 @@ for (let i = 1; i <= daysInMonth; i++) {
   }
 
   if (data.section !== "body") return;
+
+  // =========================
+  // ❌ COLONNA NOMI
+  // =========================
+  if (colIndex === 0) {
+    data.cell.styles.fillColor = [255, 255, 255];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  const dayNumber = colIndex;
+  const value = data.cell.raw;
+
+  // =========================
+  // 🔥 FIX IMPORTANTE: CFI/REP NON TAGLIATO
+  // =========================
+  if (value === "CFI/REP") {
+    data.cell.styles.fontSize = 4.5;
+    data.cell.styles.fontStyle = "bold";
+    data.cell.styles.cellPadding = 0.3;
+    data.cell.styles.overflow = "linebreak";
+    return;
+  }
+
+  // =========================
+  // 🟢 TURNI
+  // =========================
+  if (value === "CFI") {
+    data.cell.styles.fillColor = [102, 187, 106];
+    data.cell.styles.textColor = [255, 255, 255];
+    return;
+  }
+
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255, 235, 59];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238, 238, 238];
+    data.cell.styles.textColor = [80, 80, 80];
+    return;
+  }
+
+  if (value === "REP") {
+    data.cell.styles.fillColor = [255, 182, 193];
+    data.cell.styles.textColor = [0, 0, 0];
+    return;
+  }
+
+  // =========================
+  // ⬜ DEFAULT
+  // =========================
+  data.cell.styles.fillColor = [255, 255, 255];
+  data.cell.styles.textColor = [0, 0, 0];
+
+}
+
 
   // =========================
   // ❌ PRIMA COLONNA
