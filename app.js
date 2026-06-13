@@ -299,12 +299,24 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
 
   const emp = EMPLOYEES[ev.employee];
 
-  // ======================
-  // 👤 COLORI DIPENDENTE
-  // ======================
-  if (emp) {
-    el.classList.add(emp.color);
+// colore dipendente (resta come classe CSS)
+if (emp) {
+  el.classList.add(emp.color);
+}
+
+// colore turno (NUOVO: usa HEX)
+const color = SHIFT_COLORS[ev.shift];
+
+if (color) {
+  el.style.backgroundColor = color;
+
+  // testo leggibile automatico
+  if (ev.shift === "CFI" || ev.shift === "CFI/REP") {
+    el.style.color = "#fff";
+  } else {
+    el.style.color = "#000";
   }
+}
 
   // ======================
   // 🔴 REGOLA FESTIVI
