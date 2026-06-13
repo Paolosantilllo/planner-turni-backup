@@ -919,21 +919,17 @@ for (let i = 1; i <= daysInMonth; i++) {
     return;
   }
 
-  // =========================
+   // =========================
   // ⬜ DEFAULT
   // =========================
   data.cell.styles.fillColor = [255, 255, 255];
   data.cell.styles.textColor = [0, 0, 0];
 
-}
-
-}, // chiusura didParseCell
-
+},
 didDrawCell: function (data) {
 
 }
-}); // chiusura autoTable
-
+});
   const finalY = pdf.lastAutoTable.finalY;
 /*
 pdf.rect(
