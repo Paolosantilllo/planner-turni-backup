@@ -848,7 +848,16 @@ for (let i = 1; i <= daysInMonth; i++) {
   const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
   const value = data.cell.raw;
 
-  // =========================
+  // 🟣 GIORNO SCOPERTO
+if (uncoveredDays.includes(dayNumber)) {
+
+  data.cell.styles.fillColor = [180, 120, 255];
+  data.cell.styles.textColor = [255, 255, 255];
+
+  return;
+}
+   
+   // =========================
   // 🟢 TURNI
   // =========================
   if (value === "CFI" || value === "CFI/REP") {
