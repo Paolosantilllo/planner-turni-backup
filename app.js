@@ -880,7 +880,7 @@ pdf.autoTable({
   if (value === "CFI" || value === "CFI/REP") {
     data.cell.styles.fillColor = [102, 187, 106];
     data.cell.styles.textColor = [255, 255, 255];
-    data.cell.styles.fontSize = 5.3;
+    data.cell.styles.fontSize = 4.8;
     return;
   }
 
