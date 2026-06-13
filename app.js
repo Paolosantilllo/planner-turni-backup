@@ -160,16 +160,7 @@ function isHoliday(dateStr){
   return holidays.includes(`${day}-${month}`);
 }
 
-/* ======================
-   AVVIO APP DOPO LOGIN
-====================== */
 
-initAuth(() => {
-
-  loadEvents();
-  renderCalendar();
-
-});
 
 /* ======================
    CARICA EVENTI FIREBASE
