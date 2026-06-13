@@ -292,7 +292,8 @@ events.forEach(ev => {
     el.classList.add(emp.color);
   }
 
-  const color = SHIFT_COLORS[ev.shift];
+  const shiftKey = (ev.shift || "").trim();
+const color = SHIFT_COLORS[shiftKey];
 
   if (color) {
     el.style.backgroundColor = color;
@@ -936,16 +937,6 @@ didDrawCell: function (data) {
 
 }); // ⬅️ chiude autoTable
 const finalY = pdf.lastAutoTable.finalY;
-
-/*
-pdf.rect(
-  10,
-  28,
-  277,
-  finalY - 28,
-  "S"
-);
-*/
 
 // 👀 ANTEPRIMA PDF
 const blobUrl = pdf.output("bloburl");
