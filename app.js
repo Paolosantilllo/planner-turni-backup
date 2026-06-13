@@ -902,32 +902,7 @@ return;
 
 didDrawCell: function (data) {
 
-  if (data.section === "head") {
-
-    // Salta la colonna Nominativi
-    if (data.column.index === 0) return;
-
-    const doc = data.doc;
-
-    const x = data.cell.x;
-    const y = data.cell.y;
-    const w = data.cell.width;
-    const h = data.cell.height;
-
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(0.1);
-
-    // linea orizzontale tra numero e giorno settimana
-    doc.line(
-      x,
-      y + (h / 2),
-      x + w,
-      y + (h / 2)
-    );
-  }
-
 }
-
 }); // chiusura autoTable
 
   const finalY = pdf.lastAutoTable.finalY;
