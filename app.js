@@ -240,7 +240,7 @@ const events = savedEvents.filter(e => {
 
   if (e.date !== date) return false;
 
-  if (selectedEmployee === "Tutti") {
+  if (selectedEmployee === "ALL") {
     return true;
   }
 
