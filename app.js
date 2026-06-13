@@ -845,7 +845,7 @@ data.cell.styles.fillColor = [255, 255, 255];
 data.cell.styles.textColor = [0, 0, 0];
 return;
 
-}, // chiusura didParseCell
+} // chiusura didParseCell
 
 didDrawCell: function (data) {
 
