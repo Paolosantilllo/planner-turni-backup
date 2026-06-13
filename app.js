@@ -323,18 +323,6 @@ events.forEach(ev => {
   box.appendChild(el);
 });
   
-  // ======================
-  // 🧾 TESTO
-  // ======================
-  el.innerText = ev.shift;
-
-if (ev.shift.length > 4) {
-  el.classList.add("long-shift");
-}
-  box.appendChild(el);
-
-});
-
 calendar.appendChild(box);
 }
 };
