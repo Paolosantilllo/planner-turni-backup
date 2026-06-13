@@ -11,7 +11,7 @@ body{
 }
 
 .app{
-  padding:15px;
+  padding:6px;
 }
 
 
@@ -274,7 +274,7 @@ body{
 .calendar{
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:12px;
+  gap:2px;
 } 
 
 
