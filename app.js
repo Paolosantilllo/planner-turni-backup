@@ -13,9 +13,7 @@ initAuth(() => {
 
 });
 
-employeeFilter.addEventListener("change", () => {
-  renderCalendar();
-});
+
 
 /* ======================
    STATO APP
@@ -27,6 +25,10 @@ let savedEvents = [];
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const employeeFilter = document.getElementById("employeeFilter");
+
+employeeFilter.addEventListener("change", () => {
+  renderCalendar();
+});
 
 /* ======================
    FESTIVI
