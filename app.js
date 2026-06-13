@@ -845,40 +845,75 @@ pdf.autoTable({
     // ================= BODY =================
     if (data.section !== "body") return;
 
-    if (colIndex === 0) {
-      data.cell.styles.fillColor = [255, 255, 255];
-      return;
-    }
+if (colIndex === 0) {
+  data.cell.styles.fillColor = [255, 255, 255];
+  data.cell.styles.textColor = [0, 0, 0];
+  return;
+}
 
-    // TURNI
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102, 187, 106];
-      data.cell.styles.textColor = [255, 255, 255];
-      data.cell.styles.fontSize = 5.3;
-      return;
-    }
+const dayNumber = colIndex;
 
-    if (value === "REP") {
-      data.cell.styles.fillColor = [255, 182, 193];
-      return;
-    }
+// =========================
+// 🟣 GIORNO SCOPERTO
+// =========================
+if (uncoveredDays.includes(dayNumber)) {
 
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255, 235, 59];
-      return;
-    }
+  data.cell.styles.fillColor = [180, 120, 255];
+  data.cell.styles.textColor = [255, 255, 255];
 
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238, 238, 238];
-      return;
-    }
+  return;
+}
 
-    data.cell.styles.fillColor = [255, 255, 255];
-  },
+// =========================
+// 🟢 CFI / CFI-REP
+// =========================
+if (value === "CFI" || value === "CFI/REP") {
 
-    didDrawCell: function (data) {
-    // vuoto ma valido
-  }
+  data.cell.styles.fillColor = [102, 187, 106];
+  data.cell.styles.textColor = [255, 255, 255];
+  data.cell.styles.fontSize = 5.3;
+
+  return;
+}
+
+// =========================
+// 🌸 REP
+// =========================
+if (value === "REP") {
+
+  data.cell.styles.fillColor = [255, 182, 193];
+  data.cell.styles.textColor = [0, 0, 0];
+
+  return;
+}
+
+// =========================
+// 🟡 LIC / REC
+// =========================
+if (value === "LIC" || value === "REC") {
+
+  data.cell.styles.fillColor = [255, 235, 59];
+  data.cell.styles.textColor = [0, 0, 0];
+
+  return;
+}
+
+// =========================
+// ⚪ MAL
+// =========================
+if (value === "MAL") {
+
+  data.cell.styles.fillColor = [238, 238, 238];
+  data.cell.styles.textColor = [80, 80, 80];
+
+  return;
+}
+
+},
+
+didDrawCell: function (data) {
+  // vuoto ma valido
+}
 
 }); // chiusura autoTable
 
