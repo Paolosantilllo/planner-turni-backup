@@ -779,6 +779,9 @@ for (let i = 1; i <= daysInMonth; i++) {
 
   tableWidth: 277,
 
+  tableLineWidth: 0.3,
+  tableLineColor: [0, 0, 0],
+      
   styles: {
     fontSize: 6,
     cellPadding: 1,
@@ -914,6 +917,16 @@ didDrawCell: function (data) {
 }
 
 }); // chiusura autoTable
+
+  const finalY = pdf.lastAutoTable.finalY;
+
+pdf.rect(
+  10,
+  28,
+  277,
+  finalY - 28,
+  "S"
+); 
 
 // 👀 ANTEPRIMA PDF
 const blobUrl = pdf.output("bloburl");
