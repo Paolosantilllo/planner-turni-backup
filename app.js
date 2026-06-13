@@ -286,13 +286,11 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
   const el = document.createElement("div");
   el.classList.add("event");
 
-  const emp = EMPLOYEES[ev.employee];
+const emp = EMPLOYEES[ev.employee];
 
-// colore dipendente (resta come classe CSS)
-if (emp) {
+if (emp && emp.color) {
   el.classList.add(emp.color);
 }
-
 // colore turno (NUOVO: usa HEX)
 const color = SHIFT_COLORS[ev.shift];
 
