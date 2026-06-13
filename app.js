@@ -903,10 +903,7 @@ if (uncoveredDays.includes(dayNumber)) {
     return;
   }
 
-  data.cell.styles.fillColor = [255, 255, 255];
-},
-   
- didDrawCell: function (data) {
+  didDrawCell: function (data) {
 
   if (data.section === "head" && data.row.index === 0) {
 
