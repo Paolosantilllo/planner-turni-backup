@@ -767,28 +767,23 @@ for (let d = 1; d <= daysInMonth; d++) {
 
 const nameColWidth = 28;
 
-// scala automatica per adattare 30/31 giorni
+// spazio reale disponibile (margini inclusi già gestiti da jsPDF)
+const usableWidth = pageWidth - nameColWidth - 10;
+
+// riduzione automatica per evitare overflow (31 giorni)
 let scaleFactor = 1;
 
-if (daysInMonth === 31) scaleFactor = 0.88;
-if (daysInMonth === 30) scaleFactor = 0.93;
+if (daysInMonth === 31) scaleFactor = 0.90;
+if (daysInMonth === 30) scaleFactor = 0.94;
 
-const availableWidth = (pageWidth - nameColWidth) * scaleFactor;
+const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
 
-const dayColWidth = availableWidth / daysInMonth;
-
-const columnStyles = {};
-
-// colonna nomi
-columnStyles[0] = {
-  cellWidth: nameColWidth
+const columnStyles = {
+  0: { cellWidth: nameColWidth }
 };
 
-// colonne giorni
 for (let i = 1; i <= daysInMonth; i++) {
-  columnStyles[i] = {
-    cellWidth: dayColWidth
-  };
+  columnStyles[i] = { cellWidth: dayColWidth };
 }
    
  pdf.autoTable({
@@ -803,13 +798,15 @@ for (let i = 1; i <= daysInMonth; i++) {
   tableLineColor: [0, 0, 0],
 
   styles: {
-  fontSize: 6,
-  cellPadding: 1,
+  fontSize: 5.5,
+  cellPadding: 0.5,
   halign: "center",
   valign: "middle",
-  minCellHeight: 8,
-  overflow: "linebreak"   // 👈 CAMBIATO QUI
+  overflow: "linebreak"
 },
+
+tableWidth: "wrap",
+margin: { left: 5, right: 5 },
 
   headStyles: {
     minCellHeight: 2,   // metà altezza
@@ -825,7 +822,7 @@ for (let i = 1; i <= daysInMonth; i++) {
   const value = data.cell.raw;
 
   // =========================
-  // 🟢 HEADER
+  // HEADER
   // =========================
   if (data.section === "head") {
 
@@ -857,74 +854,48 @@ for (let i = 1; i <= daysInMonth; i++) {
     return;
   }
 
+  // =========================
+  // BODY ONLY
+  // =========================
   if (data.section !== "body") return;
 
-  // =========================
-  // ❌ COLONNA NOMI
-  // =========================
+  // colonna nomi
   if (colIndex === 0) {
     data.cell.styles.fillColor = [255, 255, 255];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-  }
-
-  const dayNumber = colIndex;
-
-  // =========================
-  // 🟣 GIORNO SCOPERTO
-  // =========================
-  if (uncoveredDays.includes(dayNumber)) {
-    data.cell.styles.fillColor = [180, 120, 255];
-    data.cell.styles.textColor = [255, 255, 255];
     return;
   }
 
   // =========================
-  // 🔥 CFI/REP (NON TAGLIATO)
+  // TURNI COLORI
   // =========================
-  if (value === "CFI/REP") {
+  if (value === "CFI" || value === "CFI/REP") {
     data.cell.styles.fillColor = [102, 187, 106];
     data.cell.styles.textColor = [255, 255, 255];
-    data.cell.styles.fontSize = 4.5;
-    data.cell.styles.fontStyle = "bold";
-    data.cell.styles.cellPadding = 0.3;
+    data.cell.styles.fontSize = 5.5;
     data.cell.styles.overflow = "linebreak";
-    return;
-  }
-
-  // =========================
-  // 🟢 TURNI
-  // =========================
-  if (value === "CFI") {
-    data.cell.styles.fillColor = [102, 187, 106];
-    data.cell.styles.textColor = [255, 255, 255];
-    return;
-  }
-
-  if (value === "LIC" || value === "REC") {
-    data.cell.styles.fillColor = [255, 235, 59];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-  }
-
-  if (value === "MAL") {
-    data.cell.styles.fillColor = [238, 238, 238];
-    data.cell.styles.textColor = [80, 80, 80];
     return;
   }
 
   if (value === "REP") {
     data.cell.styles.fillColor = [255, 182, 193];
-    data.cell.styles.textColor = [0, 0, 0];
+    data.cell.styles.fontSize = 5.5;
     return;
   }
 
-   // =========================
-  // ⬜ DEFAULT
-  // =========================
-  data.cell.styles.fillColor = [255, 255, 255];
-  data.cell.styles.textColor = [0, 0, 0];
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255, 235, 59];
+    data.cell.styles.fontSize = 5.5;
+    return;
+  }
 
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238, 238, 238];
+    data.cell.styles.fontSize = 5.5;
+    return;
+  }
+
+  // default
+  data.cell.styles.fillColor = [255, 255, 255];
 },
 didDrawCell: function (data) {
 
