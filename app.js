@@ -766,13 +766,13 @@ for (let d = 1; d <= daysInMonth; d++) {
 
 // colonna NOMINATIVI (più stretta come nel foglio reale)
 columnStyles[0] = {
-  cellWidth: 32
+  cellWidth: 28
 };
 
 // colonne GIORNI
 for (let i = 1; i <= daysInMonth; i++) {
   columnStyles[i] = {
-    cellWidth: 8
+    cellWidth: 7.8
   };
 }
    
