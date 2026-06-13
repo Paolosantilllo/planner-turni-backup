@@ -848,20 +848,10 @@ return;
 } // chiusura didParseCell
 
 didDrawCell: function (data) {
-
-}
+ }
 }); // chiusura autoTable
 
-  const finalY = pdf.lastAutoTable.finalY;
-/*
-pdf.rect(
-  10,
-  28,
-  277,
-  finalY - 28,
-  "S"
-); 
-*/
+ 
 // 👀 ANTEPRIMA PDF
 const blobUrl = pdf.output("bloburl");
 window.open(blobUrl, "_blank");
