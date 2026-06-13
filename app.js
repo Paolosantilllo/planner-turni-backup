@@ -762,17 +762,21 @@ for (let d = 1; d <= daysInMonth; d++) {
     uncoveredDays.push(d);
   }
 }
-   const columnStyles = {};
+  const columnStyles = {};
 
-// colonna NOMINATIVI (più stretta come nel foglio reale)
+const tableWidth = 277;
+const nominativiWidth = 32;
+
+const dayWidth =
+  (tableWidth - nominativiWidth) / daysInMonth;
+
 columnStyles[0] = {
-  cellWidth: 28
+  cellWidth: nominativiWidth
 };
 
-// colonne GIORNI
 for (let i = 1; i <= daysInMonth; i++) {
   columnStyles[i] = {
-    cellWidth: 7.8
+    cellWidth: dayWidth
   };
 }
    
