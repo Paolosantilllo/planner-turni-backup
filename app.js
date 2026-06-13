@@ -857,54 +857,47 @@ if (uncoveredDays.includes(dayNumber)) {
   return;
 }
    
-   // =========================
-  // 🟢 TURNI
   // =========================
-  if (value === "CFI" || value === "CFI/REP") {
-    data.cell.styles.fillColor = [102, 187, 106];
-    data.cell.styles.textColor = [255, 255, 255];
-    data.cell.styles.fontSize = 6;
-    return;
-  }
+// 🟢 TURNI
+// =========================
+if (value === "CFI" || value === "CFI/REP") {
+  data.cell.styles.fillColor = [102, 187, 106];
+  data.cell.styles.textColor = [255, 255, 255];
+  data.cell.styles.fontSize = 6;
+  return;
+}
 
-  if (value === "LIC" || value === "REC") {
-    data.cell.styles.fillColor = [255, 235, 59];
-    data.cell.styles.textColor = [0, 0, 0];
-    data.cell.styles.fontSize = 6;
-    return;
-  }
+if (value === "LIC" || value === "REC") {
+  data.cell.styles.fillColor = [255, 235, 59];
+  data.cell.styles.textColor = [0, 0, 0];
+  data.cell.styles.fontSize = 6;
+  return;
+}
 
-  if (value === "MAL") {
-    data.cell.styles.fillColor = [238, 238, 238];
-    data.cell.styles.textColor = [80, 80, 80];
-    data.cell.styles.fontSize = 6;
-    return;
-  }
+if (value === "MAL") {
+  data.cell.styles.fillColor = [238, 238, 238];
+  data.cell.styles.textColor = [80, 80, 80];
+  data.cell.styles.fontSize = 6;
+  return;
+}
 
-  if (value === "REP") {
-    data.cell.styles.fillColor = [255, 182, 193];
-    data.cell.styles.textColor = [0, 0, 0];
-    data.cell.styles.fontSize = 6;
-    return;
-  }
+if (value === "REP") {
+  data.cell.styles.fillColor = [255, 182, 193];
+  data.cell.styles.textColor = [0, 0, 0];
+  data.cell.styles.fontSize = 6;
+  return;
+}
 
-  // =========================
-  // 📅 GIORNI
-  // =========================
-  if (weekday === 0 || isHoliday) {
-    data.cell.styles.fillColor = [255, 59, 48];
-    data.cell.styles.textColor = [255, 255, 255];
-    return;
-  }
+// =========================
+// ⬜ CELLE VUOTE
+// =========================
+data.cell.styles.fillColor = [255, 255, 255];
+data.cell.styles.textColor = [0, 0, 0];
+return;
 
-  if (weekday === 6) {
-    data.cell.styles.fillColor = [255, 149, 0];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-   }
-  },
+}, // chiusura didParseCell
 
-  didDrawCell: function (data) {
+didDrawCell: function (data) {
 
   if (data.section === "head" && data.row.index === 0) {
 
@@ -920,7 +913,7 @@ if (uncoveredDays.includes(dayNumber)) {
   }
 }
 
-}); // 👈 FONDAMENTALE
+}); // chiusura autoTable
 
 // 👀 ANTEPRIMA PDF
 const blobUrl = pdf.output("bloburl");
