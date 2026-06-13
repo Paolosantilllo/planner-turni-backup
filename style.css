@@ -1253,3 +1253,16 @@ button:disabled{
   align-items: center;
   text-align: center;
 }
+/* ======================
+   ALLARGA BOX CALENDARIO
+====================== */
+
+.calendar {
+  gap: 10px; /* opzionale: aumenta spazio tra celle */
+}
+
+.day {
+  min-height: 110px;  /* più alte */
+  padding: 10px;      /* più spazio interno */
+  border-radius: 20px;
+}
