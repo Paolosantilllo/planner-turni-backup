@@ -895,7 +895,7 @@ for (let i = 1; i <= daysInMonth; i++) {
   }
 
   data.cell.styles.fillColor = [255, 255, 255];
-}
+},
    
  didDrawCell: function (data) {
 
