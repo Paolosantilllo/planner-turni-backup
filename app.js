@@ -763,17 +763,31 @@ for (let d = 1; d <= daysInMonth; d++) {
     uncoveredDays.push(d);
   }
 }
-   const columnStyles = {};
+   const pageWidth = pdf.internal.pageSize.getWidth();
 
-// colonna NOMINATIVI (più stretta come nel foglio reale)
+const nameColWidth = 28;
+
+// scala automatica per adattare 30/31 giorni
+let scaleFactor = 1;
+
+if (daysInMonth === 31) scaleFactor = 0.92;
+if (daysInMonth === 30) scaleFactor = 0.96;
+
+const availableWidth = (pageWidth - nameColWidth) * scaleFactor;
+
+const dayColWidth = availableWidth / daysInMonth;
+
+const columnStyles = {};
+
+// colonna nomi
 columnStyles[0] = {
-  cellWidth: 28
+  cellWidth: nameColWidth
 };
 
-// colonne GIORNI
+// colonne giorni
 for (let i = 1; i <= daysInMonth; i++) {
   columnStyles[i] = {
-    cellWidth: 7.8
+    cellWidth: dayColWidth
   };
 }
    
