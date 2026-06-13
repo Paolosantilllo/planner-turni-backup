@@ -797,8 +797,8 @@ for (let i = 1; i <= daysInMonth; i++) {
   },
 
   headStyles: {
-    minCellHeight: 4,   // metà altezza
-    cellPadding: 0.3,
+    minCellHeight: 2,   // metà altezza
+    cellPadding: 0.1,
     fontStyle: "bold"
   },
 
