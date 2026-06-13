@@ -763,7 +763,7 @@ for (let d = 1; d <= daysInMonth; d++) {
     uncoveredDays.push(d);
   }
 }
- const pageWidth = pdf.internal.pageSize.getWidth();
+const pageWidth = pdf.internal.pageSize.getWidth();
 
 const nameColWidth = 28;
 const usableWidth = pageWidth - nameColWidth - 10;
@@ -790,9 +790,7 @@ pdf.autoTable({
   startY: 28,
   theme: "grid",
 
-  // 🔥 IMPORTANTE: SOLO UNO
   tableWidth: "wrap",
-
   margin: { left: 5, right: 5 },
 
   styles: {
@@ -876,24 +874,15 @@ pdf.autoTable({
     }
 
     data.cell.styles.fillColor = [255, 255, 255];
+  },
+
+  didDrawCell: function (data) {
+    // vuoto ma valido
   }
 });
-didDrawCell: function (data) {
 
-}
-});
-  const finalY = pdf.lastAutoTable.finalY;
-/*
-pdf.rect(
-  10,
-  28,
-  277,
-  finalY - 28,
-  "S"
-); 
-*/
-// 👀 ANTEPRIMA PDF
-const blobUrl = pdf.output("bloburl");
+// fine autoTable
+const finalY = pdf.lastAutoTable.finalY;
 window.open(blobUrl, "_blank");
 }
 
