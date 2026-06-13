@@ -1,4 +1,3 @@
-
 /* ======================
    IMPORT MODULI
 ====================== */
@@ -6,6 +5,17 @@
 import { initAuth } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES } from "./employees.js";
+
+initAuth(() => {
+
+  loadEvents();
+  renderCalendar();
+
+});
+
+employeeFilter.addEventListener("change", () => {
+  renderCalendar();
+});
 
 /* ======================
    STATO APP
@@ -16,6 +26,7 @@ let savedEvents = [];
 
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
+const employeeFilter = document.getElementById("employeeFilter");
 
 /* ======================
    FESTIVI
@@ -221,11 +232,23 @@ for (let day = 1; day <= daysInMonth; day++) {
 
   const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  const events = savedEvents.filter(e => e.date === date);
+  const selectedEmployee = employeeFilter.value;
 
-  const box = document.createElement("div");
-  box.classList.add("day");
-  box.style.cursor = "pointer";
+const events = savedEvents.filter(e => {
+
+  if (e.date !== date) return false;
+
+  if (selectedEmployee === "Tutti") {
+    return true;
+  }
+
+  return e.employee === selectedEmployee;
+
+});
+
+const box = document.createElement("div");
+box.classList.add("day");
+box.style.cursor = "pointer";
 
    // ======================
 // 🟣 CONTROLLO COPERTURA
