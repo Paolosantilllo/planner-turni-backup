@@ -776,31 +776,39 @@ for (let i = 1; i <= daysInMonth; i++) {
   };
 }
    
-   pdf.autoTable({
+ pdf.autoTable({
   head,
   body,
   startY: 28,
   theme: "grid",
 
-  tableWidth: 277,
+  tableWidth: "auto",
 
   tableLineWidth: 0.3,
   tableLineColor: [0, 0, 0],
-      
+
   styles: {
     fontSize: 6,
     cellPadding: 1,
     halign: "center",
     valign: "middle",
-    minCellHeight: 8,
+    minCellHeight: 8,   // righe dipendenti
     overflow: "hidden"
+  },
+
+  headStyles: {
+    minCellHeight: 4,   // metà altezza
+    cellPadding: 0.3,
+    fontStyle: "bold"
   },
 
   columnStyles,
 
   didParseCell: function (data) {
 
-  const colIndex = data.column.index;
+    const colIndex = data.column.index;
+
+    // qui sotto rimane il tuo codice attuale
 
   // =========================
   // 🟢 HEADER
