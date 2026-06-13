@@ -225,8 +225,7 @@ for (let day = 1; day <= daysInMonth; day++) {
 
   const selectedEmployee = employeeFilter.value;
 
-const events = savedEvents.filter(e => {
-
+let events = savedEvents.filter(e => {
   if (e.date !== date) return false;
 
   if (selectedEmployee === "ALL") {
@@ -234,14 +233,11 @@ const events = savedEvents.filter(e => {
   }
 
   return e.employee === selectedEmployee;
-
 });
 
 const box = document.createElement("div");
 box.classList.add("day");
 box.style.cursor = "pointer";
-
-if (!events) events = [];
    
    // ======================
 // 🟣 CONTROLLO COPERTURA
@@ -290,35 +286,26 @@ events.forEach(ev => {
   const el = document.createElement("div");
   el.classList.add("event");
 
-  // 👤 colore dipendente (solo stile base)
   const emp = EMPLOYEES[ev.employee];
 
   if (emp && emp.color) {
     el.classList.add(emp.color);
   }
 
-  // 🎯 colore turno (prioritario)
   const color = SHIFT_COLORS[ev.shift];
 
   if (color) {
     el.style.backgroundColor = color;
 
-    // testo leggibile
-    if (ev.shift === "CFI" || ev.shift === "CFI/REP") {
-      el.style.color = "#fff";
-    } else {
-      el.style.color = "#000";
-    }
+    el.style.color =
+      (ev.shift === "CFI" || ev.shift === "CFI/REP")
+        ? "#fff"
+        : "#000";
   }
 
-  el.innerText = ev.shift;
+  // ✅ QUI VA LA REGOLA FESTIVI
+  const dayInfo = getDayInfo(date);
 
-  box.appendChild(el);
-});
-
-  // ======================
-  // 🔴 REGOLA FESTIVI
-  // ======================
   if (
     (dayInfo.isSunday || dayInfo.isHoliday) &&
     (
@@ -331,6 +318,11 @@ events.forEach(ev => {
     el.classList.add("frep-text");
   }
 
+  el.innerText = ev.shift;
+
+  box.appendChild(el);
+});
+  
   // ======================
   // 🧾 TESTO
   // ======================
