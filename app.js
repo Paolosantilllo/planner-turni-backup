@@ -7,10 +7,7 @@ import { db, firestore } from "./firebase.js";
 import { EMPLOYEES } from "./employees.js";
 
 initAuth(() => {
-
   loadEvents();
-  renderCalendar();
-
 });
 
 
@@ -166,7 +163,7 @@ function isHoliday(dateStr){
    CARICA EVENTI FIREBASE
 ====================== */
 
-function loadEvents(){
+function loadEvents() {
 
   firestore.onSnapshot(
     firestore.collection(db, "events"),
@@ -181,11 +178,12 @@ function loadEvents(){
         });
       });
 
-      renderCalendar();
+      console.log("EVENTI CARICATI:", savedEvents.length);
+
+      renderCalendar(); // 👈 SOLO QUI
 
     }
   );
-
 }
 
 /* ======================
