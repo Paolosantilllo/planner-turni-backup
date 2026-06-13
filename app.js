@@ -4,7 +4,7 @@
 
 import { initAuth } from "./auth.js";
 import { db, firestore } from "./firebase.js";
-import { EMPLOYEES } from "./employees.js";
+import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
 
 initAuth(() => {
   loadEvents();
@@ -287,22 +287,18 @@ events.forEach(ev => {
   el.classList.add("event");
 
   const emp = EMPLOYEES[ev.employee];
+if (emp?.color) {
+  el.classList.add(emp.color);
+}
 
-  if (emp && emp.color) {
-    el.classList.add(emp.color);
-  }
+const shiftKey = ev.shift?.trim();
+const color = SHIFT_COLORS?.[shiftKey];
 
-  const shiftKey = (ev.shift || "").trim();
-const color = SHIFT_COLORS[shiftKey];
-
-  if (color) {
-    el.style.backgroundColor = color;
-
-    el.style.color =
-      (ev.shift === "CFI" || ev.shift === "CFI/REP")
-        ? "#fff"
-        : "#000";
-  }
+if (color) {
+  el.style.backgroundColor = color;
+  el.style.color =
+    (shiftKey === "CFI" || shiftKey === "CFI/REP") ? "#fff" : "#000";
+}
 
   // ✅ QUI VA LA REGOLA FESTIVI
   const dayInfo = getDayInfo(date);
