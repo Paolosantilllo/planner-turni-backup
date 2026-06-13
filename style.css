@@ -1228,3 +1228,28 @@ button:disabled{
   font-size:7px;
   letter-spacing:-0.2px;
 }
+/* ======================
+   FIX CENTRATURA EVENTI (CFI/REP ecc.)
+====================== */
+
+.event{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 3px 0;
+  margin-top: 2px;
+
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.event-shift{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
