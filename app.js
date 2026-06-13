@@ -759,15 +759,15 @@ for (let d = 1; d <= daysInMonth; d++) {
 }
    const columnStyles = {};
 
-// colonna nominativi
-columnStyles[0] = { cellWidth: 45 };
+// colonna NOMINATIVI (più stretta come nel foglio reale)
+columnStyles[0] = {
+  cellWidth: 32
+};
 
-// colonne giorni (tutte uguali e bloccate)
+// colonne GIORNI
 for (let i = 1; i <= daysInMonth; i++) {
   columnStyles[i] = {
-    cellWidth: 7.2,   // leggermente più stretto per evitare overflow
-    minCellWidth: 7.2,
-    overflow: "hidden"
+    cellWidth: 8
   };
 }
    
