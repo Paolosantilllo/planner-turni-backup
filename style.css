@@ -274,7 +274,7 @@ body{
 .calendar{
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:8px;
+  gap:10px;
 } 
 
 
@@ -1183,14 +1183,7 @@ button:disabled{
   line-height: 10px;
   white-space: nowrap; /* evita spezzature */
 }
- /* ======================
-   CALENDARIO - CELLE PIÙ ARIOSO
-====================== */
-
-.day{
-  min-height: 90px;   /* più spazio verticale */
-}
-
+ 
 /* ======================
    EVENTI - TESTO PIÙ COMPATTO
 ====================== */
