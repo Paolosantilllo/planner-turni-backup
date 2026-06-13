@@ -901,7 +901,8 @@ if (uncoveredDays.includes(dayNumber)) {
     data.cell.styles.fillColor = [255, 149, 0];
     data.cell.styles.textColor = [0, 0, 0];
     return;
-  }
+   }
+  },
 
   didDrawCell: function (data) {
 
