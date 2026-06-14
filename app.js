@@ -825,14 +825,13 @@ function generatePDF() {
     startY = pdf.lastAutoTable.finalY + 8;
   }
 
-  // ======================
-  // 👀 PREVIEW
-  // ======================
-  const blobUrl = pdf.output("bloburl");
-  window.open(blobUrl, "_blank");
-}
-  
-   const btn = document.getElementById("pdfBtn");
+   // ======================
+// BOTTONE PDF
+// ======================
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("pdfBtn");
 
   if (!btn) {
     console.error("pdfBtn non trovato");
