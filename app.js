@@ -857,6 +857,29 @@ for (let m = 0; m < monthsToPrint; m++) {
 }
 
 // ======================
+// 📤 PDF POPUP CONTROL
+// ======================
+window.openPdfPopup = function () {
+  document.getElementById("pdfPopup").style.display = "flex";
+};
+
+window.closePdfPopup = function () {
+  document.getElementById("pdfPopup").style.display = "none";
+};
+
+window.confirmPdfExport = function () {
+
+  const months = parseInt(
+    document.getElementById("monthsRange").value
+  );
+
+  closePdfPopup();
+
+  generatePDF(months);
+};
+
+
+// ======================
 // BOTTONE PDF
 // ======================
 
@@ -869,6 +892,8 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  btn.addEventListener("click", generatePDF);
+  btn.addEventListener("click", () => {
+    document.getElementById("pdfPopup").style.display = "flex";
+  });
 
 });
