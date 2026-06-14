@@ -291,15 +291,6 @@ if (emp?.color) {
   el.classList.add(emp.color);
 }
 
-const shiftKey = ev.shift?.trim();
-const color = SHIFT_COLORS?.[shiftKey];
-
-if (color) {
-  el.style.backgroundColor = color;
-  el.style.color =
-    (shiftKey === "CFI" || shiftKey === "CFI/REP") ? "#fff" : "#000";
-}
-
   // ✅ QUI VA LA REGOLA FESTIVI
   const dayInfo = getDayInfo(date);
 
