@@ -962,52 +962,50 @@ for (let m = 0; m < monthsToPrint; m++) {
   }
 
   pdf.autoTable({
-    head,
-    body: [weekdayRow, ...body],
-    startY,
-    theme: "grid",
-    tableWidth: "wrap",
-    margin: { left: 5, right: 5 },
+  head,
+  body: [weekdayRow, ...body],
+  startY: startY,
+  theme: "grid",
+  tableWidth: "wrap",
+  margin: { left: 5, right: 5 },
 
-    styles: {
-      fontSize: 5.5,
-      cellPadding: 0.4,
-      halign: "center",
-      valign: "middle"
-    },
+  styles: {
+    fontSize: 5.5,
+    cellPadding: 0.4,
+    halign: "center",
+    valign: "middle"
+  },
 
-    columnStyles,
+  columnStyles,
 
-    didParseCell: function (data) {
+  didParseCell: function (data) {
+    const colIndex = data.column.index;
+    const value = data.cell.raw;
 
-      const colIndex = data.column.index;
-      const value = data.cell.raw;
+    const dayNumber = colIndex;
+    const dDate = new Date(year, month, dayNumber);
 
-      const dayNumber = colIndex;
-      const dDate = new Date(year, month, dayNumber);
-      const weekday = dDate.getDay();
-
-      if (data.section === "body" && colIndex === 0) {
-        data.cell.styles.fillColor = [255, 255, 255];
-      }
-
-      if (value === "REP" || value === "FREP") {
-        data.cell.styles.fillColor = [255, 182, 193];
-      }
-
-      if (value === "CFI" || value === "CFI/REP") {
-        data.cell.styles.fillColor = [102, 187, 106];
-      }
-
-      if (value === "LIC" || value === "REC") {
-        data.cell.styles.fillColor = [255, 235, 59];
-      }
-
-      if (value === "MAL") {
-        data.cell.styles.fillColor = [238, 238, 238];
-      }
+    if (data.section === "body" && colIndex === 0) {
+      data.cell.styles.fillColor = [255, 255, 255];
     }
-  });
+
+    if (value === "REP" || value === "FREP") {
+      data.cell.styles.fillColor = [255, 182, 193];
+    }
+
+    if (value === "CFI" || value === "CFI/REP") {
+      data.cell.styles.fillColor = [102, 187, 106];
+    }
+
+    if (value === "LIC" || value === "REC") {
+      data.cell.styles.fillColor = [255, 235, 59];
+    }
+
+    if (value === "MAL") {
+      data.cell.styles.fillColor = [238, 238, 238];
+    }
+  }
+});
 
   startY = pdf.lastAutoTable.finalY + 10;
 }
