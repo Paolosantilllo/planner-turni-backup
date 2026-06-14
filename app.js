@@ -780,6 +780,8 @@ for (let m = 0; m < monthsToPrint; m++) {
       const value = data.cell.raw;
 
       const dayNumber = colIndex;
+       if (colIndex === 0) return;
+       
       const dDate = new Date(year, month, dayNumber);
       const weekday = dDate.getDay();
       const info = getDayInfo(
