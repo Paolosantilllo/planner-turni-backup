@@ -844,10 +844,12 @@ pdf.autoTable({
       return;
     }
   }
-});
+  });
 
-  startY = pdf.lastAutoTable.finalY + 4;
+  if (m < monthsToPrint - 1) {
+    startY = pdf.lastAutoTable.finalY + 10;
   }
+
 }
 
 // ======================
