@@ -309,12 +309,47 @@
 
 </div>
 
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<!-- POPUP PDF EXPORT -->
+<div class="popup" id="pdfPopup">
 
-<!-- APP -->
-<script type="module" src="app.js"></script>
-</body>
-</html>
+  <div class="popup-content">
+
+    <div class="popup-header">
+
+      <h2>Esportazione PDF</h2>
+
+      <button class="close-btn" onclick="closePdfPopup()">
+        ✕
+      </button>
+
+    </div>
+
+    <p>
+      Mancano alcune reperibilità.<br>
+      Vuoi continuare l’esportazione?
+    </p>
+
+    <label for="monthsRange">Numero mesi da esportare</label>
+
+    <select id="monthsRange">
+      <option value="1">1 mese (mese corrente)</option>
+      <option value="2">2 mesi</option>
+      <option value="3">3 mesi</option>
+      <option value="4">4 mesi</option>
+    </select>
+
+    <div class="popup-actions">
+
+      <button class="save-btn" onclick="confirmPdfExport()">
+        Genera PDF
+      </button>
+
+      <button class="delete-btn" onclick="closePdfPopup()">
+        Annulla
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
