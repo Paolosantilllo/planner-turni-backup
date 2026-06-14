@@ -853,8 +853,10 @@ for (let m = 0; m < monthsToPrint; m++) {
   });
 
   startY = pdf.lastAutoTable.finalY + 8;
+  }
 }
-   // ======================
+
+// ======================
 // BOTTONE PDF
 // ======================
 
