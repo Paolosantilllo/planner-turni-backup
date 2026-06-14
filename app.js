@@ -285,30 +285,49 @@ events.forEach(ev => {
 
   const el = document.createElement("div");
   el.classList.add("event");
+const emp = EMPLOYEES[ev.employee];
 
-  const emp = EMPLOYEES[ev.employee];
-if (emp?.color) {
-  el.classList.add(emp.color);
-}
+if (selectedEmployee === "ALL") {
 
-  // ✅ QUI VA LA REGOLA FESTIVI
-  const dayInfo = getDayInfo(date);
-
-  if (
-    (dayInfo.isSunday || dayInfo.isHoliday) &&
-    (
-      ev.shift === "FREP" ||
-      ev.shift === "CFI/REP" ||
-      ev.shift === "MAL" ||
-      ev.shift === "LIC"
-    )
-  ) {
-    el.classList.add("frep-text");
+  // Colore dipendente
+  if (emp?.color) {
+    el.classList.add(emp.color);
   }
 
-  el.innerText = ev.shift;
+} else {
 
-  box.appendChild(el);
+  // Colore turno
+  const shiftKey = (ev.shift || "").trim();
+  const color = SHIFT_COLORS[shiftKey];
+
+  if (color) {
+    el.style.backgroundColor = color;
+  }
+
+  el.style.color =
+    (shiftKey === "CFI" || shiftKey === "CFI/REP")
+      ? "#fff"
+      : "#000";
+}
+
+// ✅ REGOLA FESTIVI
+const dayInfo = getDayInfo(date);
+
+if (
+  (dayInfo.isSunday || dayInfo.isHoliday) &&
+  (
+    ev.shift === "FREP" ||
+    ev.shift === "CFI/REP" ||
+    ev.shift === "MAL" ||
+    ev.shift === "LIC"
+  )
+) {
+  el.classList.add("frep-text");
+}
+
+el.innerText = ev.shift;
+
+box.appendChild(el);
 });
   
 calendar.appendChild(box);
