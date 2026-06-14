@@ -581,7 +581,7 @@ window.deleteShift = async function () {
 //  📤 PDF EXPORT
 // ======================
 
-function generatePDF() {
+function generatePDF(months = 1) {
 
   const missingMessages = [];
 
@@ -645,7 +645,7 @@ const monthNames = [
 
 const map = ["D","L","Ma","Me","G","V","S"];
 
-const monthsToPrint = months;
+const monthsToPrint = Number(months);
 let baseDate = new Date(currentDate);
 let startY = 20;
 
