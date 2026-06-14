@@ -645,7 +645,7 @@ const monthNames = [
 
 const map = ["D","L","Ma","Me","G","V","S"];
 
-const monthsToPrint = 4;
+const monthsToPrint = months;
 let baseDate = new Date(currentDate);
 let startY = 20;
 
