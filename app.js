@@ -711,32 +711,38 @@ pdf.text(
 
 const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
 
+// ======================
+// 📊 HEADER (riga 1: numeri + Nominativi)
+// ======================
 const head = [
-
   [
     "Nominativi",
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1)
-  ],
-
-  [
-    "",
-    ...Array.from({ length: daysInMonth }, (_, i) => {
-
-      const day = i + 1;
-      const date = new Date(year, month, day);
-
-      return map[date.getDay()];
-    })
   ]
 ];
 
-  const dipendenti = Object.keys(EMPLOYEES);
+// ======================
+// 📊 HEADER (riga 2: giorni settimana)
+// ======================
+const weekdayRow = [
+  "",
+  ...Array.from({ length: daysInMonth }, (_, i) => {
+    const day = i + 1;
+    const date = new Date(year, month, day);
+    return map[date.getDay()];
+  })
+];
+
+// ======================
+// 👥 DIPENDENTI
+// ======================
+const dipendenti = Object.keys(EMPLOYEES);
 
 const body = dipendenti.map(nome => {
 
   const row = [
-  EMPLOYEES[nome].name
-];
+    EMPLOYEES[nome].name
+  ];
 
   for (let d = 1; d <= daysInMonth; d++) {
 
@@ -754,7 +760,10 @@ const body = dipendenti.map(nome => {
   return row;
 });
 
-   const uncoveredDays = [];
+// ======================
+// ⚠️ GIORNI SCOPERTI
+// ======================
+const uncoveredDays = [];
 
 for (let d = 1; d <= daysInMonth; d++) {
 
@@ -778,18 +787,34 @@ for (let d = 1; d <= daysInMonth; d++) {
       ev.shift === "REP" ||
       ev.shift === "CFI/REP"
     );
-
   });
 
   if (!covered) {
     uncoveredDays.push(d);
   }
 }
+
+// ======================
+// 📐 LAYOUT TABELLA
+// ======================
 const pageWidth = pdf.internal.pageSize.getWidth();
 
 const nameColWidth = 28;
 const usableWidth = pageWidth - nameColWidth - 10;
 
+let scaleFactor = 1;
+if (daysInMonth === 31) scaleFactor = 0.90;
+if (daysInMonth === 30) scaleFactor = 0.94;
+
+const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
+
+const columnStyles = {
+  0: { cellWidth: nameColWidth }
+};
+
+for (let i = 1; i <= daysInMonth; i++) {
+  columnStyles[i] = { cellWidth: dayColWidth };
+}
 // scaling SOLO per sicurezza stampa
 let scaleFactor = 1;
 if (daysInMonth === 31) scaleFactor = 0.90;
@@ -808,7 +833,11 @@ for (let i = 1; i <= daysInMonth; i++) {
 
 pdf.autoTable({
   head,
-  body,
+  body: [
+    weekdayRow,
+    ...body
+  ],
+
   startY: 28,
   theme: "grid",
 
@@ -833,115 +862,103 @@ pdf.autoTable({
 
   didParseCell: function (data) {
 
-  const colIndex = data.column.index;
-  const value = data.cell.raw;
+    const colIndex = data.column.index;
+    const value = data.cell.raw;
 
-  const dayNumber = colIndex;
-  const date = new Date(year, month, dayNumber);
-  const weekday = date.getDay();
-  const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
+    const dayNumber = colIndex;
+    const date = new Date(year, month, dayNumber);
+    const weekday = date.getDay();
+    const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
 
-  // =========================
-  // 🟢 HEADER (righe numeri + giorni)
-  // =========================
-  if (data.section === "head") {
+    // =========================
+    // 🟢 HEADER
+    // =========================
+    if (data.section === "head") {
+
+      if (colIndex === 0) {
+        data.cell.styles.fillColor = [255, 255, 255];
+        data.cell.styles.textColor = [0, 0, 0];
+        data.cell.styles.fontStyle = "bold";
+        return;
+      }
+
+      if (weekday === 0 || isHoliday) {
+        data.cell.styles.fillColor = [255, 59, 48];
+        data.cell.styles.textColor = [255, 255, 255];
+        return;
+      }
+
+      if (weekday === 6) {
+        data.cell.styles.fillColor = [255, 149, 0];
+        data.cell.styles.textColor = [0, 0, 0];
+        return;
+      }
+
+      data.cell.styles.fillColor = [255, 255, 255];
+      data.cell.styles.textColor = [0, 0, 0];
+      return;
+    }
+
+    // =========================
+    // 🟣 BODY
+    // =========================
+    if (data.section !== "body") return;
 
     if (colIndex === 0) {
       data.cell.styles.fillColor = [255, 255, 255];
-      data.cell.styles.textColor = [0, 0, 0];
-      data.cell.styles.fontStyle = "bold";
       return;
     }
 
-    // DOMENICA o FESTIVI
-    if (weekday === 0 || isHoliday) {
-      data.cell.styles.fillColor = [255, 59, 48];
+    // =========================
+    // 🟣 GIORNI SCOPERTI
+    // =========================
+    if (uncoveredDays.includes(dayNumber)) {
+      data.cell.styles.fillColor = [180, 120, 255];
       data.cell.styles.textColor = [255, 255, 255];
-      data.cell.styles.fontStyle = "bold";
       return;
     }
 
-    // SABATO
-    if (weekday === 6) {
-      data.cell.styles.fillColor = [255, 149, 0];
+    // =========================
+    // 🟢 CFI
+    // =========================
+    if (value === "CFI" || value === "CFI/REP") {
+      data.cell.styles.fillColor = [102, 187, 106];
+      data.cell.styles.textColor = [255, 255, 255];
+      return;
+    }
+
+    // =========================
+    // 🌸 REP / FREP
+    // =========================
+    if (value === "REP" || value === "FREP") {
+      data.cell.styles.fillColor = [255, 182, 193];
       data.cell.styles.textColor = [0, 0, 0];
-      data.cell.styles.fontStyle = "bold";
       return;
     }
 
-    // LUN–VEN → SEMPRE BIANCO
+    // =========================
+    // 🟡 LIC / REC
+    // =========================
+    if (value === "LIC" || value === "REC") {
+      data.cell.styles.fillColor = [255, 235, 59];
+      data.cell.styles.textColor = [0, 0, 0];
+      return;
+    }
+
+    // ⚪ MAL
+    if (value === "MAL") {
+      data.cell.styles.fillColor = [238, 238, 238];
+      data.cell.styles.textColor = [80, 80, 80];
+      return;
+    }
+
+    // DEFAULT
     data.cell.styles.fillColor = [255, 255, 255];
     data.cell.styles.textColor = [0, 0, 0];
-    data.cell.styles.fontStyle = "bold";
-    return;
-  }
+  },
 
-  // =========================
-  // 🟣 BODY SOLO
-  // =========================
-  if (data.section !== "body") return;
-
-  // colonna nomi
-  if (colIndex === 0) {
-    data.cell.styles.fillColor = [255, 255, 255];
-    return;
-  }
-
-  // =========================
-  // 🟣 GIORNI SCOPERTI
-  // =========================
-  if (uncoveredDays.includes(dayNumber)) {
-    data.cell.styles.fillColor = [180, 120, 255];
-    data.cell.styles.textColor = [255, 255, 255];
-    return;
-  }
-
-  // =========================
-  // 🟢 CFI
-  // =========================
-  if (value === "CFI" || value === "CFI/REP") {
-    data.cell.styles.fillColor = [102, 187, 106];
-    data.cell.styles.textColor = [255, 255, 255];
-    data.cell.styles.fontSize = 4.8;
-    return;
-  }
-
-  // =========================
-  // 🌸 REP / FREP
-  // =========================
-  if (value === "REP" || value === "FREP") {
-    data.cell.styles.fillColor = [255, 182, 193];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-  }
-
-  // =========================
-  // 🟡 LIC / REC
-  // =========================
-  if (value === "LIC" || value === "REC") {
-    data.cell.styles.fillColor = [255, 235, 59];
-    data.cell.styles.textColor = [0, 0, 0];
-    return;
-  }
-
-  // ⚪ MAL
-if (value === "MAL") {
-  data.cell.styles.fillColor = [238, 238, 238];
-  data.cell.styles.textColor = [80, 80, 80];
-  return;
-}
-
-// DEFAULT
-data.cell.styles.fillColor = [255, 255, 255];
-data.cell.styles.textColor = [0, 0, 0];
-
-}, // ⬅️ chiude didParseCell
-
-didDrawCell: function (data) {
-  // vuoto ma valido
-}
-
-}); // ⬅️ chiude autoTable
+  didDrawCell: function () {}
+});
 const finalY = pdf.lastAutoTable.finalY;
 
 // 👀 ANTEPRIMA PDF
