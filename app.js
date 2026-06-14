@@ -802,19 +802,6 @@ const pageWidth = pdf.internal.pageSize.getWidth();
 const nameColWidth = 28;
 const usableWidth = pageWidth - nameColWidth - 10;
 
-let scaleFactor = 1;
-if (daysInMonth === 31) scaleFactor = 0.90;
-if (daysInMonth === 30) scaleFactor = 0.94;
-
-const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
-
-const columnStyles = {
-  0: { cellWidth: nameColWidth }
-};
-
-for (let i = 1; i <= daysInMonth; i++) {
-  columnStyles[i] = { cellWidth: dayColWidth };
-}
 // scaling SOLO per sicurezza stampa
 let scaleFactor = 1;
 if (daysInMonth === 31) scaleFactor = 0.90;
