@@ -871,266 +871,154 @@ pdf.text(
   { align: "right" }
 );
 
-  // ======================
-  // 📊 STAFF (COLLEGATO ALL'APP)
-  // ======================
-  // ⚠️ QUI DEVE ESISTERE NEL TUO FILE
-  // esempio:
-  // let staff = [{grado:"LGT.", nome:"..."}, ...]
-
-  // ======================
-  // 📊 GENERAZIONE TABELLA DINAMICA
-  // ======================
-  
+ // ======================
+// 📊 GENERAZIONE TABELLA DINAMICA (UNICA VERSIONE PULITA)
+// ======================
 
 const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
 
-// ======================
-// 📊 HEADER (riga 1: numeri + Nominativi)
-// ======================
-const head = [
-  [
-    "Nominativi",
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1)
-  ]
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("landscape", "mm", "a4");
+
+const monthNames = [
+  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
 ];
 
-// ======================
-// 📊 HEADER (riga 2: giorni settimana)
-// ======================
-const weekdayRow = [
-  "",
-  ...Array.from({ length: daysInMonth }, (_, i) => {
-    const day = i + 1;
-    const date = new Date(year, month, day);
-    return map[date.getDay()];
-  })
-];
+const monthsToPrint = 4;
+let baseDate = new Date(currentDate);
+let startY = 20;
 
 // ======================
-// 👥 DIPENDENTI
+// 🔁 LOOP MESI
 // ======================
-const dipendenti = Object.keys(EMPLOYEES);
+for (let m = 0; m < monthsToPrint; m++) {
 
-const body = dipendenti.map(nome => {
+  const date = new Date(baseDate.getFullYear(), baseDate.getMonth() + m, 1);
 
-  const row = [
-    EMPLOYEES[nome].name
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "bold");
+
+  pdf.text(
+    `${monthNames[month]} ${year}`,
+    148,
+    startY,
+    { align: "center" }
+  );
+
+  startY += 5;
+
+  const head = [
+    ["Nominativi", ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
   ];
 
-  for (let d = 1; d <= daysInMonth; d++) {
+  const weekdayRow = [
+    "",
+    ...Array.from({ length: daysInMonth }, (_, i) => {
+      const d = i + 1;
+      const dDate = new Date(year, month, d);
+      return map[dDate.getDay()];
+    })
+  ];
 
-    const date =
-      `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  const dipendenti = Object.keys(EMPLOYEES);
 
-    const ev = savedEvents.find(e =>
-      e.date === date &&
-      e.employee === nome
-    );
+  const body = dipendenti.map(nome => {
+    const row = [EMPLOYEES[nome].name];
 
-    row.push(ev ? ev.shift : "");
-  }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr =
+        `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-  return row;
-});
-
-// ======================
-// ⚠️ GIORNI SCOPERTI
-// ======================
-const uncoveredDays = [];
-
-for (let d = 1; d <= daysInMonth; d++) {
-
-  const date =
-    `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-  const info = getDayInfo(date);
-
-  const covered = savedEvents.some(ev => {
-
-    if (ev.date !== date) return false;
-
-    if (info.isSunday || info.isHoliday) {
-      return (
-        ev.shift === "FREP" ||
-        ev.shift === "CFI/REP"
+      const ev = savedEvents.find(e =>
+        e.date === dateStr && e.employee === nome
       );
+
+      row.push(ev ? ev.shift : "");
     }
 
-    return (
-      ev.shift === "REP" ||
-      ev.shift === "CFI/REP"
-    );
+    return row;
   });
 
-  if (!covered) {
-    uncoveredDays.push(d);
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const nameColWidth = 28;
+  const usableWidth = pageWidth - nameColWidth - 10;
+
+  let scaleFactor = 1;
+  if (daysInMonth === 31) scaleFactor = 0.90;
+  if (daysInMonth === 30) scaleFactor = 0.94;
+
+  const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
+
+  const columnStyles = { 0: { cellWidth: nameColWidth } };
+
+  for (let i = 1; i <= daysInMonth; i++) {
+    columnStyles[i] = { cellWidth: dayColWidth };
   }
-}
 
-// ======================
-// 📐 LAYOUT TABELLA
-// ======================
-const pageWidth = pdf.internal.pageSize.getWidth();
+  pdf.autoTable({
+    head,
+    body: [weekdayRow, ...body],
+    startY,
+    theme: "grid",
+    tableWidth: "wrap",
+    margin: { left: 5, right: 5 },
 
-const nameColWidth = 28;
-const usableWidth = pageWidth - nameColWidth - 10;
+    styles: {
+      fontSize: 5.5,
+      cellPadding: 0.4,
+      halign: "center",
+      valign: "middle"
+    },
 
-// scaling SOLO per sicurezza stampa
-let scaleFactor = 1;
-if (daysInMonth === 31) scaleFactor = 0.90;
-if (daysInMonth === 30) scaleFactor = 0.94;
+    columnStyles,
 
-const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
+    didParseCell: function (data) {
 
-// column styles pulito
-const columnStyles = {
-  0: { cellWidth: nameColWidth }
-};
+      const colIndex = data.column.index;
+      const value = data.cell.raw;
 
-for (let i = 1; i <= daysInMonth; i++) {
-  columnStyles[i] = { cellWidth: dayColWidth };
-}
+      const dayNumber = colIndex;
+      const dDate = new Date(year, month, dayNumber);
+      const weekday = dDate.getDay();
 
-pdf.autoTable({
-  head,
-  body: [
-    weekdayRow,
-    ...body
-  ],
-
-  startY: 28,
-  theme: "grid",
-
-  tableWidth: "wrap",
-  margin: { left: 5, right: 5 },
-
-  styles: {
-    fontSize: 5.5,
-    cellPadding: 0.4,
-    halign: "center",
-    valign: "middle",
-    overflow: "linebreak"
-  },
-
-  headStyles: {
-    fontStyle: "bold",
-    cellPadding: 0.2,
-    minCellHeight: 4
-  },
-
-  columnStyles,
-
-  didParseCell: function (data) {
-
-    const colIndex = data.column.index;
-    const value = data.cell.raw;
-
-    const dayNumber = colIndex;
-    const date = new Date(year, month, dayNumber);
-    const weekday = date.getDay();
-    const isHoliday = holidays.includes(`${dayNumber}-${month + 1}`);
-
-    // =========================
-    // 🟢 HEADER
-    // =========================
-    if (data.section === "head") {
-
-      if (colIndex === 0) {
+      if (data.section === "body" && colIndex === 0) {
         data.cell.styles.fillColor = [255, 255, 255];
-        data.cell.styles.textColor = [0, 0, 0];
-        data.cell.styles.fontStyle = "bold";
-        return;
       }
 
-      if (weekday === 0 || isHoliday) {
-        data.cell.styles.fillColor = [255, 59, 48];
-        data.cell.styles.textColor = [255, 255, 255];
-        return;
+      if (value === "REP" || value === "FREP") {
+        data.cell.styles.fillColor = [255, 182, 193];
       }
 
-      if (weekday === 6) {
-        data.cell.styles.fillColor = [255, 149, 0];
-        data.cell.styles.textColor = [0, 0, 0];
-        return;
+      if (value === "CFI" || value === "CFI/REP") {
+        data.cell.styles.fillColor = [102, 187, 106];
       }
 
-      data.cell.styles.fillColor = [255, 255, 255];
-      data.cell.styles.textColor = [0, 0, 0];
-      return;
+      if (value === "LIC" || value === "REC") {
+        data.cell.styles.fillColor = [255, 235, 59];
+      }
+
+      if (value === "MAL") {
+        data.cell.styles.fillColor = [238, 238, 238];
+      }
     }
+  });
 
-    // =========================
-    // 🟣 BODY
-    // =========================
-    if (data.section !== "body") return;
+  startY = pdf.lastAutoTable.finalY + 10;
+}
 
-    if (colIndex === 0) {
-      data.cell.styles.fillColor = [255, 255, 255];
-      return;
-    }
-
-    // =========================
-    // 🟣 GIORNI SCOPERTI
-    // =========================
-    if (uncoveredDays.includes(dayNumber)) {
-      data.cell.styles.fillColor = [180, 120, 255];
-      data.cell.styles.textColor = [255, 255, 255];
-      return;
-    }
-
-    // =========================
-    // 🟢 CFI
-    // =========================
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102, 187, 106];
-      data.cell.styles.textColor = [255, 255, 255];
-      return;
-    }
-
-    // =========================
-    // 🌸 REP / FREP
-    // =========================
-    if (value === "REP" || value === "FREP") {
-      data.cell.styles.fillColor = [255, 182, 193];
-      data.cell.styles.textColor = [0, 0, 0];
-      return;
-    }
-
-    // =========================
-    // 🟡 LIC / REC
-    // =========================
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255, 235, 59];
-      data.cell.styles.textColor = [0, 0, 0];
-      return;
-    }
-
-    // ⚪ MAL
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238, 238, 238];
-      data.cell.styles.textColor = [80, 80, 80];
-      return;
-    }
-
-    // DEFAULT
-    data.cell.styles.fillColor = [255, 255, 255];
-    data.cell.styles.textColor = [0, 0, 0];
-  },
-
-  didDrawCell: function () {}
-});
-const finalY = pdf.lastAutoTable.finalY;
-
-// 👀 ANTEPRIMA PDF
+// ======================
+// 👀 PREVIEW PDF (UNICO)
+// ======================
 const blobUrl = pdf.output("bloburl");
 window.open(blobUrl, "_blank");
-
-} // chiusura generatePDF
-
-window.addEventListener("DOMContentLoaded", () => {
-
-  const btn = document.getElementById("pdfBtn");
+  
+   const btn = document.getElementById("pdfBtn");
 
   if (!btn) {
     console.error("pdfBtn non trovato");
