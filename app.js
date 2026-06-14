@@ -774,86 +774,77 @@ pdf.autoTable({
 
   columnStyles,
 
-  pageBreak: "avoid" // 👈 AGGIUNTO QUI
-});
+  // ❌ RIMUOVI pageBreak: "avoid"
 
-    didParseCell: function (data) {
+  didParseCell: function (data) {
 
-      const colIndex = data.column.index;
-      const value = data.cell.raw;
+    const colIndex = data.column.index;
+    const value = data.cell.raw;
 
-      const dayNumber = colIndex;
-       if (colIndex === 0) return;
-       
-      const dDate = new Date(year, month, dayNumber);
-      const weekday = dDate.getDay();
-      const info = getDayInfo(
-        `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
-      );
+    const dayNumber = colIndex;
+    if (colIndex === 0) return;
 
-      // ======================
-      // HEADER
-      // ======================
-      if (data.section === "head") {
-        if (colIndex === 0) {
-          data.cell.styles.fillColor = [255,255,255];
-          return;
-        }
+    const dDate = new Date(year, month, dayNumber);
+    const weekday = dDate.getDay();
+    const info = getDayInfo(
+      `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
+    );
 
-        if (weekday === 0 || info.isHoliday) {
-          data.cell.styles.fillColor = [255,59,48];
-          data.cell.styles.textColor = [255,255,255];
-          return;
-        }
-
-        if (weekday === 6) {
-          data.cell.styles.fillColor = [255,149,0];
-          return;
-        }
-
-        return;
-      }
-
-      if (data.section !== "body") return;
+    if (data.section === "head") {
 
       if (colIndex === 0) {
         data.cell.styles.fillColor = [255,255,255];
         return;
       }
 
-      // ======================
-      // 🟣 GIORNI SCOPERTI (VIOLA)
-      // ======================
-      if (uncoveredDays.has(dayNumber)) {
-        data.cell.styles.fillColor = [180,120,255];
+      if (weekday === 0 || info.isHoliday) {
+        data.cell.styles.fillColor = [255,59,48];
         data.cell.styles.textColor = [255,255,255];
         return;
       }
 
-      // ======================
-      // COLORI TURNI
-      // ======================
-      if (value === "CFI" || value === "CFI/REP") {
-        data.cell.styles.fillColor = [102,187,106];
+      if (weekday === 6) {
+        data.cell.styles.fillColor = [255,149,0];
         return;
       }
 
-      if (value === "REP" || value === "FREP") {
-        data.cell.styles.fillColor = [255,182,193];
-        return;
-      }
-
-      if (value === "LIC" || value === "REC") {
-        data.cell.styles.fillColor = [255,235,59];
-        return;
-      }
-
-      if (value === "MAL") {
-        data.cell.styles.fillColor = [238,238,238];
-        return;
-      }
+      return;
     }
-  });
+
+    if (data.section !== "body") return;
+
+    if (colIndex === 0) {
+      data.cell.styles.fillColor = [255,255,255];
+      return;
+    }
+
+    if (uncoveredDays.has(dayNumber)) {
+      data.cell.styles.fillColor = [180,120,255];
+      data.cell.styles.textColor = [255,255,255];
+      return;
+    }
+
+    if (value === "CFI" || value === "CFI/REP") {
+      data.cell.styles.fillColor = [102,187,106];
+      return;
+    }
+
+    if (value === "REP" || value === "FREP") {
+      data.cell.styles.fillColor = [255,182,193];
+      return;
+    }
+
+    if (value === "LIC" || value === "REC") {
+      data.cell.styles.fillColor = [255,235,59];
+      return;
+    }
+
+    if (value === "MAL") {
+      data.cell.styles.fillColor = [238,238,238];
+      return;
+    }
+  }
+});
 
   startY = pdf.lastAutoTable.finalY + 4;
   }
