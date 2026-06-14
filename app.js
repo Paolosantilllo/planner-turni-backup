@@ -818,7 +818,7 @@ for (let m = 0; m < monthsToPrint; m++) {
   // ======================
   // ⬇️ spazio tra mesi
   // ======================
-  startY = pdf.lastAutoTable.finalY + 10;
+  startY = pdf.lastAutoTable.finalY + 8;
 }
 
 // ======================
