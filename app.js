@@ -756,23 +756,26 @@ for (let m = 0; m < monthsToPrint; m++) {
   // ======================
   // 📊 TABELA PDF
   // ======================
-  pdf.autoTable({
-    head,
-    body: [weekdayRow, ...body],
+pdf.autoTable({
+  head,
+  body: [weekdayRow, ...body],
 
-    startY,
-    theme: "grid",
-    tableWidth: "wrap",
-    margin: { left: 5, right: 5 },
+  startY,
+  theme: "grid",
+  tableWidth: "wrap",
+  margin: { left: 3, right: 3 },
 
-    styles: {
-      fontSize: 5.5,
-      cellPadding: 0.4,
-      halign: "center",
-      valign: "middle"
-    },
+  styles: {
+    fontSize: 4.5,
+    cellPadding: 0.4,
+    halign: "center",
+    valign: "middle"
+  },
 
-    columnStyles,
+  columnStyles,
+
+  pageBreak: "avoid" // 👈 AGGIUNTO QUI
+});
 
     didParseCell: function (data) {
 
@@ -852,7 +855,7 @@ for (let m = 0; m < monthsToPrint; m++) {
     }
   });
 
-  startY = pdf.lastAutoTable.finalY + 8;
+  startY = pdf.lastAutoTable.finalY + 4;
   }
 }
 
