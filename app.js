@@ -592,7 +592,7 @@ function generatePDF() {
     new Date(year, month + 1, 0).getDate();
 
   // ======================
-  // 🔍 CONTROLLO COPERTURA
+  // 🔍 CONTROLLO COPERTURA (RIMANE UGUALE)
   // ======================
   for (let d = 1; d <= daysInMonth; d++) {
 
@@ -601,26 +601,17 @@ function generatePDF() {
 
     const info = getDayInfo(date);
 
-const hasCoverage = savedEvents.some(ev => {
+    const hasCoverage = savedEvents.some(ev => {
 
-  if (ev.date !== date) return false;
+      if (ev.date !== date) return false;
 
-  // Domeniche e festivi
-  if (info.isSunday || info.isHoliday) {
+      if (info.isSunday || info.isHoliday) {
+        return ev.shift === "FREP" || ev.shift === "CFI/REP";
+      }
 
-    return (
-      ev.shift === "FREP" ||
-      ev.shift === "CFI/REP"
-    );
-  }
+      return ev.shift === "REP" || ev.shift === "CFI/REP";
+    });
 
-  // Lunedì-Sabato
-  return (
-    ev.shift === "REP" ||
-    ev.shift === "CFI/REP"
-  );
-
-});
     if (!hasCoverage) {
       missingMessages.push(
         `${String(d).padStart(2, "0")}/${String(month + 1).padStart(2, "0")}/${String(year).slice(-2)}`
@@ -629,10 +620,9 @@ const hasCoverage = savedEvents.some(ev => {
   }
 
   // ======================
-  // ⚠️ AVVISO MANCANZE
+  // ⚠️ AVVISO
   // ======================
   if (missingMessages.length > 0) {
-
     const proceed = confirm(
       "⚠️ Mancano le seguenti reperibilità:\n\n" +
       missingMessages.join("\n") +
@@ -643,378 +633,204 @@ const hasCoverage = savedEvents.some(ev => {
   }
 
   // ======================
-  // 📄 GENERAZIONE PDF (NUOVO SISTEMA COLLEGATO ALL'APP)
+  // 📄 PDF INIT (UNICO - FIX ERRORE jsPDF DUPLICATO)
   // ======================
   const { jsPDF } = window.jspdf;
-const pdf = new jsPDF("landscape", "mm", "a4");
+  const pdf = new jsPDF("landscape", "mm", "a4");
 
-const monthNames = [
-  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
-  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
-];
-
-// 🔥 QUANTI MESI STAMPARE
-const monthsToPrint = 4;
-
-// 📅 mese di partenza (quello selezionato)
-let baseDate = new Date(currentDate);
-
-// 📍 posizione verticale iniziale
-let startY = 20;
-
-// ======================
-// 🔁 LOOP MESI
-// ======================
-for (let m = 0; m < monthsToPrint; m++) {
-
-  const date = new Date(baseDate.getFullYear(), baseDate.getMonth() + m, 1);
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // ======================
-  // 📌 TITOLO MESE
-  // ======================
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-
-  pdf.text(
-    `${monthNames[month]} ${year}`,
-    148,
-    startY,
-    { align: "center" }
-  );
-
-  startY += 5;
-
-  // ======================
-  // 📊 HEADER
-  // ======================
-  const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
-
-  const head = [
-    [
-      "Nominativi",
-      ...Array.from({ length: daysInMonth }, (_, i) => i + 1)
-    ]
+  const monthNames = [
+    "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+    "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
   ];
 
-  const weekdayRow = [
-    "",
-    ...Array.from({ length: daysInMonth }, (_, i) => {
-      const d = i + 1;
-      const dDate = new Date(year, month, d);
-      return map[dDate.getDay()];
-    })
-  ];
+  const map = ["D","L","Ma","Me","G","V","S"];
 
-  const dipendenti = Object.keys(EMPLOYEES);
+  const monthsToPrint = 4;
+  let baseDate = new Date(currentDate);
+  let startY = 20;
 
-  const body = dipendenti.map(nome => {
+  // ======================
+  // 🔁 4 MESI UNO SOTTO L'ALTRO
+  // ======================
+  for (let m = 0; m < monthsToPrint; m++) {
 
-    const row = [EMPLOYEES[nome].name];
+    const date = new Date(baseDate.getFullYear(), baseDate.getMonth() + m, 1);
 
-    for (let d = 1; d <= daysInMonth; d++) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
 
-      const dateStr =
-        `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      const ev = savedEvents.find(e =>
-        e.date === dateStr &&
-        e.employee === nome
-      );
+    // ======================
+    // 📌 TITOLO MESE
+    // ======================
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
 
-      row.push(ev ? ev.shift : "");
+    pdf.text(
+      `${monthNames[month]} ${year}`,
+      148,
+      startY,
+      { align: "center" }
+    );
+
+    startY += 5;
+
+    // ======================
+    // HEADER
+    // ======================
+    const head = [
+      ["Nominativi", ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
+    ];
+
+    const weekdayRow = [
+      "",
+      ...Array.from({ length: daysInMonth }, (_, i) => {
+        const d = i + 1;
+        const dDate = new Date(year, month, d);
+        return map[dDate.getDay()];
+      })
+    ];
+
+    const dipendenti = Object.keys(EMPLOYEES);
+
+    const body = dipendenti.map(nome => {
+      const row = [EMPLOYEES[nome].name];
+
+      for (let d = 1; d <= daysInMonth; d++) {
+
+        const dateStr =
+          `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+        const ev = savedEvents.find(e =>
+          e.date === dateStr && e.employee === nome
+        );
+
+        row.push(ev ? ev.shift : "");
+      }
+
+      return row;
+    });
+
+    // ======================
+    // LAYOUT
+    // ======================
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const nameColWidth = 28;
+    const usableWidth = pageWidth - nameColWidth - 10;
+
+    const dayColWidth = usableWidth / daysInMonth;
+
+    const columnStyles = { 0: { cellWidth: nameColWidth } };
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      columnStyles[i] = { cellWidth: dayColWidth };
     }
 
-    return row;
-  });
+    // ======================
+    // TABELLA (VERSIONE UNICA PULITA MA COMPLETA)
+    // ======================
+    pdf.autoTable({
+      head,
+      body: [weekdayRow, ...body],
 
-  // ======================
-  // 📐 LAYOUT
-  // ======================
-  const pageWidth = pdf.internal.pageSize.getWidth();
+      startY,
+      theme: "grid",
+      tableWidth: "wrap",
+      margin: { left: 5, right: 5 },
 
-  const nameColWidth = 28;
-  const usableWidth = pageWidth - nameColWidth - 10;
+      styles: {
+        fontSize: 5.5,
+        cellPadding: 0.4,
+        halign: "center",
+        valign: "middle"
+      },
 
-  let scaleFactor = 1;
-  if (daysInMonth === 31) scaleFactor = 0.90;
-  if (daysInMonth === 30) scaleFactor = 0.94;
+      columnStyles,
 
-  const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
+      didParseCell: function (data) {
 
-  const columnStyles = {
-    0: { cellWidth: nameColWidth }
-  };
+        const colIndex = data.column.index;
+        const value = data.cell.raw;
 
-  for (let i = 1; i <= daysInMonth; i++) {
-    columnStyles[i] = { cellWidth: dayColWidth };
+        const dayNumber = colIndex;
+        const dDate = new Date(year, month, dayNumber);
+        const weekday = dDate.getDay();
+        const info = getDayInfo(`${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`);
+
+        // ======================
+        // HEADER
+        // ======================
+        if (data.section === "head") {
+          if (colIndex === 0) {
+            data.cell.styles.fillColor = [255,255,255];
+            return;
+          }
+
+          if (weekday === 0 || info.isHoliday) {
+            data.cell.styles.fillColor = [255,59,48];
+            data.cell.styles.textColor = [255,255,255];
+            return;
+          }
+
+          if (weekday === 6) {
+            data.cell.styles.fillColor = [255,149,0];
+            return;
+          }
+
+          return;
+        }
+
+        if (data.section !== "body") return;
+
+        if (colIndex === 0) {
+          data.cell.styles.fillColor = [255,255,255];
+          return;
+        }
+
+        // ======================
+        // GIORNI SCOPERTI
+        // ======================
+        if (uncoveredDays && uncoveredDays.includes(dayNumber)) {
+          data.cell.styles.fillColor = [180,120,255];
+          data.cell.styles.textColor = [255,255,255];
+          return;
+        }
+
+        // ======================
+        // COLORI TURNI
+        // ======================
+        if (value === "CFI" || value === "CFI/REP") {
+          data.cell.styles.fillColor = [102,187,106];
+          return;
+        }
+
+        if (value === "REP" || value === "FREP") {
+          data.cell.styles.fillColor = [255,182,193];
+          return;
+        }
+
+        if (value === "LIC" || value === "REC") {
+          data.cell.styles.fillColor = [255,235,59];
+          return;
+        }
+
+        if (value === "MAL") {
+          data.cell.styles.fillColor = [238,238,238];
+          return;
+        }
+      }
+    });
+
+    startY = pdf.lastAutoTable.finalY + 8;
   }
 
   // ======================
-  // 📊 TABELA MESE
+  // 👀 PREVIEW
   // ======================
-  pdf.autoTable({
-    head,
-    body: [
-      weekdayRow,
-      ...body
-    ],
-
-    startY: startY,
-    theme: "grid",
-
-    tableWidth: "wrap",
-    margin: { left: 5, right: 5 },
-
-    styles: {
-      fontSize: 5,
-      cellPadding: 0.3,
-      halign: "center",
-      valign: "middle"
-    },
-
-    headStyles: {
-      fontStyle: "bold",
-      cellPadding: 0.2
-    },
-
-    columnStyles,
-
-    didParseCell: function (data) {
-
-      const colIndex = data.column.index;
-      const value = data.cell.raw;
-
-      const dayNumber = colIndex;
-      const dDate = new Date(year, month, dayNumber);
-      const weekday = dDate.getDay();
-
-      if (data.section === "body" && colIndex === 0) {
-        data.cell.styles.fillColor = [255, 255, 255];
-      }
-
-      if (value === "REP" || value === "FREP") {
-        data.cell.styles.fillColor = [255, 182, 193];
-      }
-
-      if (value === "CFI" || value === "CFI/REP") {
-        data.cell.styles.fillColor = [102, 187, 106];
-      }
-
-      if (value === "LIC" || value === "REC") {
-        data.cell.styles.fillColor = [255, 235, 59];
-      }
-
-      if (value === "MAL") {
-        data.cell.styles.fillColor = [238, 238, 238];
-      }
-    }
-  });
-
-  // ======================
-  // ⬇️ spazio tra mesi
-  // ======================
-  startY = pdf.lastAutoTable.finalY + 8;
+  const blobUrl = pdf.output("bloburl");
+  window.open(blobUrl, "_blank");
 }
-
-// ======================
-// 👀 PREVIEW
-// ======================
-const blobUrl = pdf.output("bloburl");
-window.open(blobUrl, "_blank");
-
-  // ======================
-  // 🧾 INTITOLAZIONE PDF
-  // ======================
-  pdf.setFontSize(16);
-  pdf.setFont("helvetica", "bold");
-
-  pdf.text(
-    `Reperibilità Specialisti PLF - ${monthNames[month]} ${year}`,
-    148,
-    15,
-    { align: "center" }
-  );
-
-  // ======================
-// 📅 DATA + VERSIONE PDF
-// ======================
-
-const now = new Date();
-
-const sendDate = now.toLocaleDateString("it-IT");
-
-if (!window.pdfVersion) {
-  window.pdfVersion = 1;
-} else {
-  window.pdfVersion++;
-}
-
-pdf.setFontSize(9);
-pdf.setFont("helvetica", "normal");
-
-pdf.text(
-  `Data invio: ${sendDate}`,
-  285,
-  10,
-  { align: "right" }
-);
-
-pdf.text(
-  `Versione: 1/${window.pdfVersion}`,
-  285,
-  15,
-  { align: "right" }
-);
-
- // ======================
-// 📊 GENERAZIONE TABELLA DINAMICA (UNICA VERSIONE PULITA)
-// ======================
-
-const map = ["D", "L", "Ma", "Me", "G", "V", "S"];
-
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF("landscape", "mm", "a4");
-
-const monthNames = [
-  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
-  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
-];
-
-const monthsToPrint = 4;
-let baseDate = new Date(currentDate);
-let startY = 20;
-
-// ======================
-// 🔁 LOOP MESI
-// ======================
-for (let m = 0; m < monthsToPrint; m++) {
-
-  const date = new Date(baseDate.getFullYear(), baseDate.getMonth() + m, 1);
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-
-  pdf.text(
-    `${monthNames[month]} ${year}`,
-    148,
-    startY,
-    { align: "center" }
-  );
-
-  startY += 5;
-
-  const head = [
-    ["Nominativi", ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
-  ];
-
-  const weekdayRow = [
-    "",
-    ...Array.from({ length: daysInMonth }, (_, i) => {
-      const d = i + 1;
-      const dDate = new Date(year, month, d);
-      return map[dDate.getDay()];
-    })
-  ];
-
-  const dipendenti = Object.keys(EMPLOYEES);
-
-  const body = dipendenti.map(nome => {
-    const row = [EMPLOYEES[nome].name];
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr =
-        `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-      const ev = savedEvents.find(e =>
-        e.date === dateStr && e.employee === nome
-      );
-
-      row.push(ev ? ev.shift : "");
-    }
-
-    return row;
-  });
-
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const nameColWidth = 28;
-  const usableWidth = pageWidth - nameColWidth - 10;
-
-  let scaleFactor = 1;
-  if (daysInMonth === 31) scaleFactor = 0.90;
-  if (daysInMonth === 30) scaleFactor = 0.94;
-
-  const dayColWidth = (usableWidth * scaleFactor) / daysInMonth;
-
-  const columnStyles = { 0: { cellWidth: nameColWidth } };
-
-  for (let i = 1; i <= daysInMonth; i++) {
-    columnStyles[i] = { cellWidth: dayColWidth };
-  }
-
-  pdf.autoTable({
-  head,
-  body: [weekdayRow, ...body],
-  startY: startY,
-  theme: "grid",
-  tableWidth: "wrap",
-  margin: { left: 5, right: 5 },
-
-  styles: {
-    fontSize: 5.5,
-    cellPadding: 0.4,
-    halign: "center",
-    valign: "middle"
-  },
-
-  columnStyles,
-
-  didParseCell: function (data) {
-    const colIndex = data.column.index;
-    const value = data.cell.raw;
-
-    const dayNumber = colIndex;
-    const dDate = new Date(year, month, dayNumber);
-
-    if (data.section === "body" && colIndex === 0) {
-      data.cell.styles.fillColor = [255, 255, 255];
-    }
-
-    if (value === "REP" || value === "FREP") {
-      data.cell.styles.fillColor = [255, 182, 193];
-    }
-
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102, 187, 106];
-    }
-
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255, 235, 59];
-    }
-
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238, 238, 238];
-    }
-  }
-});
-
-  startY = pdf.lastAutoTable.finalY + 10;
-}
-
-// ======================
-// 👀 PREVIEW PDF (UNICO)
-// ======================
-const blobUrl = pdf.output("bloburl");
-window.open(blobUrl, "_blank");
   
    const btn = document.getElementById("pdfBtn");
 
