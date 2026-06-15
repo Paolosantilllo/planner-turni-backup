@@ -1007,7 +1007,7 @@ function loadChangeEmployees() {
 
   Object.keys(EMPLOYEES).forEach(emp => {
 
-    if (emp === window.currentUser) return;
+    if (emp === window.CURRENT_EMPLOYEE) return;
 
     const option = document.createElement("option");
 
