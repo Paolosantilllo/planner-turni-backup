@@ -849,16 +849,18 @@ headStyles: {
       return;
     }
 
-    // 🟣 GIORNI SCOPERTI SOLO SE NON COPERTI DA TURNI VALIDI
-const isCovered =
-  value === "REP" ||
-  value === "FREP" ||
-  value === "CFI/REP";
+   // 🟣 GIORNI SCOPERTI (VIOLA SOLO SE CELLA VUOTA)
 
-if (uncoveredDays.has(dayNumber) && !isCovered) {
-  data.cell.styles.fillColor = [180,120,255];
-  data.cell.styles.textColor = [255,255,255];
-  return;
+if (uncoveredDays.has(dayNumber)) {
+
+  // se c'è già un valore → NON fare nulla (lascia altri colori)
+  if (value && value !== "") {
+    // non return: lasci passare gli altri colori sotto
+  } else {
+    data.cell.styles.fillColor = [180,120,255];
+    data.cell.styles.textColor = [255,255,255];
+    return;
+  }
 }
 
     // 🟢 CFI
