@@ -972,3 +972,25 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+// ======================
+// 🔁 CAMBIO REPERIBILITA'
+// ======================
+
+window.openChangePopup = function () {
+
+  const popup = document.getElementById("changePopup");
+
+  if (!popup) {
+    console.error("changePopup non trovato");
+    return;
+  }
+
+  popup.style.display = "flex";
+};
+
+window.closeChangePopup = function () {
+
+  document.getElementById("changePopup").style.display = "none";
+
+};
