@@ -849,12 +849,17 @@ headStyles: {
       return;
     }
 
-    // 🟣 Giorni scoperti
-    if (uncoveredDays.has(dayNumber)) {
-      data.cell.styles.fillColor = [180,120,255];
-      data.cell.styles.textColor = [255,255,255];
-      return;
-    }
+    // 🟣 GIORNI SCOPERTI SOLO SE NON COPERTI DA TURNI VALIDI
+const isCovered =
+  value === "REP" ||
+  value === "FREP" ||
+  value === "CFI/REP";
+
+if (uncoveredDays.has(dayNumber) && !isCovered) {
+  data.cell.styles.fillColor = [180,120,255];
+  data.cell.styles.textColor = [255,255,255];
+  return;
+}
 
     // 🟢 CFI
     if (value === "CFI" || value === "CFI/REP") {
