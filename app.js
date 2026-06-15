@@ -2,9 +2,11 @@
    IMPORT MODULI
 ====================== */
 
-import { initAuth } from "./auth.js";
+import { initAuth, logout } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
+
+window.logout = logout;
 
 initAuth(() => {
   loadEvents();
