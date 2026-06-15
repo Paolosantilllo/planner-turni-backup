@@ -581,7 +581,7 @@ window.deleteShift = async function () {
 //  📤 PDF EXPORT
 // ======================
 
-function generatePDF(months = 1) {
+function generatePDF() {
 
   const missingMessages = [];
 
@@ -645,7 +645,7 @@ const monthNames = [
 
 const map = ["D","L","Ma","Me","G","V","S"];
 
-const monthsToPrint = Number(months);
+const monthsToPrint = 4;
 let baseDate = new Date(currentDate);
 let startY = 20;
 
@@ -756,129 +756,105 @@ for (let m = 0; m < monthsToPrint; m++) {
   // ======================
   // 📊 TABELA PDF
   // ======================
-pdf.autoTable({
-  head,
-  body: [weekdayRow, ...body],
+  pdf.autoTable({
+    head,
+    body: [weekdayRow, ...body],
 
-  startY,
-  theme: "grid",
-  tableWidth: "wrap",
-  margin: { left: 3, right: 3 },
+    startY,
+    theme: "grid",
+    tableWidth: "wrap",
+    margin: { left: 5, right: 5 },
 
-  styles: {
-    fontSize: 4.5,
-    cellPadding: 0.4,
-    halign: "center",
-    valign: "middle"
-  },
+    styles: {
+      fontSize: 5.5,
+      cellPadding: 0.4,
+      halign: "center",
+      valign: "middle"
+    },
 
-  columnStyles,
+    columnStyles,
 
-  // ❌ RIMUOVI pageBreak: "avoid"
+    didParseCell: function (data) {
 
-  didParseCell: function (data) {
+      const colIndex = data.column.index;
+      const value = data.cell.raw;
 
-    const colIndex = data.column.index;
-    const value = data.cell.raw;
+      const dayNumber = colIndex;
+       if (colIndex === 0) return;
+       
+      const dDate = new Date(year, month, dayNumber);
+      const weekday = dDate.getDay();
+      const info = getDayInfo(
+        `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
+      );
 
-    const dayNumber = colIndex;
-    if (colIndex === 0) return;
+      // ======================
+      // HEADER
+      // ======================
+      if (data.section === "head") {
+        if (colIndex === 0) {
+          data.cell.styles.fillColor = [255,255,255];
+          return;
+        }
 
-    const dDate = new Date(year, month, dayNumber);
-    const weekday = dDate.getDay();
-    const info = getDayInfo(
-      `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
-    );
+        if (weekday === 0 || info.isHoliday) {
+          data.cell.styles.fillColor = [255,59,48];
+          data.cell.styles.textColor = [255,255,255];
+          return;
+        }
 
-    if (data.section === "head") {
+        if (weekday === 6) {
+          data.cell.styles.fillColor = [255,149,0];
+          return;
+        }
+
+        return;
+      }
+
+      if (data.section !== "body") return;
 
       if (colIndex === 0) {
         data.cell.styles.fillColor = [255,255,255];
         return;
       }
 
-      if (weekday === 0 || info.isHoliday) {
-        data.cell.styles.fillColor = [255,59,48];
+      // ======================
+      // 🟣 GIORNI SCOPERTI (VIOLA)
+      // ======================
+      if (uncoveredDays.has(dayNumber)) {
+        data.cell.styles.fillColor = [180,120,255];
         data.cell.styles.textColor = [255,255,255];
         return;
       }
 
-      if (weekday === 6) {
-        data.cell.styles.fillColor = [255,149,0];
+      // ======================
+      // COLORI TURNI
+      // ======================
+      if (value === "CFI" || value === "CFI/REP") {
+        data.cell.styles.fillColor = [102,187,106];
         return;
       }
 
-      return;
-    }
+      if (value === "REP" || value === "FREP") {
+        data.cell.styles.fillColor = [255,182,193];
+        return;
+      }
 
-    if (data.section !== "body") return;
+      if (value === "LIC" || value === "REC") {
+        data.cell.styles.fillColor = [255,235,59];
+        return;
+      }
 
-    if (colIndex === 0) {
-      data.cell.styles.fillColor = [255,255,255];
-      return;
+      if (value === "MAL") {
+        data.cell.styles.fillColor = [238,238,238];
+        return;
+      }
     }
-
-    if (uncoveredDays.has(dayNumber)) {
-      data.cell.styles.fillColor = [180,120,255];
-      data.cell.styles.textColor = [255,255,255];
-      return;
-    }
-
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102,187,106];
-      return;
-    }
-
-    if (value === "REP" || value === "FREP") {
-      data.cell.styles.fillColor = [255,182,193];
-      return;
-    }
-
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255,235,59];
-      return;
-    }
-
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238,238,238];
-      return;
-    }
-  }
   });
 
-  if (m < monthsToPrint - 1) {
-    startY = pdf.lastAutoTable.finalY + 10;
+  startY = pdf.lastAutoTable.finalY + 8;
   }
-
 }
-
-const blobUrl = pdf.output("bloburl");
-window.open(blobUrl, "_blank");
-
-}
-   
-   // ======================
-// 📤 PDF POPUP CONTROL
-// ======================
-window.openPdfPopup = function () {
-  document.getElementById("pdfPopup").style.display = "flex";
-};
-
-window.closePdfPopup = function () {
-  document.getElementById("pdfPopup").style.display = "none";
-};
-
-window.confirmPdfExport = function () {
-
-  const months = parseInt(
-    document.getElementById("monthsRange").value
-  );
-
-  closePdfPopup();
-
-  generatePDF(months);
-};
-
 
 // ======================
 // BOTTONE PDF
@@ -893,8 +869,6 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  btn.addEventListener("click", () => {
-    document.getElementById("pdfPopup").style.display = "flex";
-  });
+  btn.addEventListener("click", generatePDF);
 
 });
