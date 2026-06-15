@@ -842,8 +842,9 @@ pdf.autoTable({
     if (value === "MAL") {
       data.cell.styles.fillColor = [238,238,238];
       return;
+       }
+      }
     }
-  }
   });
 
   if (m < monthsToPrint - 1) {
