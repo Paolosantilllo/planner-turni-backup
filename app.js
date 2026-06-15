@@ -1000,6 +1000,18 @@ window.closeChangePopup = function () {
 
 };
 
+window.loadGiveDays = function () {
+
+  const select = document.getElementById("changeFromDate");
+  const employee = window.CURRENT_EMPLOYEE;
+
+  const options = savedEvents
+    .filter(e => e.employee === employee)
+    .map(e => e.date);
+
+  openDatePicker(select, options);
+};
+
 function loadChangeEmployees() {
 
   const select = document.getElementById("changeTo");
