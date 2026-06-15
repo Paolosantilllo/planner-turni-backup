@@ -1000,16 +1000,21 @@ window.closeChangePopup = function () {
 
 };
 
-window.loadGiveDays = function () {
+window.loadChangeDays = function () {
 
-  const select = document.getElementById("changeFromDate");
   const employee = window.CURRENT_EMPLOYEE;
+  const input = document.getElementById("changeFromDate");
 
-  const options = savedEvents
-    .filter(e => e.employee === employee)
-    .map(e => e.date);
+  input.addEventListener("click", () => {
 
-  openDatePicker(select, options);
+    const allowedDates = savedEvents
+      .filter(e => e.employee === employee)
+      .map(e => e.date);
+
+    console.log("Giorni disponibili:", allowedDates);
+
+  });
+
 };
 
 function loadChangeEmployees() {
