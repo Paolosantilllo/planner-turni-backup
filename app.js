@@ -683,11 +683,11 @@ function generatePDF(months = 1) {
     pdf.setFont("helvetica", "bold");
 
     pdf.text(
-      `${monthNames[month]} ${year}`,
-      148,
-      startY,
-      { align: "center" }
-    );
+  `Reperibilità specialisti PLF del mese di ${monthNames[month].toUpperCase()} ${year}`,
+  148,
+  startY,
+  { align: "center" }
+);
 
     startY += 5;
 
