@@ -989,8 +989,31 @@ window.openChangePopup = function () {
   popup.style.display = "flex";
 };
 
-window.closeChangePopup = function () {
+window.openChangePopup = function () {
 
-  document.getElementById("changePopup").style.display = "none";
+  loadChangeEmployees();
+
+  document.getElementById("changePopup").style.display = "flex";
 
 };
+
+function loadChangeEmployees() {
+
+  const select = document.getElementById("changeTo");
+
+  select.innerHTML = "";
+
+  Object.keys(EMPLOYEES).forEach(emp => {
+
+    if (emp === window.currentUser) return;
+
+    const option = document.createElement("option");
+
+    option.value = emp;
+    option.textContent = EMPLOYEES[emp].name;
+
+    select.appendChild(option);
+
+  });
+
+}
