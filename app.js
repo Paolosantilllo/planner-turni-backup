@@ -742,6 +742,14 @@ function generatePDF(months = 1) {
       body: [weekdayRow, ...body],
       startY,
       theme: "grid",
+
+headStyles: {
+  fillColor: [255,255,255],
+  textColor: [0,0,0],
+  lineColor: [0,0,0],
+  lineWidth: 0.1
+},
+       
       tableWidth: "wrap",
       margin: { left: 3, right: 3 },
       styles: {
@@ -766,11 +774,15 @@ function generatePDF(months = 1) {
 
         if (data.section === "body") {
 
-          if (uncoveredDays.has(dayNumber)) {
-            data.cell.styles.fillColor = [180,120,255];
-            data.cell.styles.textColor = [255,255,255];
-            return;
-          }
+          // Giorni scoperti solo nelle righe dipendenti
+if (
+  uncoveredDays.has(dayNumber) &&
+  data.row.index > 0
+) {
+  data.cell.styles.fillColor = [180,120,255];
+  data.cell.styles.textColor = [255,255,255];
+  return;
+}
 
           if (value === "CFI" || value === "CFI/REP") {
             data.cell.styles.fillColor = [102,187,106];
