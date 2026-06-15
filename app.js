@@ -981,6 +981,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 window.openChangePopup = function () {
 
+  loadChangeEmployees();
+
   const popup = document.getElementById("changePopup");
 
   if (!popup) {
@@ -991,11 +993,9 @@ window.openChangePopup = function () {
   popup.style.display = "flex";
 };
 
-window.openChangePopup = function () {
+window.closeChangePopup = function () {
 
-  loadChangeEmployees();
-
-  document.getElementById("changePopup").style.display = "flex";
+  document.getElementById("changePopup").style.display = "none";
 
 };
 
