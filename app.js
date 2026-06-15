@@ -842,51 +842,80 @@ headStyles: {
   // ======================
   if (data.section === "body") {
 
-    const dayNumber = colIndex;
+  const dayNumber = colIndex;
 
-    if (colIndex === 0) {
-      data.cell.styles.fillColor = [255,255,255];
+  if (colIndex === 0) {
+    data.cell.styles.fillColor = [255,255,255];
+    return;
+  }
+
+  const value = data.cell.raw;
+
+  const dDate = new Date(year, month, dayNumber);
+  const weekday = dDate.getDay();
+
+  const info = getDayInfo(
+    `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
+  );
+
+  // ======================
+  // 🟠🔴 WEEKEND (SOLO SE CELLA VUOTA)
+  // ======================
+  if (!value || value === "") {
+
+    // 🔴 Domenica / festivi
+    if (weekday === 0 || info.isHoliday) {
+      data.cell.styles.fillColor = [255,59,48];
+      data.cell.styles.textColor = [255,255,255];
       return;
     }
 
-   // 🟣 GIORNI SCOPERTI (VIOLA SOLO SE CELLA VUOTA)
+    // 🟠 Sabato
+    if (weekday === 6) {
+      data.cell.styles.fillColor = [255,149,0];
+      data.cell.styles.textColor = [255,255,255];
+      return;
+    }
+  }
 
-if (uncoveredDays.has(dayNumber)) {
+  // ======================
+  // 🟣 GIORNI SCOPERTI (SOLO SE CELLA VUOTA)
+  // ======================
+  if (uncoveredDays.has(dayNumber)) {
 
-  // se c'è già un valore → NON fare nulla (lascia altri colori)
-  if (value && value !== "") {
-    // non return: lasci passare gli altri colori sotto
-  } else {
-    data.cell.styles.fillColor = [180,120,255];
-    data.cell.styles.textColor = [255,255,255];
+    if (!value || value === "") {
+      data.cell.styles.fillColor = [180,120,255];
+      data.cell.styles.textColor = [255,255,255];
+      return;
+    }
+  }
+
+  // ======================
+  // 🟢 CFI
+  // ======================
+  if (value === "CFI" || value === "CFI/REP") {
+    data.cell.styles.fillColor = [102,187,106];
+    return;
+  }
+
+  // 🩷 REP
+  if (value === "REP" || value === "FREP") {
+    data.cell.styles.fillColor = [255,182,193];
+    return;
+  }
+
+  // 🟡 LIC / REC
+  if (value === "LIC" || value === "REC") {
+    data.cell.styles.fillColor = [255,235,59];
+    return;
+  }
+
+  // ⚪ MAL
+  if (value === "MAL") {
+    data.cell.styles.fillColor = [238,238,238];
     return;
   }
 }
-
-    // 🟢 CFI
-    if (value === "CFI" || value === "CFI/REP") {
-      data.cell.styles.fillColor = [102,187,106];
-      return;
-    }
-
-    // 🩷 REP
-    if (value === "REP" || value === "FREP") {
-      data.cell.styles.fillColor = [255,182,193];
-      return;
-    }
-
-    // 🟡 LIC / REC
-    if (value === "LIC" || value === "REC") {
-      data.cell.styles.fillColor = [255,235,59];
-      return;
-    }
-
-    // ⚪ MAL
-    if (value === "MAL") {
-      data.cell.styles.fillColor = [238,238,238];
-      return;
-    }
-  }
 }
     });
 
