@@ -5,7 +5,7 @@
 import { initAuth, logout } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
-
+import { CURRENT_EMPLOYEE } from "./auth.js";
 
 window.logout = logout;
 
@@ -1008,7 +1008,7 @@ function loadChangeEmployees() {
 
   Object.keys(EMPLOYEES).forEach(emp => {
 
-if (emp === window.CURRENT_EMPLOYEE) return;
+if (emp === CURRENT_EMPLOYEE) return;
 
     const option = document.createElement("option");
 
