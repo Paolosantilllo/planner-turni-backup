@@ -855,9 +855,9 @@ pdf.autoTable({
 const blobUrl = pdf.output("bloburl");
 window.open(blobUrl, "_blank");
 
-}
-   
-}
+  }
+
+
  // ======================
 // 📤 PDF POPUP CONTROL
 // ======================
