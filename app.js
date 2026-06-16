@@ -1478,16 +1478,6 @@ div.onclick = function(){
   const actionPopup =
     document.getElementById("requestActionPopup");
 
-
-  const details =
-    document.getElementById("requestDetails");
-
-
-  div.onclick = function(){
-
-  const actionPopup =
-    document.getElementById("requestActionPopup");
-
   const details =
     document.getElementById("requestDetails");
 
@@ -1542,7 +1532,7 @@ div.onclick = function(){
    
 };
 
-   // ======================
+ // ======================
 // ✅❌ GESTIONE RICHIESTA
 // ======================
 
