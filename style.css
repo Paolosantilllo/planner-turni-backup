@@ -378,11 +378,8 @@ body{
 /* FREP TESTO ROSSO */
 
 .frep-text{
-
-  color:#ff3b30;
-
+  color:#ff3b30 !important;
   font-weight:800;
-
 }
 
 
