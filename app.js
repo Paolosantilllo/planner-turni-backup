@@ -1489,9 +1489,8 @@ div.onclick = function(){
     return;
   }
 
-
-  actionPopup.dataset.requestId = doc.id;
-
+actionPopup.dataset.requestId = doc.id;
+actionPopup.dataset.notifId = doc.id;
 
 document.getElementById("acceptRequestBtn").onclick = function(){
 
