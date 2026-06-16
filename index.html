@@ -150,27 +150,67 @@
   <input type="hidden" id="changeFrom">
 
     <!-- CAMBIO CON -->
-<label>Cambio con</label>
-
-<select id="changeTo"></select>
-
-    <!-- REPERIBILITÀ -->
-    <label>Reperibilità</label>
-
-    <select id="changeShift" onchange="loadChangeDays()">
-      <option>REP</option>
-      <option>FREP</option>
-      <option>CFI/REP</option>
-      </select>
-
-  <!-- GIORNO DA DARE -->
 <label>Giorno da dare</label>
-<input type="date" id="changeFromDate">
 
-<!-- GIORNO DA RICEVERE -->
+<div
+  class="calendar-selector"
+  onclick="toggleMiniCalendar('from')">
+  <span id="selectedFromText">
+    Seleziona giorno
+  </span>
+</div>
+
+<div
+  id="changeCalendarFrom"
+  class="mini-calendar hidden-calendar">
+
+  <div class="mini-weekdays">
+    <div>L</div>
+    <div>Ma</div>
+    <div>Me</div>
+    <div>G</div>
+    <div>V</div>
+    <div>S</div>
+    <div>D</div>
+  </div>
+
+  <div
+    class="mini-calendar-grid"
+    id="miniGridFrom">
+  </div>
+
+</div>
+
 <label>Giorno da ricevere</label>
-<input type="date" id="changeToDate">
 
+<div
+  class="calendar-selector"
+  onclick="toggleMiniCalendar('to')">
+  <span id="selectedToText">
+    Seleziona giorno
+  </span>
+</div>
+
+<div
+  id="changeCalendarTo"
+  class="mini-calendar hidden-calendar">
+
+  <div class="mini-weekdays">
+    <div>L</div>
+    <div>Ma</div>
+    <div>Me</div>
+    <div>G</div>
+    <div>V</div>
+    <div>S</div>
+    <div>D</div>
+  </div>
+
+  <div
+    class="mini-calendar-grid"
+    id="miniGridTo">
+  </div>
+
+</div>
     <!-- INVIA -->
     <button
       class="save-btn"
