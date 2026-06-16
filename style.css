@@ -860,7 +860,7 @@ body{
 }
 .calendar,
 .calendar * {
-  color: #111 !important;
+  color: #111;
 }
 
 @media print {
