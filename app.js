@@ -1247,7 +1247,7 @@ window.loadChangeRequests = function(){
 
         if(
           req.toEmployee === CURRENT_EMPLOYEE &&
-          req.status === "PENDING"
+          req.status === "PENDING_USER"
         ){
 
           count++;
@@ -1329,7 +1329,7 @@ window.sendChangeRequest = async function(){
 
         shift: shift,
 
-        status:"PENDING",
+        status:"PENDING_USER",
 
         createdAt: new Date()
 
@@ -1423,7 +1423,7 @@ window.loadRequestsList = function(){
 
         if(
           req.toEmployee === CURRENT_EMPLOYEE &&
-          req.status === "PENDING"
+          req.status === "PENDING_USER"
         ){
 
 
