@@ -1449,23 +1449,35 @@ window.loadRequestsList = function(){
 
           div.innerHTML = `
 
-          <p>
-          🔁 Richiesta cambio
-          </p>
+<p>
+🔁 Richiesta cambio
+</p>
 
-          <p>
-          Da:
-          ${EMPLOYEES[req.fromEmployee].name}
-          </p>
+<p>
+Da:
+${EMPLOYEES[req.fromEmployee].name}
+</p>
 
-          <p>
-          Giorno:
-          ${req.fromDate}
-          ➡️
-          ${req.toDate}
-          </p>
+<p>
+Giorno:
+${req.fromDate}
+➡️
+${req.toDate}
+</p>
 
-          `;
+<div class="request-actions">
+
+<button class="btn-accept">
+✅ Accetta
+</button>
+
+<button class="btn-reject">
+❌ Rifiuta
+</button>
+
+</div>
+
+`;
 
 list.appendChild(div);
 
