@@ -1483,35 +1483,49 @@ div.onclick = function(){
     document.getElementById("requestDetails");
 
 
+  div.onclick = function(){
+
+  const actionPopup =
+    document.getElementById("requestActionPopup");
+
+  const details =
+    document.getElementById("requestDetails");
+
+
+  if(!actionPopup || !details){
+    console.error("Popup richiesta non trovato");
+    return;
+  }
+
+
   actionPopup.dataset.requestId = doc.id;
 
 
   details.innerHTML = `
 
-  <p>🔁 Richiesta cambio</p>
+    <p>🔁 Richiesta cambio</p>
 
-  <p>
-  Da:
-  ${EMPLOYEES[req.fromEmployee].name}
-  </p>
+    <p>
+    Da:
+    ${EMPLOYEES[req.fromEmployee].name}
+    </p>
 
-  <p>
-  Giorno:
-  ${req.fromDate}
-  ➡️
-  ${req.toDate}
-  </p>
+    <p>
+    Giorno:
+    ${req.fromDate}
+    ➡️
+    ${req.toDate}
+    </p>
 
-  <p>
-  Turno:
-  ${req.shift}
-  </p>
+    <p>
+    Turno:
+    ${req.shift}
+    </p>
 
   `;
 
 
   actionPopup.style.display = "flex";
-
 
 };
 
@@ -1570,6 +1584,19 @@ window.handleChangeRequest = async function(
       "Errore gestione richiesta:",
       err
     );
+
+  }
+
+};
+
+window.closeRequestActionPopup = function(){
+
+  const popup =
+    document.getElementById("requestActionPopup");
+
+  if(popup){
+
+    popup.style.display = "none";
 
   }
 
