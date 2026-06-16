@@ -984,6 +984,8 @@ window.openChangePopup = function () {
 
   loadChangeEmployees();
 
+  loadChangeDays();
+
   const popup = document.getElementById("changePopup");
 
   if (!popup) {
