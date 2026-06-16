@@ -11,7 +11,7 @@ body{
 }
 
 .app{
-  padding:6px;
+  padding:15px;
 }
 
 
@@ -272,28 +272,35 @@ body{
 /* CALENDARIO */
 
 .calendar{
+
   display:grid;
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:4px;
-} 
+
+  grid-template-columns:repeat(7,1fr);
+
+  gap:6px;
+
+}
+
 
 
 /* CELLE */
 
 .day{
+
   background:white;
+
   border-radius:18px;
 
-  min-height:95px;
+  min-height:72px;
 
-  padding:6px;
+  padding:5px;
 
-  display:flex;
-  flex-direction:column;
-  align-items:stretch;
+  overflow-y:auto;
 
   box-shadow:0 4px 15px rgba(0,0,0,0.05);
+
   transition:0.2s;
+
 }
 
 .day:hover{
@@ -333,27 +340,27 @@ body{
 /* EVENTI */
 
 .event{
+
   color:white;
 
-  padding:3px 2px;
+  padding:4px;
 
   border-radius:8px;
 
-  font-size:8px;
+  font-size:10px;
+
+  margin-top:3px;
 
   font-weight:700;
 
   text-align:center;
 
-  margin-top:2px;
+  overflow:hidden;
 
-  white-space:normal;
+  text-overflow:ellipsis;
 
-  word-break:break-word;
+  white-space:nowrap;
 
-  overflow:visible;
-
-  text-overflow:unset;
 }
 
 
@@ -370,9 +377,12 @@ body{
 
 /* FREP TESTO ROSSO */
 
-.frep-text {
-  color:#ff3b30 !important;
-  font-weight:900;
+.frep-text{
+
+  color:#ff3b30;
+
+  font-weight:800;
+
 }
 
 
@@ -848,13 +858,11 @@ body{
   color:white !important;
 
 }
-.calendar {
-  color: #111;
+.calendar,
+.calendar * {
+  color: #111 !important;
 }
 
-.calendar * {
-  color: inherit;
-}
 @media print {
   .day {
     box-shadow: none !important;
@@ -1103,7 +1111,7 @@ button:disabled{
 }
 
 .shift-pink{
-  background:#ffcc99;
+  background:#F8CCD0;
   color:#000;
 }
 #loginBox{
@@ -1120,167 +1128,3 @@ button:disabled{
 .hidden{
   display: none !important;
 }
-.icon-btn {
-  width: 75px;
-  height: 75px;
-
-  border-radius: 22px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 34px; /* 👈 icona più grande */
-
-  background: #34c759;
-  color: white;
-
-  box-shadow: 0 12px 30px rgba(52,199,89,0.35);
-
-  border: none;
-  cursor: pointer;
-
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.icon-btn:active {
-  transform: scale(0.92);
-  box-shadow: 0 6px 15px rgba(52,199,89,0.25);
-}
-.day-red {
-  color: #ff3b30 !important;
-  font-weight: 900;
-}
-.monthly-send-btn {
-  width: 28px;
-  height: 28px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: #007aff;
-  color: white;
-
-  font-size: 14px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  box-shadow: 0 4px 10px rgba(0,122,255,0.2);
-
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.monthly-send-btn:active {
-  transform: scale(0.92);
-  box-shadow: 0 2px 6px rgba(0,122,255,0.15);
-}
-.event-small-text {
-  font-size: 9px;      /* riduce testo */
-  line-height: 10px;
-  white-space: nowrap; /* evita spezzature */
-}
- 
-/* ======================
-   EVENTI - TESTO PIÙ COMPATTO
-====================== */
-
-.event{
-  font-size: 9px;      /* più piccolo */
-  line-height: 10px;
-  padding: 3px 4px;
-}
-
-/* NON troncare CFI/REP */
-.event{
-  overflow: visible;
-  text-overflow: unset;
-  white-space: nowrap;
-}/* ======================
-   DAY BOX OTTIMIZZATO (NO TAGLI)
-====================== */
-
-.day{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-/* contenitore eventi */
-.day{
-  overflow: hidden;
-}
-
-/* lista eventi più flessibile */
-.event{
-  white-space: nowrap;
-  overflow: visible;
-  text-overflow: unset;
-  font-size: 9px;
-  line-height: 10px;
-}
-/* EVENTI LUNGHI */
-
-.event.long-shift{
-  font-size:7px;
-  letter-spacing:-0.2px;
-}
-/* ======================
-   FIX CENTRATURA EVENTI (CFI/REP ecc.)
-====================== */
-
-.event{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  text-align: center;
-  padding: 3px 0;
-  margin-top: 2px;
-
-  white-space: nowrap;
-  line-height: 1;
-}
-
-.event-shift{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-/* ======================
-   AZIONI POPUP RICHIESTA
-====================== */
-
-.popup-actions{
-
-  display:flex;
-
-  gap:10px;
-
-  margin-top:20px;
-  bordex:3px solid red;
-}
-
-
-.popup-actions .save-btn,
-.popup-actions .delete-btn{
-
-  flex:1;
-
-  width:50%;
-
-  margin-top:0;
-
-}
-.popup-actions button{
-  display:block !important;
-  visibility:visible !important;
-  opcacity:1 !important;
-  }
