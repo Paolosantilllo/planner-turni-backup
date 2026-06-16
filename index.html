@@ -147,58 +147,144 @@
 
     </div>
 
-  <input type="hidden" id="changeFrom">
 
-<label>Cambio con</label>
-
-<select id="changeTo" onchange="loadChangeDays()"></select>
+    <input type="hidden" id="changeFrom">
 
 
-<label>Reperibilità</label>
+    <!-- CAMBIO CON -->
+    <label>Cambio con</label>
 
-<select id="changeShift" onchange="loadChangeDays()">
-  <option>REP</option>
-  <option>FREP</option>
-  <option>CFI/REP</option>
-</select>
-    
-<label>Giorno da ricevere</label>
+    <select 
+      id="changeTo" 
+      onchange="loadChangeDays()">
+    </select>
 
-<div
-  class="calendar-selector"
-  onclick="toggleMiniCalendar('to')">
-  <span id="selectedToText">
-    Seleziona giorno
-  </span>
-</div>
 
-<div
-  id="changeCalendarTo"
-  class="mini-calendar hidden-calendar">
 
-  <div class="mini-weekdays">
-    <div>L</div>
-    <div>Ma</div>
-    <div>Me</div>
-    <div>G</div>
-    <div>V</div>
-    <div>S</div>
-    <div>D</div>
-  </div>
+    <!-- REPERIBILITÀ -->
+    <label>Reperibilità</label>
 
-  <div
-    class="mini-calendar-grid"
-    id="miniGridTo">
-  </div>
+    <select 
+      id="changeShift" 
+      onchange="loadChangeDays()">
 
-</div>
+      <option>REP</option>
+      <option>FREP</option>
+      <option>CFI/REP</option>
+
+    </select>
+
+
+
+
+    <!-- GIORNO DA DARE -->
+    <label>Giorno da dare</label>
+
+
+    <div
+      class="calendar-selector"
+      onclick="toggleMiniCalendar('from')">
+
+      <span id="selectedFromText">
+        Seleziona giorno
+      </span>
+
+    </div>
+
+
+
+    <div
+      id="changeCalendarFrom"
+      class="mini-calendar hidden-calendar">
+
+
+      <div class="mini-weekdays">
+
+        <div>L</div>
+        <div>Ma</div>
+        <div>Me</div>
+        <div>G</div>
+        <div>V</div>
+        <div>S</div>
+        <div>D</div>
+
+      </div>
+
+
+      <div
+        class="mini-calendar-grid"
+        id="miniGridFrom">
+      </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- GIORNO DA RICEVERE -->
+    <label>Giorno da ricevere</label>
+
+
+    <div
+      class="calendar-selector"
+      onclick="toggleMiniCalendar('to')">
+
+
+      <span id="selectedToText">
+        Seleziona giorno
+      </span>
+
+
+    </div>
+
+
+
+
+    <div
+      id="changeCalendarTo"
+      class="mini-calendar hidden-calendar">
+
+
+      <div class="mini-weekdays">
+
+        <div>L</div>
+        <div>Ma</div>
+        <div>Me</div>
+        <div>G</div>
+        <div>V</div>
+        <div>S</div>
+        <div>D</div>
+
+      </div>
+
+
+
+      <div
+        class="mini-calendar-grid"
+        id="miniGridTo">
+      </div>
+
+
+
+    </div>
+
+
+
+
+
     <!-- INVIA -->
+
     <button
       class="save-btn"
-      onclick="sendChangeRequest()"
-    >
+      onclick="sendChangeRequest()">
+
       Invia Richiesta
+
     </button>
+
+
 
   </div>
 
