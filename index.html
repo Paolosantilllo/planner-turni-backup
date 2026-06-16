@@ -321,7 +321,7 @@
 
       <h2>Gestione richiesta</h2>
 
-      <button
+            <button
         class="close-btn"
         onclick="closeRequestActionPopup()">
         ✕
@@ -331,19 +331,36 @@
 
     <div id="requestDetails"></div>
 
-    <p style="background:red;color:white;">
-TEST PULSANTI
-</p>
+
     <div class="popup-actions">
 
+
       <button
-        class="save-btn"
+        class="btn-accept"
         onclick="handleChangeRequest(
           document.getElementById('requestActionPopup').dataset.requestId,
           'ACCEPT'
         )">
+
         ✅ Accetta
+
       </button>
+
+
+
+      <button
+        class="btn-reject"
+        onclick="handleChangeRequest(
+          document.getElementById('requestActionPopup').dataset.requestId,
+          'REJECT'
+        )">
+
+        ❌ Rifiuta
+
+      </button>
+
+
+    </div>
 
       <button
         class="delete-btn"
