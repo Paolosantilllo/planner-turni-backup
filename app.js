@@ -3,14 +3,19 @@
    IMPORT MODULI
 ====================== */
 
-import { initAuth, logout } from "./auth.js";
+import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
+
 
 window.logout = logout;
 
 initAuth(() => {
+
   loadEvents();
+
+  loadChangeRequests();
+
 });
 
 
@@ -242,7 +247,7 @@ const box = document.createElement("div");
 box.classList.add("day");
 box.style.cursor = "pointer";
    
-   // ======================
+// ======================
 // 🟣 CONTROLLO COPERTURA
 // ======================
 
@@ -265,81 +270,128 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
   );
 
 }
- 
-  box.onclick = () => openPopupWithDate(date, events);
-
-  const num = document.createElement("div");
-  num.classList.add("day-number");
 
 
+box.onclick = () => openPopupWithDate(date, events);
 
-  // 🔴 domeniche + festivi
-  if (dayInfo.isSunday || isHoliday(date)) {
-    num.classList.add("day-red");
-  }
 
-  num.innerText = day;
+const num = document.createElement("div");
+num.classList.add("day-number");
 
-  box.appendChild(num);
-   
+
+// 🔴 domeniche + festivi
+if (dayInfo.isSunday || dayInfo.isHoliday) {
+
+  num.classList.add("day-red");
+
+}
+
+
+num.innerText = day;
+
+box.appendChild(num);
+
+
+// ======================
+// EVENTI DEL GIORNO
+// ======================
+
 events.forEach(ev => {
+
 
   if (!ev || !ev.employee || !ev.shift) return;
 
+
   const el = document.createElement("div");
+
   el.classList.add("event");
-const emp = EMPLOYEES[ev.employee];
 
-if (selectedEmployee === "ALL") {
 
-  // Colore dipendente
-  if (emp?.color) {
-    el.classList.add(emp.color);
+  const emp = EMPLOYEES[ev.employee];
+
+
+  if (selectedEmployee === "ALL") {
+
+
+    // Colore dipendente
+
+    if (emp?.color) {
+
+      el.classList.add(emp.color);
+
+    }
+
+
+  } else {
+
+
+    // Colore turno
+
+    const shiftKey = (ev.shift || "").trim();
+
+    const color = SHIFT_COLORS[shiftKey];
+
+
+    if (color) {
+
+      el.style.backgroundColor = color;
+
+    }
+
+
+    el.style.color =
+      (shiftKey === "CFI" || shiftKey === "CFI/REP")
+        ? "#fff"
+        : "#000";
+
   }
 
-} else {
 
-  // Colore turno
-  const shiftKey = (ev.shift || "").trim();
-  const color = SHIFT_COLORS[shiftKey];
 
-  if (color) {
-    el.style.backgroundColor = color;
+  // ======================
+  // REGOLA FESTIVI
+  // ======================
+
+
+  if (
+
+    (dayInfo.isSunday || dayInfo.isHoliday) &&
+
+    (
+
+      ev.shift === "FREP" ||
+      ev.shift === "CFI/REP" ||
+      ev.shift === "MAL" ||
+      ev.shift === "LIC"
+
+    )
+
+  ) {
+
+
+    el.classList.add("frep-text");
+
+
   }
 
-  el.style.color =
-    (shiftKey === "CFI" || shiftKey === "CFI/REP")
-      ? "#fff"
-      : "#000";
-}
 
-// ✅ REGOLA FESTIVI
-const dayInfo = getDayInfo(date);
+  el.innerText = ev.shift;
 
-if (
-  (dayInfo.isSunday || dayInfo.isHoliday) &&
-  (
-    ev.shift === "FREP" ||
-    ev.shift === "CFI/REP" ||
-    ev.shift === "MAL" ||
-    ev.shift === "LIC"
-  )
-) {
-  el.classList.add("frep-text");
-}
 
-el.innerText = ev.shift;
+  box.appendChild(el);
 
-box.appendChild(el);
+
 });
-  
+
+
 calendar.appendChild(box);
+
+
 }
 };
-/* ======================
-   NAVIGAZIONE MESI
-====================== */
-
+  // ======================
+ // NAVIGAZIONE MESI
+ // ======================
 window.nextMonth = function(){
   currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
   renderCalendar();
@@ -984,6 +1036,8 @@ window.openChangePopup = function () {
 
   loadChangeEmployees();
 
+  loadChangeDays();
+
   const popup = document.getElementById("changePopup");
 
   if (!popup) {
@@ -1000,6 +1054,168 @@ window.closeChangePopup = function () {
 
 };
 
+// ======================
+// MINI CALENDARI CAMBIO
+// ======================
+
+window.loadChangeDays = function () {
+
+  const fromEmployee = CURRENT_EMPLOYEE;
+
+  const toEmployee =
+    document.getElementById("changeTo").value;
+
+  const selectedShift =
+    document.getElementById("changeShift").value;
+
+  const calFrom =
+    document.getElementById("miniGridFrom");
+
+  const calTo =
+    document.getElementById("miniGridTo");
+
+  if (!calFrom || !calTo) return;
+
+  calFrom.innerHTML = "";
+  calTo.innerHTML = "";
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  const fromEvents =
+    savedEvents.filter(ev =>
+      ev.employee === fromEmployee &&
+      ev.shift === selectedShift
+    );
+
+  const toEvents =
+    savedEvents.filter(ev =>
+      ev.employee === toEmployee &&
+      ev.shift === selectedShift
+    );
+
+  function buildCalendar(container, events, isFrom) {
+
+    const firstDay =
+      new Date(year, month, 1).getDay();
+
+    let startDay = firstDay - 1;
+
+    if (startDay < 0) {
+      startDay = 6;
+    }
+
+    for (let i = 0; i < startDay; i++) {
+
+      const empty = document.createElement("div");
+
+      empty.classList.add(
+        "mini-day",
+        "disabled"
+      );
+
+      container.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+
+      const iso =
+        `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+      const div =
+        document.createElement("div");
+
+      div.classList.add("mini-day");
+      div.innerText = d;
+
+      const hasEvent =
+        events.some(ev => ev.date === iso);
+
+      if (!hasEvent) {
+        div.classList.add("disabled");
+      }
+
+      div.onclick = () => {
+
+        if (!hasEvent) return;
+
+        if (isFrom) {
+
+          document.getElementById(
+            "selectedFromText"
+          ).innerText = iso;
+
+          window.selectedFromDate = iso;
+
+        } else {
+
+          document.getElementById(
+            "selectedToText"
+          ).innerText = iso;
+
+          window.selectedToDate = iso;
+        }
+      };
+
+      container.appendChild(div);
+    }
+  }
+
+  buildCalendar(
+    calFrom,
+    fromEvents,
+    true
+  );
+
+  buildCalendar(
+    calTo,
+    toEvents,
+    false
+  );
+};
+
+// ======================
+// TOGGLE MINI CALENDARI
+// ======================
+
+window.toggleMiniCalendar = function(type){
+
+  const fromCal =
+    document.getElementById(
+      "changeCalendarFrom"
+    );
+
+  const toCal =
+    document.getElementById(
+      "changeCalendarTo"
+    );
+
+  if(type === "from"){
+
+    fromCal.classList.toggle(
+      "hidden-calendar"
+    );
+
+    toCal.classList.add(
+      "hidden-calendar"
+    );
+  }
+
+  if(type === "to"){
+
+    toCal.classList.toggle(
+      "hidden-calendar"
+    );
+
+    fromCal.classList.add(
+      "hidden-calendar"
+    );
+  }
+};
+
 function loadChangeEmployees() {
 
   const select = document.getElementById("changeTo");
@@ -1008,7 +1224,7 @@ function loadChangeEmployees() {
 
   Object.keys(EMPLOYEES).forEach(emp => {
 
-    if (emp === window.CURRENT_EMPLOYEE) return;
+    if (emp === CURRENT_EMPLOYEE) return;
 
     const option = document.createElement("option");
 
@@ -1020,3 +1236,380 @@ function loadChangeEmployees() {
   });
 
 }
+
+// ======================
+// 🔔 CARICA RICHIESTE CAMBIO
+// ======================
+
+window.loadChangeRequests = function(){
+
+  firestore.onSnapshot(
+
+    firestore.collection(db,"changeRequests"),
+
+    (snap)=>{
+
+
+      let count = 0;
+
+
+      snap.forEach(doc=>{
+
+
+        const req = doc.data();
+
+
+        if(
+          req.toEmployee === CURRENT_EMPLOYEE &&
+          req.status === "PENDING"
+        ){
+
+          count++;
+
+        }
+
+
+      });
+
+
+      const badge =
+        document.getElementById("notifBadge");
+
+
+      if(badge){
+
+
+        if(count > 0){
+
+          badge.innerText = count;
+
+        } else {
+
+          badge.innerText = "";
+
+        }
+
+      }
+
+
+      console.log(
+        "Richieste ricevute:",
+        count
+      );
+
+
+    }
+
+  );
+
+};
+
+// ======================
+// 📩 INVIA RICHIESTA CAMBIO
+// ======================
+
+window.sendChangeRequest = async function(){
+
+  const toEmployee =
+    document.getElementById("changeTo").value;
+
+
+  const shift =
+    document.getElementById("changeShift").value;
+
+
+  if(!window.selectedFromDate || !window.selectedToDate){
+
+    alert("Seleziona giorno da dare e giorno da ricevere");
+    return;
+
+  }
+
+
+  try {
+
+
+    await firestore.addDoc(
+      firestore.collection(db,"changeRequests"),
+      {
+
+        fromEmployee: CURRENT_EMPLOYEE,
+
+        toEmployee: toEmployee,
+
+        fromDate: window.selectedFromDate,
+
+        toDate: window.selectedToDate,
+
+        shift: shift,
+
+        status:"PENDING",
+
+        createdAt: new Date()
+
+      }
+    );
+
+
+    alert("✅ Richiesta inviata");
+
+
+    closeChangePopup();
+
+  } catch(err){
+
+    console.error(
+      "Errore invio richiesta:",
+      err
+    );
+
+  }
+
+};
+
+// ======================
+// 🔔 APRI POPUP RICHIESTE
+// ======================
+
+window.openRequestsPopup = function(){
+
+  const popup =
+    document.getElementById("requestsPopup");
+
+  if(!popup){
+    console.error("requestsPopup non trovato");
+    return;
+  }
+
+  popup.style.display = "flex";
+
+  loadRequestsList();
+
+};
+
+
+// ======================
+// ❌ CHIUDI POPUP RICHIESTE
+// ======================
+
+window.closeRequestsPopup = function(){
+
+  const popup =
+    document.getElementById("requestsPopup");
+
+  if(popup){
+
+    popup.style.display = "none";
+
+  }
+
+};
+
+
+// ======================
+// 📋 LISTA RICHIESTE
+// ======================
+
+window.loadRequestsList = function(){
+
+  const list =
+    document.getElementById("requestsList");
+
+
+  list.innerHTML = "Caricamento...";
+
+
+  firestore.onSnapshot(
+
+    firestore.collection(db,"changeRequests"),
+
+    (snap)=>{
+
+
+      list.innerHTML = "";
+
+
+      snap.forEach(doc=>{
+
+
+        const req = doc.data();
+
+
+        if(
+          req.toEmployee === CURRENT_EMPLOYEE &&
+          req.status === "PENDING"
+        ){
+
+
+          const div =
+          document.createElement("div");
+
+
+          div.className = "request-item";
+
+
+          div.innerHTML = `
+
+<p>
+🔁 Richiesta cambio
+</p>
+
+<p>
+Da:
+${EMPLOYEES[req.fromEmployee].name}
+</p>
+
+<p>
+Giorno:
+${req.fromDate}
+➡️
+${req.toDate}
+</p>
+
+`;
+
+list.appendChild(div);
+
+
+           
+// ======================
+// CLICK SU RICHIESTA
+// ======================
+
+div.onclick = function(){
+
+  const actionPopup =
+    document.getElementById("requestActionPopup");
+
+  const details =
+    document.getElementById("requestDetails");
+
+
+  if(!actionPopup || !details){
+    console.error("Popup richiesta non trovato");
+    return;
+  }
+
+actionPopup.dataset.requestId = doc.id;
+actionPopup.dataset.notifId = doc.id;
+
+/*document.getElementById("acceptRequestBtn").onclick = function(){
+
+  handleChangeRequest(
+    actionPopup.dataset.requestId,
+    "ACCEPT"
+  );
+
+};
+
+
+document.getElementById("rejectRequestBtn").onclick = function(){
+
+  handleChangeRequest(
+    actionPopup.dataset.requestId,
+    "REJECT"
+  );
+
+};*/
+
+
+  details.innerHTML = `
+
+    <p>🔁 Richiesta cambio</p>
+
+    <p>
+    Da:
+    ${EMPLOYEES[req.fromEmployee].name}
+    </p>
+
+    <p>
+    Giorno:
+    ${req.fromDate}
+    ➡️
+    ${req.toDate}
+    </p>
+
+    <p>
+    Turno:
+    ${req.shift}
+    </p>
+
+  `;
+console.log("APERTURA POPUP AZIONE", actionPopup);
+document.getElementById("requestsPopup").style.display = "none";
+  actionPopup.style.display = "flex";
+
+};
+
+
+        }
+
+
+      });
+
+
+    }
+
+  );
+   
+};
+
+ // ======================
+// ✅❌ GESTIONE RICHIESTA
+// ======================
+
+window.handleChangeRequest = async function(
+  requestId,
+  action
+){
+
+  try{
+
+    await firestore.updateDoc(
+
+      firestore.doc(
+        db,
+        "changeRequests",
+        requestId
+      ),
+
+      {
+        status:
+          action === "ACCEPT"
+          ? "ACCEPTED"
+          : "REJECTED"
+      }
+
+    );
+
+    closeRequestActionPopup();
+
+    alert(
+      action === "ACCEPT"
+      ? "✅ Richiesta accettata"
+      : "❌ Richiesta rifiutata"
+    );
+
+  }catch(err){
+
+    console.error(
+      "Errore gestione richiesta:",
+      err
+    );
+
+  }
+
+};
+
+window.closeRequestActionPopup = function(){
+
+  const popup =
+    document.getElementById("requestActionPopup");
+
+  if(popup){
+
+    popup.style.display = "none";
+
+  }
+
+};
