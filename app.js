@@ -1308,7 +1308,6 @@ window.sendChangeRequest = async function(){
 
     closeChangePopup();
 
-
   } catch(err){
 
     console.error(
@@ -1317,5 +1316,108 @@ window.sendChangeRequest = async function(){
     );
 
   }
+
+};
+
+// ======================
+// 🔔 APRI POPUP RICHIESTE
+// ======================
+
+window.openRequestsPopup = function(){
+
+  const popup =
+    document.getElementById("requestsPopup");
+
+
+  if(!popup){
+    console.error("requestsPopup non trovato");
+    return;
+  }
+
+
+  popup.style.display = "flex";
+
+
+  loadRequestsList();
+
+};
+
+
+// ======================
+// 📋 LISTA RICHIESTE
+// ======================
+
+window.loadRequestsList = function(){
+
+  const list =
+    document.getElementById("requestsList");
+
+
+  list.innerHTML = "Caricamento...";
+
+
+  firestore.onSnapshot(
+
+    firestore.collection(db,"changeRequests"),
+
+    (snap)=>{
+
+
+      list.innerHTML = "";
+
+
+      snap.forEach(doc=>{
+
+
+        const req = doc.data();
+
+
+        if(
+          req.toEmployee === CURRENT_EMPLOYEE &&
+          req.status === "PENDING"
+        ){
+
+
+          const div =
+          document.createElement("div");
+
+
+          div.className = "request-item";
+
+
+          div.innerHTML = `
+
+          <p>
+          🔁 Richiesta cambio
+          </p>
+
+          <p>
+          Da:
+          ${EMPLOYEES[req.fromEmployee].name}
+          </p>
+
+          <p>
+          Giorno:
+          ${req.fromDate}
+          ➡️
+          ${req.toDate}
+          </p>
+
+          `;
+
+
+          list.appendChild(div);
+
+
+        }
+
+
+      });
+
+
+    }
+
+  );
+
 
 };
