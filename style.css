@@ -1125,3 +1125,20 @@ button:disabled{
 .hidden{
   display: none !important;
 }
+
+.popup-actions{
+
+  display:flex;
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+.popup-actions button{
+
+  flex:1;
+
+}
