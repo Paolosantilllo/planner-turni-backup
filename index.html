@@ -304,37 +304,13 @@
 
     </div>
 
-  <div id="requestDetails">
-
-</div>
-
-
-<div class="popup-actions">
-
-<button
-class="save-btn"
-onclick="handleChangeRequest(
-document.getElementById('requestActionPopup').dataset.requestId,
-'ACCEPT'
-)">
-✅ Accetta
-</button>
-
-
-<button
-class="delete-btn"
-onclick="handleChangeRequest(
-document.getElementById('requestActionPopup').dataset.requestId,
-'REJECT'
-)">
-❌ Rifiuta
-</button>
-
-</div>
+    <div id="requestsList"></div>
 
   </div>
 
 </div>
+
+
 <!-- POPUP AZIONE RICHIESTA -->
 <div id="requestActionPopup" class="popup" style="display:none;">
 
@@ -354,30 +330,31 @@ document.getElementById('requestActionPopup').dataset.requestId,
 
     <div id="requestDetails"></div>
 
-    
-  <button
-  class="save-btn"
-  onclick="handleChangeRequest(
-    document.getElementById('requestActionPopup').dataset.requestId,
-    'ACCEPT',
-    document.getElementById('requestActionPopup').dataset.notifId
-  )">
-  ✅ Accetta
-</button>
+    <div class="popup-actions">
 
-  <button
-  class="delete-btn"
-  onclick="handleChangeRequest(
-    document.getElementById('requestActionPopup').dataset.requestId,
-    'REJECT',
-    document.getElementById('requestActionPopup').dataset.notifId
-  )">
-  ❌ Rifiuta
-</button>
+      <button
+        class="save-btn"
+        onclick="handleChangeRequest(
+          document.getElementById('requestActionPopup').dataset.requestId,
+          'ACCEPT'
+        )">
+        ✅ Accetta
+      </button>
+
+      <button
+        class="delete-btn"
+        onclick="handleChangeRequest(
+          document.getElementById('requestActionPopup').dataset.requestId,
+          'REJECT'
+        )">
+        ❌ Rifiuta
+      </button>
+
+    </div>
+
   </div>
 
 </div>
-
 <!-- POPUP PDF EXPORT -->
 <div class="popup" id="pdfPopup">
 
