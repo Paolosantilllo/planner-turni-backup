@@ -1493,6 +1493,26 @@ div.onclick = function(){
   actionPopup.dataset.requestId = doc.id;
 
 
+document.getElementById("acceptRequestBtn").onclick = function(){
+
+  handleChangeRequest(
+    actionPopup.dataset.requestId,
+    "ACCEPT"
+  );
+
+};
+
+
+document.getElementById("rejectRequestBtn").onclick = function(){
+
+  handleChangeRequest(
+    actionPopup.dataset.requestId,
+    "REJECT"
+  );
+
+};
+
+
   details.innerHTML = `
 
     <p>🔁 Richiesta cambio</p>
