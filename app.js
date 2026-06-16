@@ -1125,7 +1125,44 @@ window.loadChangeDays = function () {
   );
 };
 
+// ======================
+// TOGGLE MINI CALENDARI
+// ======================
 
+window.toggleMiniCalendar = function(type){
+
+  const fromCal =
+    document.getElementById(
+      "changeCalendarFrom"
+    );
+
+  const toCal =
+    document.getElementById(
+      "changeCalendarTo"
+    );
+
+  if(type === "from"){
+
+    fromCal.classList.toggle(
+      "hidden-calendar"
+    );
+
+    toCal.classList.add(
+      "hidden-calendar"
+    );
+  }
+
+  if(type === "to"){
+
+    toCal.classList.toggle(
+      "hidden-calendar"
+    );
+
+    fromCal.classList.add(
+      "hidden-calendar"
+    );
+  }
+};
 
 function loadChangeEmployees() {
 
