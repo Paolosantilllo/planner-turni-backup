@@ -1420,97 +1420,9 @@ window.loadRequestsList = function(){
 
           `;
 
-
-          div.onclick = () => {
-
-  const popup =
-    document.getElementById("requestActionPopup");
-
-
-  if(popup){
-
-    popup.style.display = "flex";
-
-
-    document.getElementById(
-      "requestDetails"
-    ).innerHTML = `
-
-    <p>🔁 Richiesta cambio reperibilità</p>
-
-    <p>
-    Da:
-    ${EMPLOYEES[req.fromEmployee].name}
-    </p>
-
-    <p>
-    Giorno:
-    ${req.fromDate}
-    ➡️
-    ${req.toDate}
-    </p>
-
-    `;
-
-
-    popup.dataset.requestId = doc.id;
-
-  }
-
-};
-
-
 list.appendChild(div);
 
 // ======================
-// ✅❌ GESTIONE RICHIESTA
-// ======================
-
-window.handleChangeRequest = async function(
-  requestId,
-  action
-){
-
-  try{
-
-    await firestore.updateDoc(
-
-      firestore.doc(
-        db,
-        "changeRequests",
-        requestId
-      ),
-
-      {
-        status:
-          action === "ACCEPT"
-          ? "ACCEPTED"
-          : "REJECTED"
-      }
-
-    );
-
-    closeRequestActionPopup();
-
-    alert(
-      action === "ACCEPT"
-      ? "✅ Richiesta accettata"
-      : "❌ Richiesta rifiutata"
-    );
-
-  }catch(err){
-
-    console.error(
-      "Errore gestione richiesta:",
-      err
-    );
-
-  }
-
-};
-
-           
-           // ======================
 // CLICK SU RICHIESTA
 // ======================
 
@@ -1566,6 +1478,53 @@ div.onclick = function(){
     }
 
   );
+
+   // ======================
+// ✅❌ GESTIONE RICHIESTA
+// ======================
+
+window.handleChangeRequest = async function(
+  requestId,
+  action
+){
+
+  try{
+
+    await firestore.updateDoc(
+
+      firestore.doc(
+        db,
+        "changeRequests",
+        requestId
+      ),
+
+      {
+        status:
+          action === "ACCEPT"
+          ? "ACCEPTED"
+          : "REJECTED"
+      }
+
+    );
+
+    closeRequestActionPopup();
+
+    alert(
+      action === "ACCEPT"
+      ? "✅ Richiesta accettata"
+      : "❌ Richiesta rifiutata"
+    );
+
+  }catch(err){
+
+    console.error(
+      "Errore gestione richiesta:",
+      err
+    );
+
+  }
+
+};
 
 
 };
