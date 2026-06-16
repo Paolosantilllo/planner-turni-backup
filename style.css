@@ -1254,3 +1254,28 @@ button:disabled{
   text-align: center;
 }
 
+/* ======================
+   AZIONI POPUP RICHIESTA
+====================== */
+
+.popup-actions{
+
+  display:flex;
+
+  gap:10px;
+
+  margin-top:20px;
+
+}
+
+
+.popup-actions .save-btn,
+.popup-actions .delete-btn{
+
+  flex:1;
+
+  width:50%;
+
+  margin-top:0;
+
+}
