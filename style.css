@@ -1265,7 +1265,7 @@ button:disabled{
   gap:10px;
 
   margin-top:20px;
-
+  bordex:3px solid red;
 }
 
 
@@ -1279,3 +1279,8 @@ button:disabled{
   margin-top:0;
 
 }
+.popup-actions button{
+  display:block !important;
+  visibility:visible !important;
+  opcacity:1 !important;
+  }
