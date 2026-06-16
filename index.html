@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 
@@ -7,43 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Planner REP</title>
 
-<link rel="icon" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+  <link rel="icon" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="loginBox" style="
-display:none;
-flex-direction:column;
-gap:10px;
-padding:20px;
-max-width:300px;
-margin:50px auto;
-">
-
-  <h2>Login</h2>
-
-  <input
-    type="email"
-    id="email"
-    placeholder="Email"
-  >
-
-  <input
-    type="password"
-    id="password"
-    placeholder="Password"
-  >
-
-  <button onclick="doLogin()">
-    Accedi
-  </button>
-
-</div>
-
 <div class="app" id="app" style="display:none;">
+
   <div class="app-logo">
   </div>
 
@@ -60,23 +31,23 @@ margin:50px auto;
 
 </header>
 
-  <!-- INVIO MENSILE -->
-  <div class="monthly-send">
-    <button class="monthly-send-btn" onclick="generatePDF()">
-      📤 Invia Mensile
-    </button>
-  </div>
+<!-- 📤 PDF EXPORT -->
+<div class="monthly-send">
+  <button class="monthly-send-btn" id="pdfBtn">
+    📤
+  </button>
+</div>
 
   <!-- TOOLBAR -->
   <div class="toolbar">
 
     <select id="employeeFilter" onchange="renderCalendar()">
-      <option value="ALL">Tutti</option>
-      <option>Dipendente D</option>
-      <option>Dipendente C</option>
-      <option>Dipendente B</option>
-      <option>Dipendente A</option>
-    </select>
+  <option value="ALL">Tutti</option>
+  <option value="A">SANTILLO</option>
+  <option value="B">MANUNTA</option>
+  <option value="C">Dipendente C</option>
+  <option value="D">Dipendente D</option>
+</select>
 
     <div class="toolbar-actions">
 
@@ -123,12 +94,12 @@ margin:50px auto;
 
     <label>Dipendente</label>
 
-    <select id="employee">
-      <option>Dipendente D</option>
-      <option>Dipendente C</option>
-      <option>Dipendente B</option>
-      <option>Dipendente A</option>
-    </select>
+  <select id="employee">
+  <option value="A">SANTILLO</option>
+  <option value="B">MANUNTA</option>
+  <option value="C">Dipendente C</option>
+  <option value="D">Dipendente D</option>
+</select>
 
     <label>Data Inizio</label>
     <input type="date" id="startDate">
@@ -146,6 +117,7 @@ margin:50px auto;
       <option>CFI/REP</option>
       <option>LIC</option>
       <option>REC</option>
+      <option value="MAL">MAL</option>
     </select>
 
     <button class="save-btn" onclick="saveShift()">
@@ -180,8 +152,7 @@ margin:50px auto;
     <!-- CAMBIO CON -->
 <label>Cambio con</label>
 
-<select id="changeTo" onchange="loadChangeDays()">
-</select>
+<select id="changeTo"></select>
 
     <!-- REPERIBILITÀ -->
     <label>Reperibilità</label>
@@ -336,67 +307,60 @@ margin:50px auto;
   </div>
 
 </div>
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- POPUP PDF EXPORT -->
+<div class="popup" id="pdfPopup">
 
-<!-- FIREBASE -->
-<script type="module">
+  <div class="popup-content">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    <div class="popup-header">
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  getDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+      <h2>Esportazione PDF</h2>
 
-import {
-  getAuth
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+      <button class="close-btn" onclick="closePdfPopup()">
+        ✕
+      </button>
 
-const firebaseConfig = {
+    </div>
 
-  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+    <p>
+      Mancano alcune reperibilità.<br>
+      Vuoi continuare l’esportazione?
+    </p>
 
-  authDomain: "calendario-rep.firebaseapp.com",
+    <label for="monthsRange">Numero mesi da esportare</label>
 
-  projectId: "calendario-rep",
+    <select id="monthsRange">
+      <option value="1">1 mese (mese corrente)</option>
+      <option value="2">2 mesi</option>
+      <option value="3">3 mesi</option>
+      <option value="4">4 mesi</option>
+    </select>
 
-  storageBucket: "calendario-rep.firebasestorage.app",
+    <div class="popup-actions">
 
-  messagingSenderId: "1067128179274",
+      <button class="save-btn" onclick="confirmPdfExport()">
+        Genera PDF
+      </button>
 
-  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
-};
+      <button class="delete-btn" onclick="closePdfPopup()">
+        Annulla
+      </button>
 
-const app = initializeApp(firebaseConfig);
+    </div>
 
-const db = getFirestore(app);
-const auth = getAuth(app);
+  </div>
 
-window.db = db;
-window.auth = auth;
+</div>
 
-window.firebaseFirestore = {
-  collection,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  doc,
-  getDoc
-};
-
+  <script>
+  window.currentUser = "C"; // oppure A / B / C / D
 </script>
 
-<script type="module" src="app.js"></script>
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-</body>
-</html>
+<!-- APP -->
+<script type="module" src="app.js"></script>
