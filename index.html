@@ -304,7 +304,33 @@
 
     </div>
 
-    <div id="requestsList"></div>
+  <div id="requestDetails">
+
+</div>
+
+
+<div class="popup-actions">
+
+<button
+class="save-btn"
+onclick="handleChangeRequest(
+document.getElementById('requestActionPopup').dataset.requestId,
+'ACCEPT'
+)">
+✅ Accetta
+</button>
+
+
+<button
+class="delete-btn"
+onclick="handleChangeRequest(
+document.getElementById('requestActionPopup').dataset.requestId,
+'REJECT'
+)">
+❌ Rifiuta
+</button>
+
+</div>
 
   </div>
 
