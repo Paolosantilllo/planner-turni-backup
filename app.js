@@ -246,7 +246,7 @@ const box = document.createElement("div");
 box.classList.add("day");
 box.style.cursor = "pointer";
    
-   // ======================
+// ======================
 // 🟣 CONTROLLO COPERTURA
 // ======================
 
@@ -269,78 +269,125 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
   );
 
 }
- 
-  box.onclick = () => openPopupWithDate(date, events);
-
-  const num = document.createElement("div");
-  num.classList.add("day-number");
 
 
+box.onclick = () => openPopupWithDate(date, events);
 
-  // 🔴 domeniche + festivi
-  if (dayInfo.isSunday || isHoliday(date)) {
-    num.classList.add("day-red");
-  }
 
-  num.innerText = day;
+const num = document.createElement("div");
+num.classList.add("day-number");
 
-  box.appendChild(num);
-   
+
+// 🔴 domeniche + festivi
+if (dayInfo.isSunday || dayInfo.isHoliday) {
+
+  num.classList.add("day-red");
+
+}
+
+
+num.innerText = day;
+
+box.appendChild(num);
+
+
+// ======================
+// EVENTI DEL GIORNO
+// ======================
+
 events.forEach(ev => {
+
 
   if (!ev || !ev.employee || !ev.shift) return;
 
+
   const el = document.createElement("div");
+
   el.classList.add("event");
-const emp = EMPLOYEES[ev.employee];
 
-if (selectedEmployee === "ALL") {
 
-  // Colore dipendente
-  if (emp?.color) {
-    el.classList.add(emp.color);
+  const emp = EMPLOYEES[ev.employee];
+
+
+  if (selectedEmployee === "ALL") {
+
+
+    // Colore dipendente
+
+    if (emp?.color) {
+
+      el.classList.add(emp.color);
+
+    }
+
+
+  } else {
+
+
+    // Colore turno
+
+    const shiftKey = (ev.shift || "").trim();
+
+    const color = SHIFT_COLORS[shiftKey];
+
+
+    if (color) {
+
+      el.style.backgroundColor = color;
+
+    }
+
+
+    el.style.color =
+      (shiftKey === "CFI" || shiftKey === "CFI/REP")
+        ? "#fff"
+        : "#000";
+
   }
 
-} else {
 
-  // Colore turno
-  const shiftKey = (ev.shift || "").trim();
-  const color = SHIFT_COLORS[shiftKey];
 
-  if (color) {
-    el.style.backgroundColor = color;
+  // ======================
+  // REGOLA FESTIVI
+  // ======================
+
+
+  if (
+
+    (dayInfo.isSunday || dayInfo.isHoliday) &&
+
+    (
+
+      ev.shift === "FREP" ||
+      ev.shift === "CFI/REP" ||
+      ev.shift === "MAL" ||
+      ev.shift === "LIC"
+
+    )
+
+  ) {
+
+
+    el.classList.add("frep-text");
+
+
   }
 
-  el.style.color =
-    (shiftKey === "CFI" || shiftKey === "CFI/REP")
-      ? "#fff"
-      : "#000";
-}
 
-// ✅ REGOLA FESTIVI
-const dayInfo = getDayInfo(date);
+  el.innerText = ev.shift;
 
-if (
-  (dayInfo.isSunday || dayInfo.isHoliday) &&
-  (
-    ev.shift === "FREP" ||
-    ev.shift === "CFI/REP" ||
-    ev.shift === "MAL" ||
-    ev.shift === "LIC"
-  )
-) {
-  el.classList.add("frep-text");
-}
 
-el.innerText = ev.shift;
+  box.appendChild(el);
 
-box.appendChild(el);
+
 });
-  
+
+
 calendar.appendChild(box);
+
+
 }
-};
-/* ======================
+};===========
    NAVIGAZIONE MESI
 ====================== */
 
