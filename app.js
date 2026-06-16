@@ -1462,55 +1462,8 @@ window.loadRequestsList = function(){
 
 list.appendChild(div);
 
+
 // ======================
-// ✅❌ GESTIONE RICHIESTA
-// ======================
-
-window.handleChangeRequest = async function(
-  requestId,
-  action
-){
-
-  try{
-
-    await firestore.updateDoc(
-
-      firestore.doc(
-        db,
-        "changeRequests",
-        requestId
-      ),
-
-      {
-        status:
-          action === "ACCEPT"
-          ? "ACCEPTED"
-          : "REJECTED"
-      }
-
-    );
-
-    closeRequestActionPopup();
-
-    alert(
-      action === "ACCEPT"
-      ? "✅ Richiesta accettata"
-      : "❌ Richiesta rifiutata"
-    );
-
-  }catch(err){
-
-    console.error(
-      "Errore gestione richiesta:",
-      err
-    );
-
-  }
-
-};
-
-           
-           // ======================
 // CLICK SU RICHIESTA
 // ======================
 
