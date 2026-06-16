@@ -1465,49 +1465,11 @@ ${req.fromDate}
 ${req.toDate}
 </p>
 
-<div class="request-actions">
-
-<button class="btn-accept">
-✅ Accetta
-</button>
-
-<button class="btn-reject">
-❌ Rifiuta
-</button>
-
-</div>
-
 `;
 
 list.appendChild(div);
 
-const acceptBtn = div.querySelector(".btn-accept");
-const rejectBtn = div.querySelector(".btn-reject");
 
-
-acceptBtn.onclick = async (e)=>{
-
-  e.stopPropagation();
-
-  handleChangeRequest(
-    doc.id,
-    "ACCEPT"
-  );
-
-};
-
-
-rejectBtn.onclick = async (e)=>{
-
-  e.stopPropagation();
-
-  handleChangeRequest(
-    doc.id,
-    "REJECT"
-  );
-
-};
-           
            
 // ======================
 // CLICK SU RICHIESTA
