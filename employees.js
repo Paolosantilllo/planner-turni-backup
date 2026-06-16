@@ -6,19 +6,26 @@
 export const EMPLOYEES = {
   A: {
     name: "SANTILLO",
-    color: "dipendente-santillo"
+    color: "dipendente-santillo",
+    role: "ADMIN"
   },
+
   B: {
     name: "MANUNTA",
-    color: "dipendente-b"
+    color: "dipendente-b",
+    role: "USER"
   },
+
   C: {
     name: "DIPENDENTE C",
-    color: "dipendente-c"
+    color: "dipendente-c",
+    role: "USER"
   },
+
   D: {
     name: "DIPENDENTE D",
-    color: "dipendente-d"
+    color: "dipendente-d",
+    role: "USER"
   }
 };
 
