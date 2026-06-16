@@ -1452,6 +1452,34 @@ ${req.fromDate}
 ${req.toDate}
 </p>
 
+<p>
+Turno:
+${req.shift}
+</p>
+
+<div class="popup-actions">
+
+<button
+class="btn-accept"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','ACCEPT')
+">
+✅ Accetta
+</button>
+
+
+<button
+class="btn-reject"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','REJECT')
+">
+❌ Rifiuta
+</button>
+
+</div>
+
 `;
 
 list.appendChild(div);
