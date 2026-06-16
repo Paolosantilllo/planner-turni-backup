@@ -1479,7 +1479,7 @@ div.onclick = function(){
 actionPopup.dataset.requestId = doc.id;
 actionPopup.dataset.notifId = doc.id;
 
-/*document.getElementById("acceptRequestBtn").onclick = function(){
+document.getElementById("acceptRequestBtn").onclick = function(){
 
   handleChangeRequest(
     actionPopup.dataset.requestId,
@@ -1496,7 +1496,7 @@ document.getElementById("rejectRequestBtn").onclick = function(){
     "REJECT"
   );
 
-};*/
+};
 
 
   details.innerHTML = `
