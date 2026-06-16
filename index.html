@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 
@@ -6,15 +7,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Planner REP</title>
 
-  <link rel="icon" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app" id="app" style="display:none;">
+<div id="loginBox" style="
+display:none;
+flex-direction:column;
+gap:10px;
+padding:20px;
+max-width:300px;
+margin:50px auto;
+">
 
+  <h2>Login</h2>
+
+  <input
+    type="email"
+    id="email"
+    placeholder="Email"
+  >
+
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+  >
+
+  <button onclick="doLogin()">
+    Accedi
+  </button>
+
+</div>
+
+<div class="app" id="app" style="display:none;">
   <div class="app-logo">
   </div>
 
@@ -31,23 +60,23 @@
 
 </header>
 
-<!-- 📤 PDF EXPORT -->
-<div class="monthly-send">
-  <button class="monthly-send-btn" id="pdfBtn">
-    📤
-  </button>
-</div>
+  <!-- INVIO MENSILE -->
+  <div class="monthly-send">
+    <button class="monthly-send-btn" onclick="generatePDF()">
+      📤 Invia Mensile
+    </button>
+  </div>
 
   <!-- TOOLBAR -->
   <div class="toolbar">
 
     <select id="employeeFilter" onchange="renderCalendar()">
-  <option value="ALL">Tutti</option>
-  <option value="A">SANTILLO</option>
-  <option value="B">MANUNTA</option>
-  <option value="C">Dipendente C</option>
-  <option value="D">Dipendente D</option>
-</select>
+      <option value="ALL">Tutti</option>
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
     <div class="toolbar-actions">
 
@@ -94,12 +123,12 @@
 
     <label>Dipendente</label>
 
-  <select id="employee">
-  <option value="A">SANTILLO</option>
-  <option value="B">MANUNTA</option>
-  <option value="C">Dipendente C</option>
-  <option value="D">Dipendente D</option>
-</select>
+    <select id="employee">
+      <option>Dipendente D</option>
+      <option>Dipendente C</option>
+      <option>Dipendente B</option>
+      <option>Dipendente A</option>
+    </select>
 
     <label>Data Inizio</label>
     <input type="date" id="startDate">
@@ -117,7 +146,6 @@
       <option>CFI/REP</option>
       <option>LIC</option>
       <option>REC</option>
-      <option value="MAL">MAL</option>
     </select>
 
     <button class="save-btn" onclick="saveShift()">
@@ -147,59 +175,44 @@
 
     </div>
 
-
-    <input type="hidden" id="changeFrom">
-
+  <input type="hidden" id="changeFrom">
 
     <!-- CAMBIO CON -->
-    <label>Cambio con</label>
+<label>Cambio con</label>
 
-    <select 
-      id="changeTo" 
-      onchange="loadChangeDays()">
-    </select>
-
-
+<select id="changeTo" onchange="loadChangeDays()">
+</select>
 
     <!-- REPERIBILITÀ -->
     <label>Reperibilità</label>
 
-    <select 
-      id="changeShift" 
-      onchange="loadChangeDays()">
-
+    <select id="changeShift" onchange="loadChangeDays()">
       <option>REP</option>
       <option>FREP</option>
+      <option>CFI</option>
       <option>CFI/REP</option>
-
+      <option>LIC</option>
+      <option>REC</option>
     </select>
-
-
-
 
     <!-- GIORNO DA DARE -->
     <label>Giorno da dare</label>
 
-
     <div
       class="calendar-selector"
-      onclick="toggleMiniCalendar('from')">
-
+      onclick="toggleMiniCalendar('from')"
+    >
       <span id="selectedFromText">
         Seleziona giorno
       </span>
-
     </div>
-
-
 
     <div
       id="changeCalendarFrom"
-      class="mini-calendar hidden-calendar">
-
+      class="mini-calendar hidden-calendar"
+    >
 
       <div class="mini-weekdays">
-
         <div>L</div>
         <div>Ma</div>
         <div>Me</div>
@@ -207,48 +220,33 @@
         <div>V</div>
         <div>S</div>
         <div>D</div>
-
       </div>
-
 
       <div
         class="mini-calendar-grid"
-        id="miniGridFrom">
-      </div>
-
+        id="miniGridFrom"
+      ></div>
 
     </div>
-
-
-
-
 
     <!-- GIORNO DA RICEVERE -->
     <label>Giorno da ricevere</label>
 
-
     <div
       class="calendar-selector"
-      onclick="toggleMiniCalendar('to')">
-
-
+      onclick="toggleMiniCalendar('to')"
+    >
       <span id="selectedToText">
         Seleziona giorno
       </span>
-
-
     </div>
-
-
-
 
     <div
       id="changeCalendarTo"
-      class="mini-calendar hidden-calendar">
-
+      class="mini-calendar hidden-calendar"
+    >
 
       <div class="mini-weekdays">
-
         <div>L</div>
         <div>Ma</div>
         <div>Me</div>
@@ -256,35 +254,22 @@
         <div>V</div>
         <div>S</div>
         <div>D</div>
-
       </div>
-
-
 
       <div
         class="mini-calendar-grid"
-        id="miniGridTo">
-      </div>
-
-
+        id="miniGridTo"
+      ></div>
 
     </div>
 
-
-
-
-
     <!-- INVIA -->
-
     <button
       class="save-btn"
-      onclick="sendChangeRequest()">
-
+      onclick="sendChangeRequest()"
+    >
       Invia Richiesta
-
     </button>
-
-
 
   </div>
 
@@ -309,8 +294,6 @@
   </div>
 
 </div>
-
-
 <!-- POPUP AZIONE RICHIESTA -->
 <div id="requestActionPopup" class="popup" style="display:none;">
 
@@ -330,84 +313,90 @@
 
     <div id="requestDetails"></div>
 
-    <p style="background:red;color:white;">
-TEST PULSANTI
-</p>
-    <div class="popup-actions">
+    
+  <button
+  class="save-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'ACCEPT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ✅ Accetta
+</button>
 
-      <button
-        class="save-btn"
-        onclick="handleChangeRequest(
-          document.getElementById('requestActionPopup').dataset.requestId,
-          'ACCEPT'
-        )">
-        ✅ Accetta
-      </button>
-
-      <button
-        class="delete-btn"
-        onclick="handleChangeRequest(
-          document.getElementById('requestActionPopup').dataset.requestId,
-          'REJECT'
-        )">
-        ❌ Rifiuta
-      </button>
-
-    </div>
-
+  <button
+  class="delete-btn"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'REJECT',
+    document.getElementById('requestActionPopup').dataset.notifId
+  )">
+  ❌ Rifiuta
+</button>
   </div>
 
 </div>
-<!-- POPUP PDF EXPORT -->
-<div class="popup" id="pdfPopup">
-
-  <div class="popup-content">
-
-    <div class="popup-header">
-
-      <h2>Esportazione PDF</h2>
-
-      <button class="close-btn" onclick="closePdfPopup()">
-        ✕
-      </button>
-
-    </div>
-
-    <p>
-      Mancano alcune reperibilità.<br>
-      Vuoi continuare l’esportazione?
-    </p>
-
-    <label for="monthsRange">Numero mesi da esportare</label>
-
-    <select id="monthsRange">
-      <option value="1">1 mese (mese corrente)</option>
-      <option value="2">2 mesi</option>
-      <option value="3">3 mesi</option>
-      <option value="4">4 mesi</option>
-    </select>
-
-    <div class="popup-actions">
-
-      <button class="save-btn" onclick="confirmPdfExport()">
-        Genera PDF
-      </button>
-
-      <button class="delete-btn" onclick="closePdfPopup()">
-        Annulla
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
- 
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-<!-- APP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+  getDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBCKQp_DA2Bjbs6g27Wwl8eo_kyzzI2A40",
+
+  authDomain: "calendario-rep.firebaseapp.com",
+
+  projectId: "calendario-rep",
+
+  storageBucket: "calendario-rep.firebasestorage.app",
+
+  messagingSenderId: "1067128179274",
+
+  appId: "1:1067128179274:web:e1c7174c25bdabee2ff4b3"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.db = db;
+window.auth = auth;
+
+window.firebaseFirestore = {
+  collection,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+  doc,
+  getDoc
+};
+
+</script>
+
 <script type="module" src="app.js"></script>
+
+</body>
+</html>
