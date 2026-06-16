@@ -1172,7 +1172,7 @@ function loadChangeEmployees() {
 
   Object.keys(EMPLOYEES).forEach(emp => {
 
-if (emp === CURRENT_EMPLOYEE) return;
+    if (emp === CURRENT_EMPLOYEE) return;
 
     const option = document.createElement("option");
 
@@ -1184,3 +1184,68 @@ if (emp === CURRENT_EMPLOYEE) return;
   });
 
 }
+
+
+// ======================
+// 📩 INVIA RICHIESTA CAMBIO
+// ======================
+
+window.sendChangeRequest = async function(){
+
+  const toEmployee =
+    document.getElementById("changeTo").value;
+
+
+  const shift =
+    document.getElementById("changeShift").value;
+
+
+  if(!window.selectedFromDate || !window.selectedToDate){
+
+    alert("Seleziona giorno da dare e giorno da ricevere");
+    return;
+
+  }
+
+
+  try {
+
+
+    await firestore.addDoc(
+      firestore.collection(db,"changeRequests"),
+      {
+
+        fromEmployee: CURRENT_EMPLOYEE,
+
+        toEmployee: toEmployee,
+
+        fromDate: window.selectedFromDate,
+
+        toDate: window.selectedToDate,
+
+        shift: shift,
+
+        status:"PENDING",
+
+        createdAt: new Date()
+
+      }
+    );
+
+
+    alert("✅ Richiesta inviata");
+
+
+    closeChangePopup();
+
+
+  } catch(err){
+
+    console.error(
+      "Errore invio richiesta:",
+      err
+    );
+
+  }
+
+};
