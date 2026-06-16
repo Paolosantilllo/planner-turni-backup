@@ -351,36 +351,20 @@ events.forEach(ev => {
 
 
   // ======================
-  // REGOLA FESTIVI
-  // ======================
+// 🔴 REGOLA FESTIVI
+// ======================
+
+if (dayInfo.isSunday || dayInfo.isHoliday) {
+
+  el.classList.add("frep-text");
+
+}
 
 
-  if (
-
-    (dayInfo.isSunday || dayInfo.isHoliday) &&
-
-    (
-
-      ev.shift === "FREP" ||
-      ev.shift === "CFI/REP" ||
-      ev.shift === "MAL" ||
-      ev.shift === "LIC"
-
-    )
-
-  ) {
+el.innerText = ev.shift;
 
 
-    el.classList.add("frep-text");
-
-
-  }
-
-
-  el.innerText = ev.shift;
-
-
-  box.appendChild(el);
+box.appendChild(el);
 
 
 });
