@@ -1568,7 +1568,7 @@ document.getElementById("requestsPopup").style.display = "none";
    
 };
 
- // ======================
+// ======================
 // ✅❌ GESTIONE RICHIESTA
 // ======================
 
@@ -1579,6 +1579,18 @@ window.handleChangeRequest = async function(
 
   try{
 
+    let newStatus;
+
+    if(action === "ACCEPT"){
+
+      newStatus = "PENDING_ADMIN";
+
+    }else{
+
+      newStatus = "USER_REJECTED";
+
+    }
+
     await firestore.updateDoc(
 
       firestore.doc(
@@ -1588,10 +1600,7 @@ window.handleChangeRequest = async function(
       ),
 
       {
-        status:
-          action === "ACCEPT"
-          ? "ACCEPTED"
-          : "REJECTED"
+        status: newStatus
       }
 
     );
@@ -1600,7 +1609,7 @@ window.handleChangeRequest = async function(
 
     alert(
       action === "ACCEPT"
-      ? "✅ Richiesta accettata"
+      ? "✅ Richiesta accettata e inoltrata all'Admin"
       : "❌ Richiesta rifiutata"
     );
 
