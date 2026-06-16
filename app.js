@@ -387,10 +387,10 @@ calendar.appendChild(box);
 
 
 }
-};===========
-   NAVIGAZIONE MESI
-====================== */
-
+};
+  // ======================
+ // NAVIGAZIONE MESI
+ // ======================
 window.nextMonth = function(){
   currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
   renderCalendar();
