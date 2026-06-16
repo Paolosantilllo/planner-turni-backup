@@ -284,8 +284,10 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
 
   num.classList.add("day-red");
 
-}
+  // colora anche la cella
+  box.classList.add("holiday-day");
 
+}
 
 num.innerText = day;
 
