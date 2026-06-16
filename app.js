@@ -1421,6 +1421,11 @@ window.loadRequestsList = function(){
         const req = doc.data();
 
 
+
+        // ======================
+        // 👤 LIVELLO DIPENDENTE
+        // ======================
+
         if(
           req.toEmployee === CURRENT_EMPLOYEE &&
           req.status === "PENDING_USER"
@@ -1457,7 +1462,9 @@ Turno:
 ${req.shift}
 </p>
 
+
 <div class="popup-actions">
+
 
 <button
 class="btn-accept"
@@ -1478,12 +1485,112 @@ handleChangeRequest('${doc.id}','REJECT')
 ❌ Rifiuta
 </button>
 
+
 </div>
 
 `;
 
-list.appendChild(div);
 
+          list.appendChild(div);
+
+
+        }
+
+
+
+        // ======================
+        // 👑 LIVELLO ADMIN
+        // ======================
+
+        if(
+          EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
+          req.status === "PENDING_ADMIN"
+        ){
+
+
+          const div =
+          document.createElement("div");
+
+
+          div.className = "request-item";
+
+
+          div.innerHTML = `
+
+<p>
+👑 Approvazione Admin
+</p>
+
+
+<p>
+Richiedente:
+${EMPLOYEES[req.fromEmployee].name}
+</p>
+
+
+<p>
+Sostituto:
+${EMPLOYEES[req.toEmployee].name}
+</p>
+
+
+<p>
+Giorno:
+${req.fromDate}
+➡️
+${req.toDate}
+</p>
+
+
+<p>
+Turno:
+${req.shift}
+</p>
+
+
+<div class="popup-actions">
+
+
+<button
+class="btn-accept"
+onclick="
+event.stopPropagation();
+handleAdminRequest('${doc.id}','APPROVE')
+">
+✅ Approva
+</button>
+
+
+<button
+class="btn-reject"
+onclick="
+event.stopPropagation();
+handleAdminRequest('${doc.id}','REJECT')
+">
+❌ Rifiuta
+</button>
+
+
+</div>
+
+
+`;
+
+
+          list.appendChild(div);
+
+
+        }
+
+
+      });
+
+
+    }
+
+  );
+
+};
 
            
 // ======================
