@@ -1406,7 +1406,46 @@ window.loadRequestsList = function(){
           `;
 
 
-          list.appendChild(div);
+          div.onclick = () => {
+
+  const popup =
+    document.getElementById("requestActionPopup");
+
+
+  if(popup){
+
+    popup.style.display = "flex";
+
+
+    document.getElementById(
+      "requestDetails"
+    ).innerHTML = `
+
+    <p>🔁 Richiesta cambio reperibilità</p>
+
+    <p>
+    Da:
+    ${EMPLOYEES[req.fromEmployee].name}
+    </p>
+
+    <p>
+    Giorno:
+    ${req.fromDate}
+    ➡️
+    ${req.toDate}
+    </p>
+
+    `;
+
+
+    popup.dataset.requestId = doc.id;
+
+  }
+
+};
+
+
+list.appendChild(div);
 
 
         }
