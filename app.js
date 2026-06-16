@@ -2,10 +2,10 @@
    IMPORT MODULI
 ====================== */
 
-import { initAuth, logout } from "./auth.js";
+import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
-import { CURRENT_EMPLOYEE } from "./auth.js";
+
 
 window.logout = logout;
 
@@ -1010,9 +1010,9 @@ window.closeChangePopup = function () {
 // MINI CALENDARI CAMBIO
 // ======================
 
-window.loadChangeDays = function () {
-
-  const fromEmployee = CURRENT_EMPLOYEE;
+function loadChangeRequests(){
+  
+   const fromEmployee = CURRENT_EMPLOYEE;
 
   const toEmployee =
     document.getElementById("changeTo").value;
@@ -1421,46 +1421,7 @@ window.loadRequestsList = function(){
           `;
 
 
-          div.onclick = () => {
-
-  const popup =
-    document.getElementById("requestActionPopup");
-
-
-  if(popup){
-
-    popup.style.display = "flex";
-
-
-    document.getElementById(
-      "requestDetails"
-    ).innerHTML = `
-
-    <p>🔁 Richiesta cambio reperibilità</p>
-
-    <p>
-    Da:
-    ${EMPLOYEES[req.fromEmployee].name}
-    </p>
-
-    <p>
-    Giorno:
-    ${req.fromDate}
-    ➡️
-    ${req.toDate}
-    </p>
-
-    `;
-
-
-    popup.dataset.requestId = doc.id;
-
-  }
-
-};
-
-
-list.appendChild(div);
+   list.appendChild(div);
 
 
 // ======================
