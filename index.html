@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 
@@ -147,43 +148,59 @@
 
     </div>
 
-  <input type="hidden" id="changeFrom">
+
+    <input type="hidden" id="changeFrom">
+
 
     <!-- CAMBIO CON -->
-<label>Cambio con</label>
+    <label>Cambio con</label>
 
-<select id="changeTo"></select>
+    <select 
+      id="changeTo" 
+      onchange="loadChangeDays()">
+    </select>
+
+
 
     <!-- REPERIBILITÀ -->
     <label>Reperibilità</label>
 
-    <select id="changeShift" onchange="loadChangeDays()">
+    <select 
+      id="changeShift" 
+      onchange="loadChangeDays()">
+
       <option>REP</option>
       <option>FREP</option>
-      <option>CFI</option>
       <option>CFI/REP</option>
-      <option>LIC</option>
-      <option>REC</option>
+
     </select>
+
+
+
 
     <!-- GIORNO DA DARE -->
     <label>Giorno da dare</label>
 
+
     <div
       class="calendar-selector"
-      onclick="toggleMiniCalendar('from')"
-    >
+      onclick="toggleMiniCalendar('from')">
+
       <span id="selectedFromText">
         Seleziona giorno
       </span>
+
     </div>
+
+
 
     <div
       id="changeCalendarFrom"
-      class="mini-calendar hidden-calendar"
-    >
+      class="mini-calendar hidden-calendar">
+
 
       <div class="mini-weekdays">
+
         <div>L</div>
         <div>Ma</div>
         <div>Me</div>
@@ -191,33 +208,48 @@
         <div>V</div>
         <div>S</div>
         <div>D</div>
+
       </div>
+
 
       <div
         class="mini-calendar-grid"
-        id="miniGridFrom"
-      ></div>
+        id="miniGridFrom">
+      </div>
+
 
     </div>
+
+
+
+
 
     <!-- GIORNO DA RICEVERE -->
     <label>Giorno da ricevere</label>
 
+
     <div
       class="calendar-selector"
-      onclick="toggleMiniCalendar('to')"
-    >
+      onclick="toggleMiniCalendar('to')">
+
+
       <span id="selectedToText">
         Seleziona giorno
       </span>
+
+
     </div>
+
+
+
 
     <div
       id="changeCalendarTo"
-      class="mini-calendar hidden-calendar"
-    >
+      class="mini-calendar hidden-calendar">
+
 
       <div class="mini-weekdays">
+
         <div>L</div>
         <div>Ma</div>
         <div>Me</div>
@@ -225,22 +257,35 @@
         <div>V</div>
         <div>S</div>
         <div>D</div>
+
       </div>
+
+
 
       <div
         class="mini-calendar-grid"
-        id="miniGridTo"
-      ></div>
+        id="miniGridTo">
+      </div>
+
+
 
     </div>
 
+
+
+
+
     <!-- INVIA -->
+
     <button
       class="save-btn"
-      onclick="sendChangeRequest()"
-    >
+      onclick="sendChangeRequest()">
+
       Invia Richiesta
+
     </button>
+
+
 
   </div>
 
@@ -265,6 +310,8 @@
   </div>
 
 </div>
+
+
 <!-- POPUP AZIONE RICHIESTA -->
 <div id="requestActionPopup" class="popup" style="display:none;">
 
@@ -284,30 +331,34 @@
 
     <div id="requestDetails"></div>
 
-    
-  <button
-  class="save-btn"
-  onclick="handleChangeRequest(
-    document.getElementById('requestActionPopup').dataset.requestId,
-    'ACCEPT',
-    document.getElementById('requestActionPopup').dataset.notifId
-  )">
-  ✅ Accetta
-</button>
+    <p style="background:red;color:white;">
+TEST PULSANTI
+</p>
+    <div class="popup-actions">
 
-  <button
-  class="delete-btn"
-  onclick="handleChangeRequest(
-    document.getElementById('requestActionPopup').dataset.requestId,
-    'REJECT',
-    document.getElementById('requestActionPopup').dataset.notifId
-  )">
-  ❌ Rifiuta
-</button>
+      <button
+        class="save-btn"
+        onclick="handleChangeRequest(
+          document.getElementById('requestActionPopup').dataset.requestId,
+          'ACCEPT'
+        )">
+        ✅ Accetta
+      </button>
+
+      <button
+        class="delete-btn"
+        onclick="handleChangeRequest(
+          document.getElementById('requestActionPopup').dataset.requestId,
+          'REJECT'
+        )">
+        ❌ Rifiuta
+      </button>
+
+    </div>
+
   </div>
 
 </div>
-
 <!-- POPUP PDF EXPORT -->
 <div class="popup" id="pdfPopup">
 
@@ -353,10 +404,7 @@
 
 </div>
 
-  <script>
-  window.currentUser = "C"; // oppure A / B / C / D
-</script>
-
+ 
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
