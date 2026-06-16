@@ -1125,22 +1125,7 @@ window.loadChangeDays = function () {
   );
 };
 
-window.loadChangeDays = function () {
 
-  const employee = window.CURRENT_EMPLOYEE;
-  const input = document.getElementById("changeFromDate");
-
-  input.addEventListener("click", () => {
-
-    const allowedDates = savedEvents
-      .filter(e => e.employee === employee)
-      .map(e => e.date);
-
-    console.log("Giorni disponibili:", allowedDates);
-
-  });
-
-};
 
 function loadChangeEmployees() {
 
