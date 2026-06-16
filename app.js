@@ -1534,7 +1534,7 @@ document.getElementById("rejectRequestBtn").onclick = function(){
     </p>
 
   `;
-
+console.log("APERTURA POPUP AZIONE", actionPopup);
 document.getElementById("requestsPopup").style.display = "none";
   actionPopup.style.display = "flex";
 
