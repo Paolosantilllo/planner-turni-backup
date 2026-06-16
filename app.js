@@ -2,10 +2,10 @@
    IMPORT MODULI
 ====================== */
 
-import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
+import { initAuth, logout } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
-
+import { CURRENT_EMPLOYEE } from "./auth.js";
 
 window.logout = logout;
 
@@ -1010,9 +1010,9 @@ window.closeChangePopup = function () {
 // MINI CALENDARI CAMBIO
 // ======================
 
-function loadChangeRequests(){
-  
-   const fromEmployee = CURRENT_EMPLOYEE;
+window.loadChangeDays = function () {
+
+  const fromEmployee = CURRENT_EMPLOYEE;
 
   const toEmployee =
     document.getElementById("changeTo").value;
@@ -1421,10 +1421,96 @@ window.loadRequestsList = function(){
           `;
 
 
-   list.appendChild(div);
+          div.onclick = () => {
 
+  const popup =
+    document.getElementById("requestActionPopup");
+
+
+  if(popup){
+
+    popup.style.display = "flex";
+
+
+    document.getElementById(
+      "requestDetails"
+    ).innerHTML = `
+
+    <p>🔁 Richiesta cambio reperibilità</p>
+
+    <p>
+    Da:
+    ${EMPLOYEES[req.fromEmployee].name}
+    </p>
+
+    <p>
+    Giorno:
+    ${req.fromDate}
+    ➡️
+    ${req.toDate}
+    </p>
+
+    `;
+
+
+    popup.dataset.requestId = doc.id;
+
+  }
+
+};
+
+
+list.appendChild(div);
 
 // ======================
+// ✅❌ GESTIONE RICHIESTA
+// ======================
+
+window.handleChangeRequest = async function(
+  requestId,
+  action
+){
+
+  try{
+
+    await firestore.updateDoc(
+
+      firestore.doc(
+        db,
+        "changeRequests",
+        requestId
+      ),
+
+      {
+        status:
+          action === "ACCEPT"
+          ? "ACCEPTED"
+          : "REJECTED"
+      }
+
+    );
+
+    closeRequestActionPopup();
+
+    alert(
+      action === "ACCEPT"
+      ? "✅ Richiesta accettata"
+      : "❌ Richiesta rifiutata"
+    );
+
+  }catch(err){
+
+    console.error(
+      "Errore gestione richiesta:",
+      err
+    );
+
+  }
+
+};
+
+           
+           // ======================
 // CLICK SU RICHIESTA
 // ======================
 
