@@ -1536,7 +1536,7 @@ document.getElementById("rejectRequestBtn").onclick = function(){
 
   `;
 
-
+document.getElementById("requestsPopup").style.display = "none";
   actionPopup.style.display = "flex";
 
 };
