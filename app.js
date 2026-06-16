@@ -1328,17 +1328,32 @@ window.openRequestsPopup = function(){
   const popup =
     document.getElementById("requestsPopup");
 
-
   if(!popup){
     console.error("requestsPopup non trovato");
     return;
   }
 
-
   popup.style.display = "flex";
 
-
   loadRequestsList();
+
+};
+
+
+// ======================
+// ❌ CHIUDI POPUP RICHIESTE
+// ======================
+
+window.closeRequestsPopup = function(){
+
+  const popup =
+    document.getElementById("requestsPopup");
+
+  if(popup){
+
+    popup.style.display = "none";
+
+  }
 
 };
 
@@ -1446,6 +1461,53 @@ window.loadRequestsList = function(){
 
 
 list.appendChild(div);
+
+
+// ======================
+// CLICK SU RICHIESTA
+// ======================
+
+div.onclick = function(){
+
+  const actionPopup =
+    document.getElementById("requestActionPopup");
+
+
+  const details =
+    document.getElementById("requestDetails");
+
+
+  actionPopup.dataset.requestId = doc.id;
+
+
+  details.innerHTML = `
+
+  <p>🔁 Richiesta cambio</p>
+
+  <p>
+  Da:
+  ${EMPLOYEES[req.fromEmployee].name}
+  </p>
+
+  <p>
+  Giorno:
+  ${req.fromDate}
+  ➡️
+  ${req.toDate}
+  </p>
+
+  <p>
+  Turno:
+  ${req.shift}
+  </p>
+
+  `;
+
+
+  actionPopup.style.display = "flex";
+
+
+};
 
 
         }
