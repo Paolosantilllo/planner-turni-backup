@@ -1008,7 +1008,7 @@ window.closeChangePopup = function () {
 
 window.loadChangeDays = function () {
 
-  const fromEmployee = window.CURRENT_EMPLOYEE;
+  const fromEmployee = CURRENT_EMPLOYEE;
 
   const toEmployee =
     document.getElementById("changeTo").value;
