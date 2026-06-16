@@ -1481,6 +1481,34 @@ ${req.toDate}
 
 list.appendChild(div);
 
+const acceptBtn = div.querySelector(".btn-accept");
+const rejectBtn = div.querySelector(".btn-reject");
+
+
+acceptBtn.onclick = async (e)=>{
+
+  e.stopPropagation();
+
+  handleChangeRequest(
+    doc.id,
+    "ACCEPT"
+  );
+
+};
+
+
+rejectBtn.onclick = async (e)=>{
+
+  e.stopPropagation();
+
+  handleChangeRequest(
+    doc.id,
+    "REJECT"
+  );
+
+};
+           
+           
 // ======================
 // CLICK SU RICHIESTA
 // ======================
