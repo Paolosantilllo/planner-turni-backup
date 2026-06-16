@@ -1002,6 +1002,129 @@ window.closeChangePopup = function () {
 
 };
 
+// ======================
+// MINI CALENDARI CAMBIO
+// ======================
+
+window.loadChangeDays = function () {
+
+  const fromEmployee = CURRENT_EMPLOYEE;
+
+  const toEmployee =
+    document.getElementById("changeTo").value;
+
+  const selectedShift =
+    document.getElementById("changeShift").value;
+
+  const calFrom =
+    document.getElementById("miniGridFrom");
+
+  const calTo =
+    document.getElementById("miniGridTo");
+
+  if (!calFrom || !calTo) return;
+
+  calFrom.innerHTML = "";
+  calTo.innerHTML = "";
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  const fromEvents =
+    savedEvents.filter(ev =>
+      ev.employee === fromEmployee &&
+      ev.shift === selectedShift
+    );
+
+  const toEvents =
+    savedEvents.filter(ev =>
+      ev.employee === toEmployee &&
+      ev.shift === selectedShift
+    );
+
+  function buildCalendar(container, events, isFrom) {
+
+    const firstDay =
+      new Date(year, month, 1).getDay();
+
+    let startDay = firstDay - 1;
+
+    if (startDay < 0) {
+      startDay = 6;
+    }
+
+    for (let i = 0; i < startDay; i++) {
+
+      const empty = document.createElement("div");
+
+      empty.classList.add(
+        "mini-day",
+        "disabled"
+      );
+
+      container.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+
+      const iso =
+        `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+      const div =
+        document.createElement("div");
+
+      div.classList.add("mini-day");
+      div.innerText = d;
+
+      const hasEvent =
+        events.some(ev => ev.date === iso);
+
+      if (!hasEvent) {
+        div.classList.add("disabled");
+      }
+
+      div.onclick = () => {
+
+        if (!hasEvent) return;
+
+        if (isFrom) {
+
+          document.getElementById(
+            "selectedFromText"
+          ).innerText = iso;
+
+          window.selectedFromDate = iso;
+
+        } else {
+
+          document.getElementById(
+            "selectedToText"
+          ).innerText = iso;
+
+          window.selectedToDate = iso;
+        }
+      };
+
+      container.appendChild(div);
+    }
+  }
+
+  buildCalendar(
+    calFrom,
+    fromEvents,
+    true
+  );
+
+  buildCalendar(
+    calTo,
+    toEvents,
+    false
+  );
+};
+
 window.loadChangeDays = function () {
 
   const employee = window.CURRENT_EMPLOYEE;
