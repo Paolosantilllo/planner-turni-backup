@@ -10,7 +10,11 @@ import { CURRENT_EMPLOYEE } from "./auth.js";
 window.logout = logout;
 
 initAuth(() => {
+
   loadEvents();
+
+  loadChangeRequests();
+
 });
 
 
@@ -1185,6 +1189,72 @@ function loadChangeEmployees() {
 
 }
 
+// ======================
+// 🔔 CARICA RICHIESTE CAMBIO
+// ======================
+
+window.loadChangeRequests = function(){
+
+  firestore.onSnapshot(
+
+    firestore.collection(db,"changeRequests"),
+
+    (snap)=>{
+
+
+      let count = 0;
+
+
+      snap.forEach(doc=>{
+
+
+        const req = doc.data();
+
+
+        if(
+          req.toEmployee === CURRENT_EMPLOYEE &&
+          req.status === "PENDING"
+        ){
+
+          count++;
+
+        }
+
+
+      });
+
+
+      const badge =
+        document.getElementById("notifBadge");
+
+
+      if(badge){
+
+
+        if(count > 0){
+
+          badge.innerText = count;
+
+        } else {
+
+          badge.innerText = "";
+
+        }
+
+      }
+
+
+      console.log(
+        "Richieste ricevute:",
+        count
+      );
+
+
+    }
+
+  );
+
+};
 
 // ======================
 // 📩 INVIA RICHIESTA CAMBIO
