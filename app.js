@@ -1395,6 +1395,76 @@ window.closeRequestsPopup = function(){
 
 };
 
+// ======================
+// 👑 GESTIONE ADMIN RICHIESTA
+// ======================
+
+window.handleAdminRequest = async function(
+  requestId,
+  action
+){
+
+  try{
+
+
+    if(action === "APPROVE"){
+
+
+      await firestore.updateDoc(
+
+        firestore.doc(
+          db,
+          "changeRequests",
+          requestId
+        ),
+
+        {
+          status:"APPROVED"
+        }
+
+      );
+
+
+      alert("✅ Cambio approvato");
+
+
+    }else{
+
+
+      await firestore.updateDoc(
+
+        firestore.doc(
+          db,
+          "changeRequests",
+          requestId
+        ),
+
+        {
+          status:"ADMIN_REJECTED"
+        }
+
+      );
+
+
+      alert("❌ Cambio rifiutato");
+
+
+    }
+
+
+    closeRequestsPopup();
+
+
+  }catch(err){
+
+    console.error(
+      "Errore admin:",
+      err
+    );
+
+  }
+
+};
 
 // ======================
 // 📋 LISTA RICHIESTE
