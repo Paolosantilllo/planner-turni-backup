@@ -1533,6 +1533,71 @@ const req = requestDoc.data();
 if(action === "APPROVE"){
 
 
+// ======================
+// 🔥 CONTROLLO ATTIVITÀ PRIMA DELLO SCAMBIO
+// ======================
+
+const targetDayEvents = savedEvents.filter(e =>
+  e.employee === req.fromEmployee &&
+  e.date === req.toDate
+);
+
+
+if(targetDayEvents.length > 0){
+
+
+  const existingShifts =
+    targetDayEvents.map(e => e.shift);
+
+
+  const hasREC =
+    existingShifts.includes("REC");
+
+
+  const hasOnlyREC =
+    targetDayEvents.length === 1 &&
+    hasREC;
+
+
+  // ======================
+  // ✅ ECCEZIONE REP + REC
+  // ======================
+
+  if(hasOnlyREC && req.shift === "REP"){
+
+    // OK, lo scambio può continuare
+
+  } else {
+
+
+    await firestore.updateDoc(
+
+      firestore.doc(
+        db,
+        "changeRequests",
+        requestId
+      ),
+
+      {
+        status:"ADMIN_REJECTED",
+        reason:"Attività già presente nel giorno dello scambio"
+      }
+
+    );
+
+
+    alert(
+      `❌ Cambio rifiutato.\n\n${EMPLOYEES[req.fromEmployee].name} ha già un'attività il ${req.toDate}`
+    );
+
+
+    return;
+
+  }
+
+}
+
+
 
 // ======================
 // PRENDO EVENTI ORIGINALI
