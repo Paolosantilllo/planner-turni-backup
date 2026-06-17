@@ -1597,7 +1597,7 @@ handleAdminRequest('${doc.id}','REJECT')
 // CLICK SU RICHIESTA
 // ======================
 
-div.onclick = function(){
+/*div.onclick = function(){
 
   const actionPopup =
     document.getElementById("requestActionPopup");
@@ -1673,7 +1673,7 @@ document.getElementById("requestsPopup").style.display = "none";
 
   );
    
-};
+};*/
 
 // ======================
 // ✅❌ GESTIONE RICHIESTA
