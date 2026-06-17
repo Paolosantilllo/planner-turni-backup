@@ -1537,7 +1537,10 @@ window.loadNotifications = function(){
 
 const list =
 document.getElementById("notificationsList");
-
+if(!list){
+  console.error("notificationsList non trovato");
+  return;
+}
 list.innerHTML = "Caricamento...";
 
 
