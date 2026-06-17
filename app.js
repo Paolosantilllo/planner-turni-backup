@@ -564,6 +564,46 @@ if (shift === "REP") {
   }
 }
 
+// ======================
+// CONTROLLO COPERTURA DOPO CONVERSIONE
+// ======================
+
+const repCoverageExists = sameDay.some(
+  e => e.shift === "REP" || e.shift === "CFI/REP"
+);
+
+const frepCoverageExists = sameDay.some(
+  e => e.shift === "FREP" || e.shift === "CFI/REP"
+);
+
+// Giorni lavorativi
+if (!info.isSunday && !info.isHoliday) {
+
+  if (
+    (finalShift === "REP" || finalShift === "CFI/REP") &&
+    repCoverageExists
+  ) {
+
+    alert("❌ La reperibilità del giorno è già coperta");
+    return;
+
+  }
+}
+
+// Festivi e domeniche
+if (info.isSunday || info.isHoliday) {
+
+  if (
+    (finalShift === "FREP" || finalShift === "CFI/REP") &&
+    frepCoverageExists
+  ) {
+
+    alert("❌ La reperibilità festiva è già coperta");
+    return;
+
+  }
+}
+       
 /* ======================
    🔴 REP RULES
 ====================== */
