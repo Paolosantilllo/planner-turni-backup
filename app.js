@@ -71,24 +71,43 @@ window.validateShift = function(events, employee, date, shift) {
   const sameDayEvents = events.filter(e => e.date === date);
 
   // ======================
-  // BLOCCO DUPLICATO GIORNO (REP / FREP)
+  // CONTROLLO COPERTURA GIORNALIERA
   // ======================
 
-  const repExists = sameDayEvents.some(e => e.shift === "REP");
-  const frepExists = sameDayEvents.some(e => e.shift === "FREP");
+  const repExists = sameDayEvents.some(
+    e => e.shift === "REP" || e.shift === "CFI/REP"
+  );
 
-  if (shift === "REP" && repExists) {
-    return {
-      ok: false,
-      message: "❌ Esiste già un REP in questo giorno"
-    };
+  const frepExists = sameDayEvents.some(
+    e => e.shift === "FREP" || e.shift === "CFI/REP"
+  );
+
+  // Giorni lavorativi
+  if (!info.isSunday && !info.isHoliday) {
+
+    if (
+      (shift === "REP" || shift === "CFI/REP") &&
+      repExists
+    ) {
+      return {
+        ok: false,
+        message: "❌ La reperibilità del giorno è già coperta"
+      };
+    }
   }
 
-  if (shift === "FREP" && frepExists) {
-    return {
-      ok: false,
-      message: "❌ Esiste già un FREP in questo giorno"
-    };
+  // Domeniche e festivi
+  if (info.isSunday || info.isHoliday) {
+
+    if (
+      (shift === "FREP" || shift === "CFI/REP") &&
+      frepExists
+    ) {
+      return {
+        ok: false,
+        message: "❌ La reperibilità festiva è già coperta"
+      };
+    }
   }
 
   // ======================
@@ -150,8 +169,6 @@ window.validateShift = function(events, employee, date, shift) {
     finalShift: shift
   };
 };
-
-
 /* ======================
    CHECK FESTIVI
 ====================== */
