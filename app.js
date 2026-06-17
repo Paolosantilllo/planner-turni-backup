@@ -1031,7 +1031,11 @@ window.openChangePopup = function () {
     return;
   }
 
-  popup.style.display = "flex";
+  // chiude lista notifiche
+document.getElementById("requestsPopup").style.display = "none";
+
+// apre dettaglio richiesta
+popup.style.display = "flex";
 };
 
 window.closeChangePopup = function () {
