@@ -1534,72 +1534,6 @@ if(action === "APPROVE"){
 
 
 // ======================
-// 🔥 CONTROLLO ATTIVITÀ PRIMA DELLO SCAMBIO
-// ======================
-
-const targetDayEvents = savedEvents.filter(e =>
-  e.employee === req.fromEmployee &&
-  e.date === req.toDate
-);
-
-
-if(targetDayEvents.length > 0){
-
-
-  const existingShifts =
-    targetDayEvents.map(e => e.shift);
-
-
-  const hasREC =
-    existingShifts.includes("REC");
-
-
-  const hasOnlyREC =
-    targetDayEvents.length === 1 &&
-    hasREC;
-
-
-  // ======================
-  // ✅ ECCEZIONE REP + REC
-  // ======================
-
-  if(hasOnlyREC && req.shift === "REP"){
-
-    // OK, lo scambio può continuare
-
-  } else {
-
-
-    await firestore.updateDoc(
-
-      firestore.doc(
-        db,
-        "changeRequests",
-        requestId
-      ),
-
-      {
-        status:"ADMIN_REJECTED",
-        reason:"Attività già presente nel giorno dello scambio"
-      }
-
-    );
-
-
-    alert(
-      `❌ Cambio rifiutato.\n\n${EMPLOYEES[req.fromEmployee].name} ha già un'attività il ${req.toDate}`
-    );
-
-
-    return;
-
-  }
-
-}
-
-
-
-// ======================
 // PRENDO EVENTI ORIGINALI
 // ======================
 
@@ -1633,6 +1567,113 @@ if(!fromEvent || !toEvent){
  return;
 
 }
+
+
+
+// ======================
+// 🔥 CONTROLLO ATTIVITÀ GIORNI SCAMBIO
+// ======================
+
+
+const checkTargetDay = (employee, date, newShift) => {
+
+
+  const events = savedEvents.filter(e =>
+    e.employee === employee &&
+    e.date === date
+  );
+
+
+  // nessuna attività presente
+  if(events.length === 0){
+
+    return true;
+
+  }
+
+
+
+  const existingShifts =
+    events.map(e => e.shift);
+
+
+
+  const hasREC =
+    existingShifts.includes("REC");
+
+
+
+  // ======================
+  // ✅ ECCEZIONE REC + REP
+  // ======================
+
+  if(
+    hasREC &&
+    newShift === "REP" &&
+    events.length === 1
+  ){
+
+    return true;
+
+  }
+
+
+
+  return false;
+
+};
+
+
+
+
+// MANUNTA riceve il giorno di SANTILLO
+const checkToEmployee = checkTargetDay(
+  req.toEmployee,
+  req.fromDate,
+  req.shift
+);
+
+
+
+// SANTILLO riceve il giorno di MANUNTA
+const checkFromEmployee = checkTargetDay(
+  req.fromEmployee,
+  req.toDate,
+  req.shift
+);
+
+
+
+if(!checkToEmployee || !checkFromEmployee){
+
+
+
+ await firestore.updateDoc(
+
+  firestore.doc(
+   db,
+   "changeRequests",
+   requestId
+  ),
+
+  {
+   status:"ADMIN_REJECTED",
+   reason:"Attività già presente nel giorno dello scambio"
+  }
+
+ );
+
+
+ alert(
+ "❌ Cambio rifiutato.\n\nUno dei dipendenti ha già un'attività nel giorno dello scambio"
+ );
+
+
+ return;
+
+
+}
+
 
 
 // ======================
@@ -1674,6 +1715,7 @@ await firestore.addDoc(
  createdAt:new Date()
 
  }
+
 );
 
 
@@ -1738,7 +1780,6 @@ alert("❌ Cambio rifiutato");
 
 
 }
-
 
 closeRequestsPopup();
 
