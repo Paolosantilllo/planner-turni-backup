@@ -1443,92 +1443,53 @@ if(
   div.className = "request-item";
 
 
-  div.innerHTML = `
+ div.innerHTML = `
 
-<p>
-🔁 Richiesta cambio
-</p>
+<div class="request-card">
 
-<p>
-Da:
-${EMPLOYEES[req.fromEmployee].name}
-</p>
+  <div class="request-employee">
+    ${EMPLOYEES[req.fromEmployee].name}
+  </div>
 
-<p>
-Giorno:
-${req.fromDate}
-➡️
-${req.toDate}
-</p>
+  <div class="request-shift">
+    (${req.shift})
+  </div>
 
-<p>
-Turno:
-${req.shift}
-</p>
+  <div class="request-date">
+    ${req.fromDate}
+    ➜
+    ${req.toDate}
+  </div>
 
-`;
+  <div class="popup-actions">
 
+    <button
+      class="request-accept-btn"
+      onclick="
+      event.stopPropagation();
+      handleChangeRequest('${doc.id}','ACCEPT')
+      ">
+      ✅ Accetta
+    </button>
 
-  div.innerHTML = `
+    <button
+      class="request-reject-btn"
+      onclick="
+      event.stopPropagation();
+      handleChangeRequest('${doc.id}','REJECT')
+      ">
+      ❌ Rifiuta
+    </button>
 
-<p>
-🔁 Richiesta cambio
-</p>
-
-
-<p>
-Da:
-${EMPLOYEES[req.fromEmployee].name}
-</p>
-
-
-<p>
-Giorno:
-${req.fromDate}
-➡️
-${req.toDate}
-</p>
-
-
-<p>
-Turno:
-${req.shift}
-</p>
-
-
-<div class="popup-actions">
-
-
-<button
-class="btn-accept"
-onclick="
-event.stopPropagation();
-handleChangeRequest('${doc.id}','ACCEPT')
-">
-✅ Accetta
-</button>
-
-
-<button
-class="btn-reject"
-onclick="
-event.stopPropagation();
-handleChangeRequest('${doc.id}','REJECT')
-">
-❌ Rifiuta
-</button>
-
+  </div>
 
 </div>
 
 `;
 
-
-  list.appendChild(div);
-
+list.appendChild(div);
 
 }
-
         // ======================
         // 👑 LIVELLO ADMIN
         // ======================
