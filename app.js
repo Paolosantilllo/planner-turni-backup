@@ -1250,13 +1250,24 @@ window.loadChangeRequests = function(){
 
 
         if(
-          req.toEmployee === CURRENT_EMPLOYEE &&
-          req.status === "PENDING_USER"
-        ){
 
-          count++;
+  (
+    req.toEmployee === CURRENT_EMPLOYEE &&
+    req.status === "PENDING_USER"
+  )
 
-        }
+  ||
+
+  (
+    EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
+    req.status === "PENDING_ADMIN"
+  )
+
+){
+
+  count++;
+
+}
 
 
       });
