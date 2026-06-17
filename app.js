@@ -469,8 +469,13 @@ window.saveShift = async function () {
      
  const sameDay = savedEvents.filter(e => e.date === dateStr);
 
-  const repExists = sameDay.some(e => e.shift === "REP");
-  const frepExists = sameDay.some(e => e.shift === "FREP");
+  const repExists = sameDay.some(
+  e => e.shift === "REP" || e.shift === "CFI/REP"
+);
+
+const frepExists = sameDay.some(
+  e => e.shift === "FREP" || e.shift === "CFI/REP"
+);
 
  // ======================
 // 🔥 CONTROLLO ATTIVITÀ DIPENDENTE
@@ -518,16 +523,35 @@ if (employeeEvents.length > 0) {
 
 }
 
-  // ❌ blocco REP/FREP stesso giorno
-  if (shift === "REP" && frepExists) {
-    alert("❌ C’è già FREP in questo giorno");
+ // ======================
+// CONTROLLO COPERTURA GIORNALIERA
+// ======================
+
+// Lunedì-Sabato non festivi
+if (!info.isSunday && !info.isHoliday) {
+
+  if (
+    (shift === "REP" || shift === "CFI/REP") &&
+    repExists
+  ) {
+    alert("❌ Esiste già una reperibilità REP in questo giorno");
     return;
   }
 
-  if (shift === "FREP" && repExists) {
-    alert("❌ C’è già REP in questo giorno");
+}
+
+// Domeniche e Festivi
+if (info.isSunday || info.isHoliday) {
+
+  if (
+    (shift === "FREP" || shift === "CFI/REP") &&
+    frepExists
+  ) {
+    alert("❌ Esiste già una reperibilità FREP in questo giorno");
     return;
   }
+
+}
 
   // =========================
   // 🔥 AUTO CONVERSIONE REP → FREP
