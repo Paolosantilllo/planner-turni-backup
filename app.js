@@ -1935,7 +1935,7 @@ window.loadRequestsList = function(){
 
 
 
-       // ======================
+  // ======================
 // 👤 LIVELLO DIPENDENTE
 // ======================
 
@@ -1945,14 +1945,14 @@ if(
 ){
 
 
-  const div =
-  document.createElement("div");
+const div =
+document.createElement("div");
 
 
-  div.className = "request-item";
+div.className = "request-item";
 
 
- div.innerHTML = `
+div.innerHTML = `
 
 <div class="request-card">
 
@@ -2022,6 +2022,59 @@ handleChangeRequest('${doc.id}','REJECT')
 `;
 
 list.appendChild(div);
+
+}
+
+
+
+// ======================
+// 🔔 NOTIFICA RICHIEDENTE
+// ======================
+
+if(
+  req.fromEmployee === CURRENT_EMPLOYEE &&
+  req.status === "PENDING_ADMIN"
+){
+
+
+const div =
+document.createElement("div");
+
+
+div.className="request-item";
+
+
+div.innerHTML = `
+
+<div class="request-card">
+
+
+<h2 style="text-align:center;">
+🔔 Aggiornamento cambio
+</h2>
+
+
+<p>
+La richiesta è stata accettata da
+${EMPLOYEES[req.toEmployee].name}
+ed inoltrata all'Admin
+</p>
+
+
+<p>
+${req.fromDate}
+➡️
+${req.toDate}
+</p>
+
+
+</div>
+
+`;
+
+
+list.appendChild(div);
+
 
 }
         // ======================
