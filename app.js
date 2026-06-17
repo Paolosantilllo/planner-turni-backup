@@ -1469,41 +1469,59 @@ ${req.shift}
 `;
 
 
-  div.onclick = () => {
-
-
-    const popup =
-    document.getElementById("requestActionPopup");
-
-
-    popup.dataset.requestId = doc.id;
-
-
-    document.getElementById(
-      "requestDetails"
-    ).innerHTML = `
-
-<h3>
-${EMPLOYEES[req.fromEmployee].name}
-</h3>
+  div.innerHTML = `
 
 <p>
-(${req.shift})
+🔁 Richiesta cambio
 </p>
 
+
 <p>
+Da:
+${EMPLOYEES[req.fromEmployee].name}
+</p>
+
+
+<p>
+Giorno:
 ${req.fromDate}
 ➡️
 ${req.toDate}
 </p>
 
+
+<p>
+Turno:
+${req.shift}
+</p>
+
+
+<div class="popup-actions">
+
+
+<button
+class="btn-accept"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','ACCEPT')
+">
+✅ Accetta
+</button>
+
+
+<button
+class="btn-reject"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','REJECT')
+">
+❌ Rifiuta
+</button>
+
+
+</div>
+
 `;
-
-
-    popup.style.display = "flex";
-
-
-  };
 
 
   list.appendChild(div);
