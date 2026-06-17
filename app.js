@@ -2054,62 +2054,128 @@ window.handleChangeRequest = async function(
   action
 ){
 
-  try{
+try{
 
-    let newStatus;
 
-    if(action === "ACCEPT"){
+// recupero richiesta
 
-      newStatus = "PENDING_ADMIN";
+const requestDoc =
+await firestore.getDoc(
 
-    }else{
+  firestore.doc(
+    db,
+    "changeRequests",
+    requestId
+  )
 
-      newStatus = "USER_REJECTED";
+);
 
-    }
 
-    await firestore.updateDoc(
+const req = requestDoc.data();
 
-      firestore.doc(
-        db,
-        "changeRequests",
-        requestId
-      ),
 
-      {
-        status: newStatus
-      }
 
-    );
+let newStatus;
+let notificationText;
 
-    closeRequestActionPopup();
 
-    alert(
-      action === "ACCEPT"
-      ? "✅ Richiesta accettata e inoltrata all'Admin"
-      : "❌ Richiesta rifiutata"
-    );
 
-  }catch(err){
+// ======================
+// ACCETTA
+// ======================
 
-    console.error(
-      "Errore gestione richiesta:",
-      err
-    );
+if(action === "ACCEPT"){
+
+
+  newStatus = "PENDING_ADMIN";
+
+
+  notificationText =
+  `✅ La richiesta di cambio è stata accettata da ${EMPLOYEES[req.toEmployee].name} ed inoltrata all'Admin`;
+
+
+
+}
+
+
+// ======================
+// RIFIUTA
+// ======================
+
+else{
+
+
+  newStatus = "USER_REJECTED";
+
+
+  notificationText =
+  `❌ La richiesta di cambio è stata rifiutata da ${EMPLOYEES[req.toEmployee].name}`;
+
+
+}
+
+
+
+// aggiorno richiesta
+
+await firestore.updateDoc(
+
+  firestore.doc(
+    db,
+    "changeRequests",
+    requestId
+  ),
+
+  {
+
+    status:newStatus,
+
+    notification:notificationText
 
   }
 
-};
+);
 
-window.closeRequestActionPopup = function(){
 
-  const popup =
-    document.getElementById("requestActionPopup");
 
-  if(popup){
+// creo notifica al richiedente
 
-    popup.style.display = "none";
+await firestore.addDoc(
+
+  firestore.collection(db,"notifications"),
+
+  {
+
+    employee:req.fromEmployee,
+
+    message:notificationText,
+
+    read:false,
+
+    createdAt:new Date()
 
   }
+
+);
+
+
+
+closeRequestActionPopup();
+
+
+
+alert(notificationText);
+
+
+
+}catch(err){
+
+console.error(
+"Errore gestione richiesta:",
+err
+);
+
+
+}
 
 };
