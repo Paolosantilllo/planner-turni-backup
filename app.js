@@ -1447,41 +1447,66 @@ if(
 
 <div class="request-card">
 
-  <div class="request-employee">
-    ${EMPLOYEES[req.fromEmployee].name}
-  </div>
 
-  <div class="request-shift">
-    (${req.shift})
-  </div>
+<h2 style="text-align:center;">
+Gestione richiesta
+</h2>
 
-  <div class="request-date">
-    ${req.fromDate}
-    ➜
-    ${req.toDate}
-  </div>
 
-  <div class="popup-actions">
+<div class="request-employee">
 
-    <button
-      class="request-accept-btn"
-      onclick="
-      event.stopPropagation();
-      handleChangeRequest('${doc.id}','ACCEPT')
-      ">
-      ✅ Accetta
-    </button>
+${EMPLOYEES[req.fromEmployee].name}
 
-    <button
-      class="request-reject-btn"
-      onclick="
-      event.stopPropagation();
-      handleChangeRequest('${doc.id}','REJECT')
-      ">
-      ❌ Rifiuta
-    </button>
+</div>
 
-  </div>
+
+<div class="request-shift">
+
+(${req.shift})
+
+</div>
+
+
+<div class="request-date">
+
+${req.fromDate}
+&nbsp; → &nbsp;
+${req.toDate}
+
+</div>
+
+
+
+<div class="popup-actions">
+
+
+<button
+class="btn-accept"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','ACCEPT')
+">
+
+✅ Accetta
+
+</button>
+
+
+
+<button
+class="btn-reject"
+onclick="
+event.stopPropagation();
+handleChangeRequest('${doc.id}','REJECT')
+">
+
+❌ Rifiuta
+
+</button>
+
+
+</div>
+
 
 </div>
 
