@@ -1513,20 +1513,20 @@ window.openRequestsPopup = function(){
   const popup =
     document.getElementById("requestsPopup");
 
-
   if(!popup){
     console.error("requestsPopup non trovato");
     return;
   }
 
-
   popup.style.display = "flex";
 
-   // carica richieste + notifiche 
+  // richieste operative
   loadRequestsList();
 
-};
+  // notifiche informative
+  loadNotifications();
 
+};
 
 // ======================
 // 🔔 CARICA NOTIFICHE
@@ -1536,8 +1536,7 @@ window.loadNotifications = function(){
 
 
 const list =
-document.getElementById("requestsList");
-
+document.getElementById("notificationsList");
 
 list.innerHTML = "Caricamento...";
 
