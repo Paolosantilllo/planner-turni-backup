@@ -1422,24 +1422,24 @@ window.loadRequestsList = function(){
 
 
 
-        // ======================
-        // 👤 LIVELLO DIPENDENTE
-        // ======================
+       // ======================
+// 👤 LIVELLO DIPENDENTE
+// ======================
 
-        if(
-          req.toEmployee === CURRENT_EMPLOYEE &&
-          req.status === "PENDING_USER"
-        ){
-
-
-          const div =
-          document.createElement("div");
+if(
+  req.toEmployee === CURRENT_EMPLOYEE &&
+  req.status === "PENDING_USER"
+){
 
 
-          div.className = "request-item";
+  const div =
+  document.createElement("div");
 
 
-          div.innerHTML = `
+  div.className = "request-item";
+
+
+  div.innerHTML = `
 
 <p>
 🔁 Richiesta cambio
@@ -1462,41 +1462,50 @@ Turno:
 ${req.shift}
 </p>
 
-
-<div class="popup-actions">
-
-
-<button
-class="btn-accept"
-onclick="
-event.stopPropagation();
-handleChangeRequest('${doc.id}','ACCEPT')
-">
-✅ Accetta
-</button>
+`;
 
 
-<button
-class="btn-reject"
-onclick="
-event.stopPropagation();
-handleChangeRequest('${doc.id}','REJECT')
-">
-❌ Rifiuta
-</button>
+  div.onclick = () => {
 
 
-</div>
+    const popup =
+    document.getElementById("requestActionPopup");
+
+
+    popup.dataset.requestId = doc.id;
+
+
+    document.getElementById(
+      "requestDetails"
+    ).innerHTML = `
+
+<h3>
+${EMPLOYEES[req.fromEmployee].name}
+</h3>
+
+<p>
+(${req.shift})
+</p>
+
+<p>
+${req.fromDate}
+➡️
+${req.toDate}
+</p>
 
 `;
 
 
-          list.appendChild(div);
+    popup.style.display = "flex";
 
 
-        }
+  };
 
 
+  list.appendChild(div);
+
+
+}
 
         // ======================
         // 👑 LIVELLO ADMIN
