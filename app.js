@@ -1505,7 +1505,7 @@ window.sendChangeRequest = async function(){
 };
 
 // ======================
-// 🔔 APRI POPUP RICHIESTE
+// 🔔 APRI POPUP NOTIFICHE
 // ======================
 
 window.openRequestsPopup = function(){
@@ -1513,18 +1513,104 @@ window.openRequestsPopup = function(){
   const popup =
     document.getElementById("requestsPopup");
 
+
   if(!popup){
     console.error("requestsPopup non trovato");
     return;
   }
 
+
   popup.style.display = "flex";
 
-  loadRequestsList();
+
+  loadNotifications();
 
 };
 
 
+// ======================
+// 🔔 CARICA NOTIFICHE
+// ======================
+
+window.loadNotifications = function(){
+
+
+const list =
+document.getElementById("requestsList");
+
+
+list.innerHTML = "Caricamento...";
+
+
+firestore.onSnapshot(
+
+firestore.collection(db,"notifications"),
+
+(snap)=>{
+
+
+list.innerHTML = "";
+
+
+snap.forEach(doc=>{
+
+
+const n = doc.data();
+
+
+if(n.employee !== CURRENT_EMPLOYEE)
+return;
+
+
+const div =
+document.createElement("div");
+
+
+div.className="request-item";
+
+
+div.innerHTML = `
+
+<div class="request-card">
+
+<h3>
+🔔 Notifica
+</h3>
+
+<p>
+${n.message}
+</p>
+
+</div>
+
+`;
+
+
+list.appendChild(div);
+
+
+});
+
+
+// tolgo badge
+
+const badge =
+document.getElementById("notifBadge");
+
+
+if(badge){
+
+badge.innerText="";
+
+}
+
+
+}
+
+);
+
+
+};
 // ======================
 // ❌ CHIUDI POPUP RICHIESTE
 // ======================
