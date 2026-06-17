@@ -1415,68 +1415,181 @@ window.handleAdminRequest = async function(
   action
 ){
 
-  try{
+try{
 
 
-    if(action === "APPROVE"){
+const requestDoc =
+await firestore.getDoc(
+  firestore.doc(
+    db,
+    "changeRequests",
+    requestId
+  )
+);
 
 
-      await firestore.updateDoc(
-
-        firestore.doc(
-          db,
-          "changeRequests",
-          requestId
-        ),
-
-        {
-          status:"APPROVED"
-        }
-
-      );
+const req = requestDoc.data();
 
 
-      alert("✅ Cambio approvato");
+
+if(action === "APPROVE"){
 
 
-    }else{
+
+// ======================
+// PRENDO EVENTI ORIGINALI
+// ======================
 
 
-      await firestore.updateDoc(
-
-        firestore.doc(
-          db,
-          "changeRequests",
-          requestId
-        ),
-
-        {
-          status:"ADMIN_REJECTED"
-        }
-
-      );
+const fromEvent =
+savedEvents.find(e =>
+  e.employee === req.fromEmployee &&
+  e.date === req.fromDate &&
+  e.shift === req.shift
+);
 
 
-      alert("❌ Cambio rifiutato");
+
+const toEvent =
+savedEvents.find(e =>
+  e.employee === req.toEmployee &&
+  e.date === req.toDate &&
+  e.shift === req.shift
+);
 
 
-    }
+
+// controllo sicurezza
+
+if(!fromEvent || !toEvent){
+
+ alert(
+ "❌ Impossibile trovare le reperibilità da scambiare"
+ );
+
+ return;
+
+}
 
 
-    closeRequestsPopup();
+// ======================
+// ELIMINO VECCHI TURNI
+// ======================
 
 
-  }catch(err){
+await firestore.deleteDoc(
+ firestore.doc(
+  db,
+  "events",
+  fromEvent.id
+ )
+);
 
-    console.error(
-      "Errore admin:",
-      err
-    );
 
-  }
+await firestore.deleteDoc(
+ firestore.doc(
+  db,
+  "events",
+  toEvent.id
+ )
+);
+
+
+
+// ======================
+// CREO NUOVI TURNI
+// ======================
+
+
+await firestore.addDoc(
+ firestore.collection(db,"events"),
+ {
+
+ employee:req.toEmployee,
+ date:req.fromDate,
+ shift:req.shift,
+ createdAt:new Date()
+
+ }
+);
+
+
+
+await firestore.addDoc(
+ firestore.collection(db,"events"),
+ {
+
+ employee:req.fromEmployee,
+ date:req.toDate,
+ shift:req.shift,
+ createdAt:new Date()
+
+ }
+
+);
+
+
+
+// ======================
+// AGGIORNO RICHIESTA
+// ======================
+
+
+await firestore.updateDoc(
+
+ firestore.doc(
+  db,
+  "changeRequests",
+  requestId
+ ),
+
+ {
+  status:"APPROVED"
+ }
+
+);
+
+
+alert("✅ Cambio reperibilità approvato");
+
+
+}else{
+
+
+await firestore.updateDoc(
+
+ firestore.doc(
+  db,
+  "changeRequests",
+  requestId
+ ),
+
+ {
+ status:"ADMIN_REJECTED"
+ }
+
+);
+
+
+alert("❌ Cambio rifiutato");
+
+
+}
+
+
+closeRequestsPopup();
+
+
+}catch(err){
+
+console.error(
+"Errore admin:",
+err
+);
+
+}
 
 };
-
 // ======================
 // 📋 LISTA RICHIESTE
 // ======================
