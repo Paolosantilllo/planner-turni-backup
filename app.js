@@ -1592,19 +1592,6 @@ list.appendChild(div);
 });
 
 
-// tolgo badge
-
-const badge =
-document.getElementById("notifBadge");
-
-
-if(badge){
-
-badge.innerText="";
-
-}
-
-
 }
 
 );
