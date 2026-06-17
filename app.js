@@ -1347,18 +1347,46 @@ window.loadChangeRequests = function(){
         const req = doc.data();
 
 
-        if(
+        // ======================
+// 🔔 CONTEGGIO NOTIFICHE
+// ======================
 
+
+// richiesta da accettare/rifiutare
+if(
+  req.toEmployee === CURRENT_EMPLOYEE &&
+  req.status === "PENDING_USER"
+){
+
+  count++;
+
+}
+
+
+// richiesta accettata dal sostituto
+if(
+  req.fromEmployee === CURRENT_EMPLOYEE &&
+  req.status === "PENDING_ADMIN"
+){
+
+  count++;
+
+}
+
+
+// risposta finale Admin
+if(
   (
-    req.toEmployee === CURRENT_EMPLOYEE &&
-    req.status === "PENDING_USER"
+    req.fromEmployee === CURRENT_EMPLOYEE ||
+    req.toEmployee === CURRENT_EMPLOYEE
   )
 
-  ||
+  &&
 
   (
-    EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
-    req.status === "PENDING_ADMIN"
+    req.status === "APPROVED" ||
+    req.status === "ADMIN_REJECTED" ||
+    req.status === "USER_REJECTED"
   )
 
 ){
@@ -1367,6 +1395,16 @@ window.loadChangeRequests = function(){
 
 }
 
+
+// Admin vede richieste da approvare
+if(
+  EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
+  req.status === "PENDING_ADMIN"
+){
+
+  count++;
+
+}
 
       });
 
