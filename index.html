@@ -314,67 +314,33 @@
 
 <!-- POPUP AZIONE RICHIESTA -->
 <div id="requestActionPopup" class="popup" style="display:none;">
-
-  <div class="popup-content">
-
-    <div class="popup-header">
-
-      <h2>Gestione richiesta</h2>
-
-            <button
-        class="close-btn"
-        onclick="closeRequestActionPopup()">
-        ✕
-      </button>
-
-    </div>
-
-    <div id="requestDetails"></div>
-
-
-    <div class="popup-actions">
-
-
-      <button
-        class="btn-accept"
-        onclick="handleChangeRequest(
-          document.getElementById('requestActionPopup').dataset.requestId,
-          'ACCEPT'
-        )">
-
-        ✅ Accetta
-
-      </button>
-
-
-
-      <button
-        class="btn-reject"
-        onclick="handleChangeRequest(
-          document.getElementById('requestActionPopup').dataset.requestId,
-          'REJECT'
-        )">
-
-        ❌ Rifiuta
-
-      </button>
-
-
-    </div>
-
-      <button
-        class="delete-btn"
-        onclick="handleChangeRequest(
-          document.getElementById('requestActionPopup').dataset.requestId,
-          'REJECT'
-        )">
-        ❌ Rifiuta
-      </button>
-
-    </div>
-
+  <div class="request-modal">
+<div class="request-header">
+  <h2>Gestione richiesta</h2>
+  <button
+    class="close-btn"
+    onclick="closeRequestActionPopup()">
+    ✕
+  </button>
+</div>
+<div id="requestDetails"></div>
+<button
+  class="request-btn-accept"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'ACCEPT'
+  )">
+  ✅ Accetta
+</button>
+<button
+  class="request-btn-reject"
+  onclick="handleChangeRequest(
+    document.getElementById('requestActionPopup').dataset.requestId,
+    'REJECT'
+  )">
+  ❌ Rifiuta
+</button>
   </div>
-
 </div>
 <!-- POPUP PDF EXPORT -->
 <div class="popup" id="pdfPopup">
