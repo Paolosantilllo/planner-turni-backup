@@ -1533,11 +1533,14 @@ window.loadNotifications = function(){
 
 
 const list =
-document.getElementById("notificationsList");
+document.getElementById("requestsList");
+
 if(!list){
-  console.error("notificationsList non trovato");
+  console.error("requestsList non trovato");
   return;
 }
+
+list.innerHTML = "Caricamento...";
 list.innerHTML = "Caricamento...";
 
 
