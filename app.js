@@ -1521,8 +1521,7 @@ window.openRequestsPopup = function(){
   popup.style.display = "flex";
 
   loadRequestsList();
-  loadNotifications();
-
+  
 };
 
 
