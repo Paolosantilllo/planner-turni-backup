@@ -1525,25 +1525,7 @@ window.openRequestsPopup = function(){
 
 };
 
-// ======================
-// 🔔 APRI SOLO NOTIFICHE
-// ======================
 
-window.openNotificationsPopup = function(){
-
-  const popup =
-    document.getElementById("changeRequestsPopup");
-
-  if(!popup){
-    console.error("changeRequestsPopup non trovato");
-    return;
-  }
-
-  popup.style.display = "flex";
-
-  loadNotifications();
-
-};
 
 // ======================
 // 🔔 APRI SOLO NOTIFICHE
