@@ -1511,7 +1511,7 @@ window.sendChangeRequest = async function(){
 window.openRequestsPopup = function(){
 
   const popup =
-    document.getElementById("requestsPopup");
+    document.getElementById("changeRequestsPopup");
 
   if(!popup){
     console.error("requestsPopup non trovato");
@@ -1520,10 +1520,7 @@ window.openRequestsPopup = function(){
 
   popup.style.display = "flex";
 
-  // richieste operative
   loadRequestsList();
-
-  // notifiche informative
   loadNotifications();
 
 };
@@ -1607,7 +1604,7 @@ list.appendChild(div);
 window.closeRequestsPopup = function(){
 
   const popup =
-    document.getElementById("requestsPopup");
+    document.getElementById("changeRequestsPopup");
 
   if(popup){
 
