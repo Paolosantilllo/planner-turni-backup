@@ -1584,6 +1584,84 @@ window.closeNotificationsPopup = function(){
 };
 
 // ======================
+// 🔔 CARICA SOLO NOTIFICHE
+// ======================
+
+window.loadOnlyNotifications = function(){
+
+
+const list =
+document.getElementById("notificationsOnlyList");
+
+
+if(!list){
+  console.error("notificationsOnlyList non trovato");
+  return;
+}
+
+
+list.innerHTML = "Caricamento...";
+
+
+firestore.onSnapshot(
+
+firestore.collection(db,"notifications"),
+
+(snap)=>{
+
+
+list.innerHTML = "";
+
+
+snap.forEach(doc=>{
+
+
+const n = doc.data();
+
+
+if(n.employee !== CURRENT_EMPLOYEE)
+return;
+
+
+
+const div =
+document.createElement("div");
+
+
+div.className="request-item";
+
+
+div.innerHTML = `
+
+<div class="request-card">
+
+<h3>
+🔔 Notifica
+</h3>
+
+<p>
+${n.message}
+</p>
+
+</div>
+
+`;
+
+
+list.appendChild(div);
+
+
+});
+
+
+}
+
+);
+
+
+};
+
+// ======================
 // 🔔 CARICA NOTIFICHE
 // ======================
 
