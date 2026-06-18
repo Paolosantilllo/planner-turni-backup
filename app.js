@@ -1111,7 +1111,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
 // ======================
 // 🔁 CAMBIO REPERIBILITA'
 // ======================
@@ -1129,11 +1128,19 @@ window.openChangePopup = function () {
     return;
   }
 
-  // chiude lista notifiche
-document.getElementById("requestsPopup").style.display = "none";
 
-// apre dettaglio richiesta
-popup.style.display = "flex";
+  // chiude centro notifiche se aperto
+  const requestsPopup =
+    document.getElementById("changeRequestsPopup");
+
+  if(requestsPopup){
+    requestsPopup.style.display = "none";
+  }
+
+
+  // apre cambio reperibilità
+  popup.style.display = "flex";
+
 };
 
 window.closeChangePopup = function () {
