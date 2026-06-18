@@ -1546,6 +1546,44 @@ window.openNotificationsPopup = function(){
 };
 
 // ======================
+// 🔔 APRI SOLO NOTIFICHE
+// ======================
+
+window.openNotificationsPopup = function(){
+
+  const popup =
+    document.getElementById("notificationsPopup");
+
+  if(!popup){
+    console.error("notificationsPopup non trovato");
+    return;
+  }
+
+  popup.style.display = "flex";
+
+  loadOnlyNotifications();
+
+};
+
+
+// ======================
+// ❌ CHIUDI SOLO NOTIFICHE
+// ======================
+
+window.closeNotificationsPopup = function(){
+
+  const popup =
+    document.getElementById("notificationsPopup");
+
+  if(popup){
+
+    popup.style.display = "none";
+
+  }
+
+};
+
+// ======================
 // 🔔 CARICA NOTIFICHE
 // ======================
 
