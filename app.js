@@ -1346,6 +1346,7 @@ window.loadChangeRequests = function(){
 
 
       let count = 0;
+let requestCount = 0;
 
 const isAdmin =
   EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
