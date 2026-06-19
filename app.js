@@ -205,11 +205,107 @@ function loadEvents() {
 
       console.log("EVENTI CARICATI:", savedEvents.length);
 
-      renderCalendar(); // 👈 SOLO QUI
+            renderCalendar(); // 👈 SOLO QUI
 
     }
   );
 }
+
+
+// ======================
+// 🔔 CARICA RICHIESTE CAMBIO
+// ======================
+
+window.loadChangeRequests = function(){
+
+firestore.onSnapshot(
+
+firestore.collection(db,"changeRequests"),
+
+(snap)=>{
+
+
+let requestCount = 0;
+
+
+const isAdmin =
+EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
+
+
+snap.forEach(doc=>{
+
+
+const req = doc.data();
+
+
+
+if(
+req.toEmployee === CURRENT_EMPLOYEE &&
+req.status === "PENDING_USER"
+){
+
+requestCount++;
+
+console.log(
+"RICHIESTA DIP:",
+req.fromEmployee,
+"→",
+req.toEmployee
+);
+
+}
+
+
+
+if(
+isAdmin &&
+req.status === "PENDING_ADMIN"
+){
+
+requestCount++;
+
+console.log(
+"RICHIESTA ADMIN:",
+req.fromEmployee,
+"→",
+req.toEmployee
+);
+
+}
+
+
+});
+
+
+
+const requestBadge =
+document.getElementById("requestBadge");
+
+
+if(requestBadge){
+
+requestBadge.innerText =
+requestCount > 0
+? requestCount
+: "";
+
+}
+
+
+
+console.log(
+"BADGE RICHIESTE:",
+requestCount
+);
+
+
+}
+
+);
+
+};
+
+
 
 /* ======================
    RENDER CALENDARIO
