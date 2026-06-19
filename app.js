@@ -1422,27 +1422,16 @@ if(
       });
 
 
-      const notifBadge =
-  document.getElementById("notifBadge");
-
+      
 const requestBadge =
   document.getElementById("requestBadge");
 
-if (notifBadge) {
-  notifBadge.innerText =
-    count > 0 ? count : "";
-}
+
 
 if (requestBadge) {
   requestBadge.innerText =
     requestCount > 0 ? requestCount : "";
 }
-
-
-      console.log(
-        "Richieste ricevute:",
-        count
-      );
 
 
     }
