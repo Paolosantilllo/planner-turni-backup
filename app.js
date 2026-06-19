@@ -1375,13 +1375,11 @@ if (
 
 
 // richiesta accettata dal sostituto
-if(
-  req.fromEmployee === CURRENT_EMPLOYEE &&
-  req.status === "PENDING_ADMIN"
+if (
+  req.toEmployee === CURRENT_EMPLOYEE &&
+  req.status === "PENDING_USER"
 ){
-
-  count++;
-
+  requestCount++;
 }
 
 
