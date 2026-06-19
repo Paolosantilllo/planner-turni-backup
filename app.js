@@ -1347,12 +1347,12 @@ window.loadChangeRequests = function(){
 
       let count = 0;
 
+const isAdmin =
+  EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
 
-      snap.forEach(doc=>{
+snap.forEach(doc=>{
 
-
-        const req = doc.data();
-
+  const req = doc.data();
 
         // ======================
 // 🔔 CONTEGGIO NOTIFICHE
@@ -1360,13 +1360,17 @@ window.loadChangeRequests = function(){
 
 
 // richiesta da accettare/rifiutare
-if(
+if (
   req.toEmployee === CURRENT_EMPLOYEE &&
   req.status === "PENDING_USER"
 ){
-
   count++;
-
+  console.log(
+    "NOTIFICA PENDING_USER:",
+    req.fromEmployee,
+    "→",
+    req.toEmployee
+  );
 }
 
 
@@ -1405,14 +1409,18 @@ if(
 
 // Admin vede richieste da approvare
 if(
-  EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
+  isAdmin &&
   req.status === "PENDING_ADMIN"
 ){
-
   count++;
 
+  console.log(
+    "NOTIFICA ADMIN:",
+    req.fromEmployee,
+    "→",
+    req.toEmployee
+  );
 }
-
       });
 
 
