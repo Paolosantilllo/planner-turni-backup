@@ -1569,7 +1569,7 @@ const popup =
 document.getElementById("notificationsPopup");
 
 if(popup){
-popup.style.display = “none”;
+popup.style.display = "none";
 }
 
 try{
