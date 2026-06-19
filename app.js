@@ -1527,9 +1527,10 @@ window.openRequestsPopup = function(){
 
   popup.style.display = "flex";
 
-  loadRequestsList();
-  
-};
+  if(!window.requestsLoaded){
+   loadRequestsList();
+   window.requestsLoaded = true;
+}
 
 
 
@@ -1549,10 +1550,10 @@ window.openNotificationsPopup = function(){
 
   popup.style.display = "flex";
 
-  loadOnlyNotifications();
-
-};
-
+  if(!window.notificationsLoaded){
+   loadOnlyNotifications();
+   window.notificationsLoaded = true;
+}
 
 // ======================
 // ❌ CHIUDI SOLO NOTIFICHE
