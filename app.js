@@ -1566,7 +1566,7 @@ window.openNotificationsPopup = function(){
 window.closeNotificationsPopup = async function(){
 
 const popup =
-document.getElementById(“notificationsPopup”);
+document.getElementById("notificationsPopup");
 
 if(popup){
 popup.style.display = “none”;
