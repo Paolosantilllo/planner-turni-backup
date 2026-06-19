@@ -2035,6 +2035,9 @@ alert("✅ Cambio reperibilità approvato");
 }else{
 
 
+if(action === "APPROVE"){
+
+
 await firestore.updateDoc(
 
  firestore.doc(
@@ -2044,7 +2047,108 @@ await firestore.updateDoc(
  ),
 
  {
- status:"ADMIN_REJECTED"
+  status:"APPROVED"
+ }
+
+);
+
+
+// 🔔 NOTIFICA A ENTRAMBI
+
+await firestore.addDoc(
+
+ firestore.collection(db,"notifications"),
+
+ {
+  employee:req.fromEmployee,
+
+  message:
+  `✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
+
+  read:false,
+
+  createdAt:new Date()
+
+ }
+
+);
+
+
+await firestore.addDoc(
+
+ firestore.collection(db,"notifications"),
+
+ {
+  employee:req.toEmployee,
+
+  message:
+  `✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
+
+  read:false,
+
+  createdAt:new Date()
+
+ }
+
+);
+
+
+alert("✅ Cambio reperibilità approvato");
+
+
+}else{
+
+
+await firestore.updateDoc(
+
+ firestore.doc(
+  db,
+  "changeRequests",
+  requestId
+ ),
+
+ {
+  status:"ADMIN_REJECTED"
+ }
+
+);
+
+
+// 🔔 NOTIFICA RIFIUTO A ENTRAMBI
+
+await firestore.addDoc(
+
+ firestore.collection(db,"notifications"),
+
+ {
+  employee:req.fromEmployee,
+
+  message:
+  `❌ L'Admin ha rifiutato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
+
+  read:false,
+
+  createdAt:new Date()
+
+ }
+
+);
+
+
+await firestore.addDoc(
+
+ firestore.collection(db,"notifications"),
+
+ {
+  employee:req.toEmployee,
+
+  message:
+  `❌ L'Admin ha rifiutato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
+
+  read:false,
+
+  createdAt:new Date()
+
  }
 
 );
@@ -2054,7 +2158,6 @@ alert("❌ Cambio rifiutato");
 
 
 }
-
 closeRequestsPopup();
 
 
