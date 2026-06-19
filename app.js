@@ -1348,7 +1348,33 @@ window.loadChangeRequests = function(){
       let count = 0;
 let requestCount = 0;
 
-const isAdmin =
+firestore.getDocs(
+  firestore.collection(db,"notifications")
+).then((snap)=>{
+
+  let notifCount = 0;
+
+  snap.forEach(doc=>{
+
+    const n = doc.data();
+
+    if(n.employee === CURRENT_EMPLOYEE){
+      notifCount++;
+    }
+
+  });
+
+  const notifBadge =
+    document.getElementById("notifBadge");
+
+  if(notifBadge){
+    notifBadge.innerText =
+      notifCount > 0 ? notifCount : "";
+  }
+
+});
+       
+       const isAdmin =
   EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
 
 snap.forEach(doc=>{
