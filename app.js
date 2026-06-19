@@ -1333,64 +1333,84 @@ function loadChangeEmployees() {
 }
 
 
- // ======================
-// 🔔 CONTEGGIO NOTIFICHE
+// ======================
+// 🔔 CONTEGGIO RICHIESTE CAMBIO
 // ======================
 
 
-// richiesta da accettare/rifiutare
-if (
-  req.toEmployee === CURRENT_EMPLOYEE &&
-  req.status === "PENDING_USER"
-){
-  requestCount++;
+snap.forEach(doc=>{
 
-  console.log(
-    "RICHIESTA CAMBIO:",
-    req.fromEmployee,
-    "→",
-    req.toEmployee
-  );
-}
+
+  const req = doc.data();
 
 
 
+  // ======================
+  // 👤 DIPENDENTE
+  // richiesta da accettare/rifiutare
+  // ======================
+
+  if (
+    req.toEmployee === CURRENT_EMPLOYEE &&
+    req.status === "PENDING_USER"
+  ){
+
+    requestCount++;
+
+    console.log(
+      "RICHIESTA CAMBIO:",
+      req.fromEmployee,
+      "→",
+      req.toEmployee
+    );
+
+  }
 
 
-// Admin vede richieste da approvare
-if(
-  isAdmin &&
-  req.status === "PENDING_ADMIN"
-){
-  requestCount++;
 
-  console.log(
-    "RICHIESTA ADMIN:",
-    req.fromEmployee,
-    "→",
-    req.toEmployee
-  );
-}
-      });
+  // ======================
+  // 👑 ADMIN
+  // richiesta da approvare
+  // ======================
+
+  if(
+    isAdmin &&
+    req.status === "PENDING_ADMIN"
+  ){
+
+    requestCount++;
+
+    console.log(
+      "RICHIESTA ADMIN:",
+      req.fromEmployee,
+      "→",
+      req.toEmployee
+    );
+
+  }
 
 
-      
+});
+
+
+
+// ======================
+// 🔴 AGGIORNA BADGE
+// ======================
+
+
 const requestBadge =
-  document.getElementById("requestBadge");
+document.getElementById("requestBadge");
 
 
+if(requestBadge){
 
-if (requestBadge) {
   requestBadge.innerText =
-    requestCount > 0 ? requestCount : "";
+  requestCount > 0
+  ? requestCount
+  : "";
+
 }
-
-
-    }
-
-  );
-
-};
 
 // ======================
 // 🔔 CARICA RICHIESTE CAMBIO
