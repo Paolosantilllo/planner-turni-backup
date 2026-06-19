@@ -1355,7 +1355,7 @@ snap.forEach(doc=>{
 
   const req = doc.data();
 
-        // ======================
+ // ======================
 // 🔔 CONTEGGIO NOTIFICHE
 // ======================
 
@@ -1375,13 +1375,7 @@ if (
   );
 }
 
-// richieste da gestire
-if (
-  req.toEmployee === CURRENT_EMPLOYEE &&
-  req.status === "PENDING_USER"
-){
-  requestCount++;
-}
+
 // risposta finale Admin
 if(
   (
@@ -1409,10 +1403,10 @@ if(
   isAdmin &&
   req.status === "PENDING_ADMIN"
 ){
-  count++;
+  requestCount++;
 
   console.log(
-    "NOTIFICA ADMIN:",
+    "RICHIESTA ADMIN:",
     req.fromEmployee,
     "→",
     req.toEmployee
