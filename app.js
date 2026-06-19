@@ -2013,28 +2013,6 @@ await firestore.addDoc(
 // AGGIORNO RICHIESTA
 // ======================
 
-
-await firestore.updateDoc(
-
- firestore.doc(
-  db,
-  "changeRequests",
-  requestId
- ),
-
- {
-  status:"APPROVED"
- }
-
-);
-
-
-alert("✅ Cambio reperibilità approvato");
-
-
-}else{
-
-
 if(action === "APPROVE"){
 
 
@@ -2053,7 +2031,7 @@ await firestore.updateDoc(
 );
 
 
-// 🔔 NOTIFICA A ENTRAMBI
+// 🔔 NOTIFICA A MANUNTA
 
 await firestore.addDoc(
 
@@ -2073,6 +2051,8 @@ await firestore.addDoc(
 
 );
 
+
+// 🔔 NOTIFICA A DIPENDENTE C
 
 await firestore.addDoc(
 
@@ -2114,13 +2094,14 @@ await firestore.updateDoc(
 );
 
 
-// 🔔 NOTIFICA RIFIUTO A ENTRAMBI
+// 🔔 NOTIFICA RIFIUTO A MANUNTA
 
 await firestore.addDoc(
 
  firestore.collection(db,"notifications"),
 
  {
+
   employee:req.fromEmployee,
 
   message:
@@ -2135,11 +2116,14 @@ await firestore.addDoc(
 );
 
 
+// 🔔 NOTIFICA RIFIUTO A DIPENDENTE C
+
 await firestore.addDoc(
 
  firestore.collection(db,"notifications"),
 
  {
+
   employee:req.toEmployee,
 
   message:
@@ -2158,8 +2142,9 @@ alert("❌ Cambio rifiutato");
 
 
 }
-closeRequestsPopup();
 
+
+closeRequestsPopup();
 
 }catch(err){
 
