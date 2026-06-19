@@ -1332,53 +1332,6 @@ function loadChangeEmployees() {
 
 }
 
-// ======================
-// 🔔 CARICA RICHIESTE CAMBIO
-// ======================
-
-window.loadChangeRequests = function(){
-
-  firestore.onSnapshot(
-
-    firestore.collection(db,"changeRequests"),
-
-    (snap)=>{
-
-
-   let requestCount = 0;
-
-firestore.getDocs(
-  firestore.collection(db,"notifications")
-).then((snap)=>{
-
-  let notifCount = 0;
-
-  snap.forEach(doc=>{
-
-    const n = doc.data();
-
-    if(n.employee === CURRENT_EMPLOYEE){
-      notifCount++;
-    }
-
-  });
-
-  const notifBadge =
-    document.getElementById("notifBadge");
-
-  if(notifBadge){
-    notifBadge.innerText =
-      notifCount > 0 ? notifCount : "";
-  }
-
-});
-       
-       const isAdmin =
-  EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
-
-snap.forEach(doc=>{
-
-  const req = doc.data();
 
  // ======================
 // 🔔 CONTEGGIO NOTIFICHE
@@ -1436,6 +1389,115 @@ if (requestBadge) {
     }
 
   );
+
+};
+
+// ======================
+// 🔔 CARICA RICHIESTE CAMBIO
+// ======================
+
+window.loadChangeRequests = function(){
+
+firestore.onSnapshot(
+
+firestore.collection(db,"changeRequests"),
+
+(snap)=>{
+
+
+let requestCount = 0;
+
+
+// controllo ruolo
+const isAdmin =
+EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN";
+
+
+
+snap.forEach(doc=>{
+
+
+const req = doc.data();
+
+
+
+// ======================
+// 👤 DIPENDENTE
+// riceve richiesta cambio
+// ======================
+
+if(
+req.toEmployee === CURRENT_EMPLOYEE &&
+req.status === "PENDING_USER"
+){
+
+requestCount++;
+
+console.log(
+"RICHIESTA DIP:",
+req.fromEmployee,
+"→",
+req.toEmployee
+);
+
+}
+
+
+
+// ======================
+// 👑 ADMIN
+// approvazione
+// ======================
+
+if(
+isAdmin &&
+req.status === "PENDING_ADMIN"
+){
+
+requestCount++;
+
+console.log(
+"RICHIESTA ADMIN:",
+req.fromEmployee,
+"→",
+req.toEmployee
+);
+
+}
+
+
+});
+
+
+
+// aggiorna badge richieste
+
+const requestBadge =
+document.getElementById("requestBadge");
+
+
+if(requestBadge){
+
+requestBadge.innerText =
+requestCount > 0
+? requestCount
+: "";
+
+}
+
+
+
+console.log(
+"BADGE RICHIESTE:",
+requestCount
+);
+
+
+
+}
+
+);
+
 
 };
 
