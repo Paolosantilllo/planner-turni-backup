@@ -1376,26 +1376,7 @@ if (
 }
 
 
-// risposta finale Admin
-if(
-  (
-    req.fromEmployee === CURRENT_EMPLOYEE ||
-    req.toEmployee === CURRENT_EMPLOYEE
-  )
 
-  &&
-
-  (
-    req.status === "APPROVED" ||
-    req.status === "ADMIN_REJECTED" ||
-    req.status === "USER_REJECTED"
-  )
-
-){
-
-  count++;
-
-}
 
 
 // Admin vede richieste da approvare
