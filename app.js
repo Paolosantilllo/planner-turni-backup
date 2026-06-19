@@ -2013,8 +2013,6 @@ await firestore.addDoc(
 // AGGIORNO RICHIESTA
 // ======================
 
-if(action === "APPROVE"){
-
 
 await firestore.updateDoc(
 
@@ -2101,7 +2099,6 @@ await firestore.addDoc(
  firestore.collection(db,"notifications"),
 
  {
-
   employee:req.fromEmployee,
 
   message:
@@ -2123,7 +2120,6 @@ await firestore.addDoc(
  firestore.collection(db,"notifications"),
 
  {
-
   employee:req.toEmployee,
 
   message:
