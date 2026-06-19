@@ -1345,8 +1345,7 @@ window.loadChangeRequests = function(){
     (snap)=>{
 
 
-      let count = 0;
-let requestCount = 0;
+   let requestCount = 0;
 
 firestore.getDocs(
   firestore.collection(db,"notifications")
