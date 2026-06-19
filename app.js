@@ -1559,16 +1559,46 @@ window.openNotificationsPopup = function(){
 // ❌ CHIUDI SOLO NOTIFICHE
 // ======================
 
-window.closeNotificationsPopup = function(){
+window.closeNotificationsPopup = async function(){
 
-  const popup =
-    document.getElementById("notificationsPopup");
+const popup =
+document.getElementById(“notificationsPopup”);
 
-  if(popup){
+if(popup){
+popup.style.display = “none”;
+}
 
-    popup.style.display = "none";
+try{
 
+const snap = await firestore.getDocs(
+  firestore.collection(db,"notifications")
+);
+const deletes = [];
+snap.forEach(doc=>{
+  const n = doc.data();
+  if(n.employee === CURRENT_EMPLOYEE){
+    deletes.push(
+      firestore.deleteDoc(
+        firestore.doc(
+          db,
+          "notifications",
+          doc.id
+        )
+      )
+    );
   }
+});
+await Promise.all(deletes);
+console.log("✅ Notifiche eliminate");
+
+}catch(err){
+
+console.error(
+  "Errore eliminazione notifiche:",
+  err
+);
+
+}
 
 };
 
