@@ -1365,25 +1365,23 @@ if (
   req.toEmployee === CURRENT_EMPLOYEE &&
   req.status === "PENDING_USER"
 ){
-  count++;
+  requestCount++;
+
   console.log(
-    "NOTIFICA PENDING_USER:",
+    "RICHIESTA CAMBIO:",
     req.fromEmployee,
     "→",
     req.toEmployee
   );
 }
 
-
-// richiesta accettata dal sostituto
+// richieste da gestire
 if (
   req.toEmployee === CURRENT_EMPLOYEE &&
   req.status === "PENDING_USER"
 ){
   requestCount++;
 }
-
-
 // risposta finale Admin
 if(
   (
@@ -1423,24 +1421,21 @@ if(
       });
 
 
-      const badge =
-        document.getElementById("notifBadge");
+      const notifBadge =
+  document.getElementById("notifBadge");
 
+const requestBadge =
+  document.getElementById("requestBadge");
 
-      if(badge){
+if (notifBadge) {
+  notifBadge.innerText =
+    count > 0 ? count : "";
+}
 
-
-        if(count > 0){
-
-          badge.innerText = count;
-
-        } else {
-
-          badge.innerText = "";
-
-        }
-
-      }
+if (requestBadge) {
+  requestBadge.innerText =
+    requestCount > 0 ? requestCount : "";
+}
 
 
       console.log(
