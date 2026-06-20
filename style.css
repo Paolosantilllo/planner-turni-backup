@@ -283,17 +283,15 @@ body{
 
 
 
-/* CELLE */
-
 .day{
 
   background:white;
 
   border-radius:18px;
 
-  min-height:72px;
+  min-height:82px;      /* prima 72 */
 
-  padding:5px;
+  padding:6px;          /* prima 5 */
 
   overflow-y:auto;
 
@@ -302,14 +300,6 @@ body{
   transition:0.2s;
 
 }
-
-.day:hover{
-
-  transform:translateY(-2px);
-
-}
-
-
 
 /* NUMERO GIORNO */
 
@@ -343,21 +333,17 @@ body{
 
   color:white;
 
-  padding:4px;
+  padding:4px 2px;
 
   border-radius:8px;
 
-  font-size:10px;
+  font-size:8px;
 
   margin-top:3px;
 
   font-weight:700;
 
   text-align:center;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
 
   white-space:nowrap;
 
