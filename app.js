@@ -306,7 +306,56 @@ requestCount
 
 };
 
+window.loadChangeRequests = function(){
 
+   ...
+};
+
+window.loadNotificationBadge = function(){
+
+firestore.onSnapshot(
+
+  firestore.collection(db,"notifications"),
+
+  (snap)=>{
+
+    let count = 0;
+
+    snap.forEach(doc=>{
+
+      const n = doc.data();
+
+      if(
+        n.employee === CURRENT_EMPLOYEE
+      ){
+        count++;
+      }
+
+    });
+
+    const badge =
+      document.getElementById("notifBadge");
+
+    if(badge){
+
+      badge.innerText =
+      count > 0
+      ? count
+      : "";
+
+    }
+
+  }
+
+);
+
+};
+
+/* ======================
+   RENDER CALENDARIO
+====================== */
+
+window.renderCalendar = function(){
 
 /* ======================
    RENDER CALENDARIO
