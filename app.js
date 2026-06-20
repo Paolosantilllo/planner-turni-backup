@@ -351,11 +351,7 @@ firestore.onSnapshot(
 
 };
 
-/* ======================
-   RENDER CALENDARIO
-====================== */
 
-window.renderCalendar = function(){
 
 /* ======================
    RENDER CALENDARIO
