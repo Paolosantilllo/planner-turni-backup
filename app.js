@@ -306,10 +306,6 @@ requestCount
 
 };
 
-window.loadChangeRequests = function(){
-
-   ...
-};
 
 window.loadNotificationBadge = function(){
 
