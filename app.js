@@ -16,8 +16,9 @@ initAuth(() => {
 
   loadChangeRequests();
 
-});
+  loadNotificationBadge();
 
+});
 
 
 /* ======================
