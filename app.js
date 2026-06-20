@@ -1592,11 +1592,10 @@ window.openNotificationsPopup = function(){
 // ❌ CHIUDI SOLO NOTIFICHE
 // ======================
 
-window.closeNotificationsPopup = async function(){
+window.closeNotificationsPopup = function(){
 
   const popup =
     document.getElementById("notificationsPopup");
-
 
   if(popup){
 
@@ -1604,63 +1603,33 @@ window.closeNotificationsPopup = async function(){
 
   }
 
+};
+
+window.readNotification = async function(notificationId){
 
   try{
 
-
-    const snap = await firestore.getDocs(
-      firestore.collection(db,"notifications")
+    await firestore.deleteDoc(
+      firestore.doc(
+        db,
+        "notifications",
+        notificationId
+      )
     );
 
-
-    const deletes = [];
-
-
-    snap.forEach(doc=>{
-
-
-      const n = doc.data();
-
-
-      if(
-        n.employee === CURRENT_EMPLOYEE
-      ){
-
-        deletes.push(
-
-          firestore.deleteDoc(
-            firestore.doc(
-              db,
-              "notifications",
-              doc.id
-            )
-          )
-
-        );
-
-      }
-
-
-    });
-
-
-    await Promise.all(deletes);
-
-
-    console.log("✅ Notifiche eliminate dopo lettura");
-
+    console.log("✅ Notifica eliminata");
 
   }catch(err){
 
     console.error(
-      "Errore eliminazione notifiche:",
+      "Errore eliminazione notifica:",
       err
     );
 
   }
 
-
 };
+
 // ======================
 // 🔔 CARICA SOLO NOTIFICHE
 // ======================
@@ -1711,7 +1680,11 @@ div.className="request-item";
 
 div.innerHTML = `
 
-<div class="request-card">
+<div
+class="request-card"
+onclick="readNotification('${doc.id}')"
+style="cursor:pointer;"
+>
 
 <h3>
 🔔 Notifica
@@ -1724,7 +1697,6 @@ ${n.message}
 </div>
 
 `;
-
 
 list.appendChild(div);
 
@@ -1787,7 +1759,11 @@ div.className="request-item";
 
 div.innerHTML = `
 
-<div class="request-card">
+<div
+class="request-card"
+onclick="readNotification('${doc.id}')"
+style="cursor:pointer;"
+>
 
 <h3>
 🔔 Notifica
