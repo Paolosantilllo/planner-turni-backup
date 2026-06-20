@@ -331,9 +331,11 @@ body{
 
 .event{
 
+  display:inline-block;
+
   color:white;
 
-  padding:4px 2px;
+  padding:4px 10px;
 
   border-radius:8px;
 
@@ -347,8 +349,11 @@ body{
 
   white-space:nowrap;
 
-}
+  width:auto;
 
+  min-width:100%;
+
+}
 
 
 /* SOLO TURNO */
