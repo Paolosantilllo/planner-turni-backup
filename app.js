@@ -1727,7 +1727,7 @@ if(!list){
 }
 
 list.innerHTML = "Caricamento...";
-list.innerHTML = "Caricamento...";
+
 
 
 firestore.onSnapshot(
