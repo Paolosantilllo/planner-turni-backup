@@ -1568,16 +1568,18 @@ window.openNotificationsPopup = async function(){
   const popup =
     document.getElementById("notificationsPopup");
 
+
   if(!popup){
     console.error("notificationsPopup non trovato");
     return;
   }
 
+
   popup.style.display = "flex";
 
 
   // ======================
-  // ✅ SEGNA NOTIFICHE LETTE
+  // 🗑️ ELIMINA NOTIFICHE LETTE
   // ======================
 
   try{
@@ -1587,7 +1589,7 @@ window.openNotificationsPopup = async function(){
     );
 
 
-    const updates = [];
+    const deletes = [];
 
 
     snap.forEach(doc=>{
@@ -1596,23 +1598,18 @@ window.openNotificationsPopup = async function(){
 
 
       if(
-        n.employee === CURRENT_EMPLOYEE &&
-        n.read === false
+        n.employee === CURRENT_EMPLOYEE
       ){
 
-        updates.push(
+        deletes.push(
 
-          firestore.updateDoc(
+          firestore.deleteDoc(
 
             firestore.doc(
               db,
               "notifications",
               doc.id
-            ),
-
-            {
-              read:true
-            }
+            )
 
           )
 
@@ -1624,13 +1621,16 @@ window.openNotificationsPopup = async function(){
     });
 
 
-    await Promise.all(updates);
+    await Promise.all(deletes);
+
+
+    console.log("✅ Notifiche eliminate");
 
 
   }catch(err){
 
     console.error(
-      "Errore lettura notifiche:",
+      "Errore eliminazione notifiche:",
       err
     );
 
@@ -1647,53 +1647,25 @@ window.openNotificationsPopup = async function(){
   }
 
 };
+
+
 // ======================
 // ❌ CHIUDI SOLO NOTIFICHE
 // ======================
 
-window.closeNotificationsPopup = async function(){
+window.closeNotificationsPopup = function(){
 
-const popup =
-document.getElementById("notificationsPopup");
+  const popup =
+    document.getElementById("notificationsPopup");
 
-if(popup){
-popup.style.display = "none";
-}
 
-try{
+  if(popup){
 
-const snap = await firestore.getDocs(
-  firestore.collection(db,"notifications")
-);
-const deletes = [];
-snap.forEach(doc=>{
-  const n = doc.data();
-  if(n.employee === CURRENT_EMPLOYEE){
-    deletes.push(
-      firestore.deleteDoc(
-        firestore.doc(
-          db,
-          "notifications",
-          doc.id
-        )
-      )
-    );
+    popup.style.display = "none";
+
   }
-});
-await Promise.all(deletes);
-console.log("✅ Notifiche eliminate");
-
-}catch(err){
-
-console.error(
-  "Errore eliminazione notifiche:",
-  err
-);
-
-}
 
 };
-
 // ======================
 // 🔔 CARICA SOLO NOTIFICHE
 // ======================
