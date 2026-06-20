@@ -1563,7 +1563,7 @@ window.openRequestsPopup = function(){
 // 🔔 APRI SOLO NOTIFICHE
 // ======================
 
-window.openNotificationsPopup = function(){
+window.openNotificationsPopup = async function(){
 
   const popup =
     document.getElementById("notificationsPopup");
@@ -1575,13 +1575,78 @@ window.openNotificationsPopup = function(){
 
   popup.style.display = "flex";
 
+
+  // ======================
+  // ✅ SEGNA NOTIFICHE LETTE
+  // ======================
+
+  try{
+
+    const snap = await firestore.getDocs(
+      firestore.collection(db,"notifications")
+    );
+
+
+    const updates = [];
+
+
+    snap.forEach(doc=>{
+
+      const n = doc.data();
+
+
+      if(
+        n.employee === CURRENT_EMPLOYEE &&
+        n.read === false
+      ){
+
+        updates.push(
+
+          firestore.updateDoc(
+
+            firestore.doc(
+              db,
+              "notifications",
+              doc.id
+            ),
+
+            {
+              read:true
+            }
+
+          )
+
+        );
+
+      }
+
+
+    });
+
+
+    await Promise.all(updates);
+
+
+  }catch(err){
+
+    console.error(
+      "Errore lettura notifiche:",
+      err
+    );
+
+  }
+
+
+
   if(!window.notificationsLoaded){
+
     loadOnlyNotifications();
+
     window.notificationsLoaded = true;
+
   }
 
 };
-
 // ======================
 // ❌ CHIUDI SOLO NOTIFICHE
 // ======================
