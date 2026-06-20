@@ -1563,7 +1563,7 @@ window.openRequestsPopup = function(){
 // 🔔 APRI SOLO NOTIFICHE
 // ======================
 
-window.openNotificationsPopup = async function(){
+window.openNotificationsPopup = function(){
 
   const popup =
     document.getElementById("notificationsPopup");
@@ -1578,11 +1578,35 @@ window.openNotificationsPopup = async function(){
   popup.style.display = "flex";
 
 
-  // ======================
-  // 🗑️ ELIMINA NOTIFICHE LETTE
-  // ======================
+  if(!window.notificationsLoaded){
+
+    loadOnlyNotifications();
+
+    window.notificationsLoaded = true;
+
+  }
+
+};
+
+// ======================
+// ❌ CHIUDI SOLO NOTIFICHE
+// ======================
+
+window.closeNotificationsPopup = async function(){
+
+  const popup =
+    document.getElementById("notificationsPopup");
+
+
+  if(popup){
+
+    popup.style.display = "none";
+
+  }
+
 
   try{
+
 
     const snap = await firestore.getDocs(
       firestore.collection(db,"notifications")
@@ -1594,6 +1618,7 @@ window.openNotificationsPopup = async function(){
 
     snap.forEach(doc=>{
 
+
       const n = doc.data();
 
 
@@ -1604,13 +1629,11 @@ window.openNotificationsPopup = async function(){
         deletes.push(
 
           firestore.deleteDoc(
-
             firestore.doc(
               db,
               "notifications",
               doc.id
             )
-
           )
 
         );
@@ -1624,7 +1647,7 @@ window.openNotificationsPopup = async function(){
     await Promise.all(deletes);
 
 
-    console.log("✅ Notifiche eliminate");
+    console.log("✅ Notifiche eliminate dopo lettura");
 
 
   }catch(err){
@@ -1636,34 +1659,6 @@ window.openNotificationsPopup = async function(){
 
   }
 
-
-
-  if(!window.notificationsLoaded){
-
-    loadOnlyNotifications();
-
-    window.notificationsLoaded = true;
-
-  }
-
-};
-
-
-// ======================
-// ❌ CHIUDI SOLO NOTIFICHE
-// ======================
-
-window.closeNotificationsPopup = function(){
-
-  const popup =
-    document.getElementById("notificationsPopup");
-
-
-  if(popup){
-
-    popup.style.display = "none";
-
-  }
 
 };
 // ======================
