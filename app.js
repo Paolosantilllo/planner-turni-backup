@@ -322,10 +322,11 @@ firestore.onSnapshot(
       const n = doc.data();
 
       if(
-        n.employee === CURRENT_EMPLOYEE
-      ){
-        count++;
-      }
+ n.employee === CURRENT_EMPLOYEE &&
+ n.read === false
+){
+ count++;
+}
 
     });
 
