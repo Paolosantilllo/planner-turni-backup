@@ -2296,39 +2296,32 @@ list.appendChild(div);
 
           div.innerHTML = `
 
-<p>
+<div class="request-card">
+
+<h2 style="text-align:center;">
 👑 Approvazione Admin
-</p>
+</h2>
 
-
-<p>
-Richiedente:
+<div class="request-employee">
 ${EMPLOYEES[req.fromEmployee].name}
-</p>
+</div>
 
-
-<p>
-Sostituto:
+<div class="request-shift">
+→
 ${EMPLOYEES[req.toEmployee].name}
-</p>
+</div>
 
-
-<p>
-Giorno:
+<div class="request-date">
 ${req.fromDate}
-➡️
+&nbsp; → &nbsp;
 ${req.toDate}
-</p>
+</div>
 
-
-<p>
-Turno:
-${req.shift}
-</p>
-
+<div class="request-shift">
+(${req.shift})
+</div>
 
 <div class="popup-actions">
-
 
 <button
 class="btn-accept"
@@ -2339,7 +2332,6 @@ handleAdminRequest('${doc.id}','APPROVE')
 ✅ Approva
 </button>
 
-
 <button
 class="btn-reject"
 onclick="
@@ -2349,9 +2341,9 @@ handleAdminRequest('${doc.id}','REJECT')
 ❌ Rifiuta
 </button>
 
-
 </div>
 
+</div>
 
 `;
 
