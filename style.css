@@ -1186,30 +1186,30 @@ button:disabled{
 
 .request-title-popup{
   text-align:center;
-  font-size:42px;
+  font-size:18px;
   font-weight:800;
-  margin-bottom:30px;
+  margin-bottom:6px;
 }
 
 .request-employee-popup{
   text-align:center;
-  font-size:32px;
+  font-size:16px;
   font-weight:700;
-  margin-bottom:20px;
+  margin-bottom:4px;
 }
 
 .request-shift-popup{
   text-align:center;
-  font-size:26px;
+  font-size:13px;
   font-weight:600;
-  margin-bottom:25px;
+  margin-bottom:4px;
 }
 
 .request-date-popup{
   text-align:center;
-  font-size:28px;
+  font-size:12px;
   font-weight:700;
-  margin-bottom:35px;
+  margin-bottom:8px;
 }
 
 /* APPROVA BLU */
