@@ -2324,7 +2324,7 @@ onclick="
 event.stopPropagation();
 handleAdminRequest('${doc.id}','APPROVE')
 ">
-✔ Approva
+✅ Approva
 </button>
 
 <button
@@ -2333,7 +2333,7 @@ onclick="
 event.stopPropagation();
 handleAdminRequest('${doc.id}','REJECT')
 ">
-✖ Rifiuta
+❌ Rifiuta
 </button>
 
 </div>
