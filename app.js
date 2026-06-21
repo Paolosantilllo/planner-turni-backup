@@ -2232,66 +2232,39 @@ div.innerHTML = `
 
 <div class="request-card">
 
-
-<h2 style="text-align:center;">
+<h2 class="request-title-popup">
 Gestione richiesta
 </h2>
 
-
-<div class="request-employee">
-
+<div class="request-employee-popup">
 ${EMPLOYEES[req.fromEmployee].name}
-
 </div>
 
-
-<div class="request-shift">
-
+<div class="request-shift-popup">
 (${req.shift})
-
 </div>
 
-
-<div class="request-date">
-
-${req.fromDate}
-&nbsp; → &nbsp;
-${req.toDate}
-
+<div class="request-date-popup">
+${req.fromDate} → ${req.toDate}
 </div>
-
-
-
-<div class="popup-actions">
-
 
 <button
-class="btn-accept"
+class="request-accept-btn"
 onclick="
 event.stopPropagation();
 handleChangeRequest('${doc.id}','ACCEPT')
 ">
-
 ✅ Accetta
-
 </button>
 
-
-
 <button
-class="btn-reject"
+class="request-reject-btn"
 onclick="
 event.stopPropagation();
 handleChangeRequest('${doc.id}','REJECT')
 ">
-
 ❌ Rifiuta
-
 </button>
-
-
-</div>
-
 
 </div>
 
