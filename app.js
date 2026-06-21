@@ -12,6 +12,8 @@ window.logout = logout;
 
 initAuth(() => {
 
+  setDefaultFilter();
+
   loadEvents();
 
   loadChangeRequests();
@@ -19,7 +21,6 @@ initAuth(() => {
   loadNotificationBadge();
 
 });
-
 
 /* ======================
    STATO APP
@@ -35,6 +36,30 @@ const employeeFilter = document.getElementById("employeeFilter");
 employeeFilter.addEventListener("change", () => {
   renderCalendar();
 });
+
+// ======================
+// FILTRO AUTOMATICO
+// ======================
+
+function setDefaultFilter() {
+
+  const role =
+    EMPLOYEES[CURRENT_EMPLOYEE]?.role;
+
+  // Admin e Santillo vedono tutti
+  if (
+    role === "ADMIN" ||
+    CURRENT_EMPLOYEE === "A"
+  ) {
+
+    employeeFilter.value = "ALL";
+    return;
+  }
+
+  // Tutti gli altri vedono se stessi
+  employeeFilter.value = CURRENT_EMPLOYEE;
+}
+
 
 /* ======================
    FESTIVI
