@@ -522,11 +522,7 @@ events.forEach(ev => {
     }
 
 
-    el.style.color =
-      (shiftKey === "CFI" || shiftKey === "CFI/REP")
-        ? "#fff"
-        : "#000";
-
+    el.style.color = "#000";
   }
 
 
