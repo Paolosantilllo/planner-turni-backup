@@ -434,15 +434,15 @@ body{
 
 .popup-content{
 
-  width:100%;
+  width:90%;
 
-  max-width:400px;
+  max-width:260px;
 
   background:white;
 
-  border-radius:28px;
+  border-radius:18px;
 
-  padding:25px;
+  padding:12px;
 
 }
 
@@ -848,7 +848,6 @@ body{
 
 }
 .calendar,
-.calendar * {
   color: #111;
 }
 
@@ -1211,4 +1210,12 @@ button:disabled{
   font-size:28px;
   font-weight:700;
   margin-bottom:35px;
+}
+
+/* APPROVA BLU */
+.btn-accept,
+.accept-btn,
+.request-accept-btn{
+  background:#1677ff !important;
+  color:white !important;
 }
