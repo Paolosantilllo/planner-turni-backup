@@ -433,17 +433,11 @@ body{
 /* CONTENUTO POPUP */
 
 .popup-content{
-
-  width:90%;
-
-  max-width:260px;
-
+  width:95%;
+  max-width:340px;
   background:white;
-
-  border-radius:18px;
-
-  padding:12px;
-
+  border-radius:28px;
+  padding:20px;
 }
 
 
@@ -1218,4 +1212,17 @@ button:disabled{
 .request-accept-btn{
   background:#1677ff !important;
   color:white !important;
+}
+
+.request-card{
+  padding:15px;
+  border-radius:18px;
+}
+
+.request-accept-btn,
+.request-reject-btn{
+  width:100%;
+  height:42px;
+  font-size:16px;
+  margin-top:8px;
 }
