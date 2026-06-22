@@ -451,49 +451,32 @@
 
 <div id="statsMenu">
 
-  <h3>
-    Seleziona cosa visualizzare
-  </h3>
+
+<button 
+class="save-btn"
+onclick="showFestiviStats()">
+
+🎉 Turnazione Festivi
+
+</button>
 
 
-  <button 
-  class="save-btn"
-  onclick="showFestiviStats()">
+<button 
+class="save-btn"
+onclick="showCfiStats()">
 
-  🎉 Turnazione Festivi
+📊 Totale CFI / CFI-REP
 
-  </button>
-
-
-  <button 
-  class="save-btn"
-  onclick="showCfiStats()">
-
-  📊 Totale CFI / CFI-REP
-
-  </button>
+</button>
 
 
 </div>
 
 
-<div id="statsContent">
+<div id="statsContent"></div>
 
-  Seleziona una voce
 
-</div>
-    <div class="popup-actions">
-
-      <button
-        class="save-btn"
-        onclick="exportStatsPdf()">
-
-        Esporta PDF
-
-      </button>
-
-    </div>
-
+<div id="statsExport"></div>
   </div>
 
 </div>
