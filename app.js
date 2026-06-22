@@ -2577,13 +2577,14 @@ window.showFestiviStats = async function(){
 const container =
 document.getElementById("statsContent");
 
+try {
 
 container.innerHTML =
 "Caricamento festivi...";
 
 
 const snapshot = await firestore.getDocs(
-firestore.collection(db,"events")
+  firestore.collection(db,"events")
 );
 
 
@@ -2643,6 +2644,7 @@ html += "</table>";
 
 container.innerHTML = html;
 
+
 document.getElementById("statsExport").innerHTML = `
 
 <button
@@ -2654,7 +2656,20 @@ onclick="exportFestiviPdf()">
 </button>
 
 `;
-   
+
+
+}catch(err){
+
+console.error(
+"Errore statistiche festivi:",
+err
+);
+
+container.innerHTML =
+"❌ Errore caricamento festivi";
+
+}
+
 };
 
 
@@ -2663,12 +2678,14 @@ onclick="exportFestiviPdf()">
 // 📊 TOTALE CFI / CFI-REP
 // ======================
 
-
 window.showCfiStats = async function(){
 
 
 const container =
 document.getElementById("statsContent");
+
+
+try {
 
 
 container.innerHTML =
@@ -2774,6 +2791,8 @@ html += "</table>";
 
 container.innerHTML=html;
 
+
+
 document.getElementById("statsExport").innerHTML = `
 
 <button
@@ -2785,9 +2804,26 @@ onclick="exportCfiPdf()">
 </button>
 
 `;
-   
-};
 
+
+
+}catch(err){
+
+
+console.error(
+"Errore statistiche CFI:",
+err
+);
+
+
+container.innerHTML =
+"❌ Errore caricamento CFI";
+
+
+}
+
+
+};
 
 
 // ======================
