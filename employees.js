@@ -23,7 +23,7 @@ export const EMPLOYEES = {
   },
 
   D: {
-    name: "DIPENDENTE D",
+    name: "PERSANO",
     color: "dipendente-d",
     role: "USER"
   }
