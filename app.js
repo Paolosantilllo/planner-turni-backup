@@ -12,6 +12,8 @@ window.logout = logout;
 
 initAuth(() => {
 
+  populateEmployeeSelects();
+
   setDefaultFilter();
 
   loadEvents();
@@ -20,7 +22,7 @@ initAuth(() => {
 
   loadNotificationBadge();
 
-setupAdminUI();
+  setupAdminUI();
 });
 
 /* ======================
@@ -34,10 +36,56 @@ const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const employeeFilter = document.getElementById("employeeFilter");
 
+// ======================
+// CARICA DIPENDENTI
+// ======================
+
+function populateEmployeeSelects() {
+
+  const filter =
+    document.getElementById("employeeFilter");
+
+  const employee =
+    document.getElementById("employee");
+
+  if (filter) {
+
+    filter.innerHTML =
+      '<option value="ALL">Tutti</option>';
+
+    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
+
+      filter.innerHTML += `
+        <option value="${id}">
+          ${emp.name}
+        </option>
+      `;
+
+    });
+
+  }
+
+  if (employee) {
+
+    employee.innerHTML = "";
+
+    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
+
+      employee.innerHTML += `
+        <option value="${id}">
+          ${emp.name}
+        </option>
+      `;
+
+    });
+
+  }
+
+}
+
 employeeFilter.addEventListener("change", () => {
   renderCalendar();
 });
-
 // ======================
 // FILTRO AUTOMATICO
 // ======================
