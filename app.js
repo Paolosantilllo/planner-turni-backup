@@ -4,7 +4,7 @@
 ====================== */
 
 import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
-import { db, firestore, getDocs, collection } from "./firebase.js";
+import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
 
 
