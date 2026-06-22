@@ -543,6 +543,24 @@ box.appendChild(num);
 
 
 // ======================
+// ORDINA DIPENDENTI A-B-C-D
+// ======================
+
+events.sort((a,b)=>{
+
+  const order = {
+    A: 1,
+    B: 2,
+    C: 3,
+    D: 4
+  };
+
+  return order[a.employee] - order[b.employee];
+
+});
+
+
+// ======================
 // EVENTI DEL GIORNO
 // ======================
 
