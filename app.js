@@ -522,7 +522,7 @@ events.forEach(ev => {
     }
 
 
-    el.style.color = "#000";
+    el.style.setProperty("color", "#000", "important");
   }
 
 
