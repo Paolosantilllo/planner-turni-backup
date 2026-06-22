@@ -1002,7 +1002,9 @@ function generatePDF(months = 1) {
     formatDateIT(date)
   );
 
-}
+    }
+    
+  }
 
   if (missingMessages.length > 0) {
     const proceed = confirm(
