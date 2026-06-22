@@ -140,7 +140,7 @@ body{
 .toolbar-actions{
 
   display:flex;
-  gap:10px;
+  gap:6px;
 
 }
 
@@ -150,18 +150,18 @@ body{
 
 .add-btn{
 
-  width:50px;
-  height:50px;
+  width:44px;
+  height:44px;
 
   border:none;
 
-  border-radius:16px;
+  border-radius:14px;
 
   background:#007aff;
 
   color:white;
 
-  font-size:30px;
+  font-size:26px;
 
   cursor:pointer;
 
@@ -175,16 +175,16 @@ body{
 
 .change-btn{
 
-  width:55px;
-  height:55px;
+  width:44px;
+  height:44px;
 
   border:none;
-  border-radius:18px;
+  border-radius:14px;
 
   background:#ff9500;
   color:white;
 
-  font-size:22px;
+  font-size:18px;
   cursor:pointer;
 
   box-shadow:0 8px 20px rgba(255,149,0,0.25);
@@ -197,16 +197,16 @@ body{
 
 .notify-btn{
 
-  width:55px;
-  height:55px;
+  width:44px;
+  height:44px;
 
   border:none;
-  border-radius:18px;
+  border-radius:14px;
 
   background:#ff3b30;
   color:white;
 
-  font-size:22px;
+  font-size:18px;
   cursor:pointer;
 
   box-shadow:0 8px 20px rgba(255,59,48,0.25);
