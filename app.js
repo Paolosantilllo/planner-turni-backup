@@ -996,10 +996,13 @@ function generatePDF(months = 1) {
       return ev.shift === "REP" || ev.shift === "CFI/REP";
     });
 
-    if (!hasCoverage) {
-      missingMessages.push(date);
-    }
-  }
+ if (!hasCoverage) {
+
+  missingMessages.push(
+    formatDateIT(date)
+  );
+
+}
 
   if (missingMessages.length > 0) {
     const proceed = confirm(
