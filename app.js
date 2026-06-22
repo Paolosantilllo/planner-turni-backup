@@ -2583,10 +2583,9 @@ container.innerHTML =
 "Caricamento festivi...";
 
 
-const snapshot = await getDocs(
-collection(db,"events")
+const snapshot = await firestore.getDocs(
+  firestore.collection(db,"events")
 );
-
 
 let html = `
 
@@ -2707,11 +2706,9 @@ total:0
 
 
 
-const snapshot = await getDocs(
-collection(db,"events")
+const snapshot = await firestore.getDocs(
+  firestore.collection(db,"events")
 );
-
-
 
 snapshot.forEach(doc=>{
 
