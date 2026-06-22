@@ -20,6 +20,7 @@ initAuth(() => {
 
   loadNotificationBadge();
 
+setupAdminUI();
 });
 
 /* ======================
@@ -2912,6 +2913,19 @@ pdf.save(
 
 };
 
+function setupAdminUI() {
 
+  if (window.IS_ADMIN) return;
+
+  const hide = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  };
+
+  hide("pdfBtn");
+  hide("statsBtn");
+  hide("addBtn");
+
+}
 
 
