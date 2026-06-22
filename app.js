@@ -2617,27 +2617,122 @@ window.openStatsPopup = async function () {
     });
 
     let html = `
-      <table style="width:100%;border-collapse:collapse;">
-        <tr>
-          <th>Dipendente</th>
-          <th>Totale</th>
-        </tr>
-    `;
 
-    Object.values(stats).forEach(emp => {
+<h3>Totale giorni CFI / CFI-REP anno ${currentYear}</h3>
 
-      html += `
-        <tr>
-          <td>${emp.name}</td>
-          <td>${emp.total}</td>
-        </tr>
-      `;
+<table style="width:100%;border-collapse:collapse;">
+<tr>
+<th>Dipendente</th>
+<th>Totale punti</th>
+</tr>
+`;
 
-    });
 
-    html += "</table>";
+Object.values(stats).forEach(emp => {
 
-    container.innerHTML = html;
+html += `
+
+<tr>
+<td>${emp.name}</td>
+<td>${emp.total}</td>
+</tr>
+
+`;
+
+});
+
+
+html += `
+</table>
+
+<br>
+
+<h3>Storico dettagliato</h3>
+
+<table id="historyTable" style="width:100%;border-collapse:collapse;">
+
+<tr>
+<th>Data</th>
+<th>Dipendente</th>
+<th>Tipo</th>
+<th>Punti</th>
+</tr>
+
+`;
+
+
+// storico
+
+snapshot.forEach(doc => {
+
+const ev = doc.data();
+
+
+if (
+ev.shift !== "CFI" &&
+ev.shift !== "CFI/REP"
+) return;
+
+
+const start = new Date(ev.startDate);
+const end = new Date(ev.endDate);
+
+
+for(
+let d = new Date(start);
+d <= end;
+d.setDate(d.getDate()+1)
+){
+
+
+if(d.getFullYear() !== currentYear)
+continue;
+
+
+const day = d.getDay();
+
+
+const weight =
+(day===0 || day===6)
+? 2
+: 1;
+
+
+
+html += `
+
+<tr>
+
+<td>
+${d.toLocaleDateString("it-IT")}
+</td>
+
+<td>
+${EMPLOYEES[ev.employee]?.name || ""}
+</td>
+
+<td>
+${ev.shift}
+</td>
+
+<td>
+${weight}
+</td>
+
+</tr>
+
+
+`;
+
+}
+
+});
+
+
+html += "</table>";
+
+
+container.innerHTML = html;
 
   } catch (err) {
 
