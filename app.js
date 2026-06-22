@@ -522,18 +522,24 @@ events.forEach(ev => {
     }
 
 
-    el.style.setProperty("color", "#000", "important");
+  el.style.color = "#000";
   }
 
 
 
-  // ======================
-// 🔴 REGOLA FESTIVI
+// ======================
+// COLORE TESTO TURNI
 // ======================
 
 if (dayInfo.isSunday || dayInfo.isHoliday) {
 
-  el.classList.add("frep-text");
+  // domeniche e festivi rosso
+  el.style.color = "#ff3b30";
+
+} else {
+
+  // giorni normali nero
+  el.style.color = "#000";
 
 }
 
