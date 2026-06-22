@@ -2550,3 +2550,141 @@ err
 }
 
 };
+
+// ======================
+// POPUP STATISTICHE
+// ======================
+
+window.openStatsPopup = async function () {
+
+  document.getElementById("statsPopup").style.display = "flex";
+
+  const container = document.getElementById("statsContent");
+
+  container.innerHTML = "Caricamento...";
+
+  try {
+
+    const currentYear = new Date().getFullYear();
+
+    const stats = {};
+
+    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
+      stats[id] = {
+        name: emp.name,
+        total: 0
+      };
+    });
+
+    const snapshot = await firestore.getDocs(
+      firestore.collection(db, "shifts")
+    );
+
+    snapshot.forEach(doc => {
+
+      const ev = doc.data();
+
+      if (
+        ev.shift !== "CFI" &&
+        ev.shift !== "CFI/REP"
+      ) return;
+
+      const start = new Date(ev.startDate);
+      const end = new Date(ev.endDate);
+
+      for (
+        let d = new Date(start);
+        d <= end;
+        d.setDate(d.getDate() + 1)
+      ) {
+
+        if (d.getFullYear() !== currentYear)
+          continue;
+
+        const day = d.getDay();
+
+        const weight =
+          (day === 0 || day === 6)
+            ? 2
+            : 1;
+
+        if (stats[ev.employee]) {
+          stats[ev.employee].total += weight;
+        }
+
+      }
+
+    });
+
+    let html = `
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <th>Dipendente</th>
+          <th>Totale</th>
+        </tr>
+    `;
+
+    Object.values(stats).forEach(emp => {
+
+      html += `
+        <tr>
+          <td>${emp.name}</td>
+          <td>${emp.total}</td>
+        </tr>
+      `;
+
+    });
+
+    html += "</table>";
+
+    container.innerHTML = html;
+
+  } catch (err) {
+
+    console.error(err);
+
+    container.innerHTML =
+      "Errore caricamento statistiche";
+
+  }
+
+};
+
+
+// ======================
+// CHIUSURA POPUP
+// ======================
+
+window.closeStatsPopup = function () {
+
+  document.getElementById("statsPopup").style.display = "none";
+
+};
+
+
+// ======================
+// EXPORT PDF STATISTICHE
+// ======================
+
+window.exportStatsPdf = function () {
+
+  const { jsPDF } = window.jspdf;
+
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(16);
+
+  pdf.text(
+    "Statistiche Reperibilità",
+    14,
+    15
+  );
+
+  pdf.autoTable({
+    html: "#statsContent table",
+    startY: 25
+  });
+
+  pdf.save("Statistiche_Reperibilita.pdf");
+
+};
