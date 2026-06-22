@@ -2661,7 +2661,7 @@ onclick="exportFestiviPdf()">
 
 console.error(
 "Errore statistiche festivi:",
-err.massage,
+err.message,
 err
 );
 
@@ -2810,7 +2810,7 @@ onclick="exportCfiPdf()">
 
 console.error(
 "Errore statistiche CFI:",
-err.massage,
+err.message,
 err
 );
 
