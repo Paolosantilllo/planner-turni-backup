@@ -2552,179 +2552,86 @@ err
 };
 
 // ======================
-// POPUP STATISTICHE
+// 📊 POPUP STATISTICHE
 // ======================
 
-window.openStatsPopup = async function () {
 
-  document.getElementById("statsPopup").style.display = "flex";
+window.openStatsPopup = function(){
 
-  const container = document.getElementById("statsContent");
+document.getElementById("statsPopup").style.display="flex";
 
-  container.innerHTML = "Caricamento...";
+document.getElementById("statsContent").innerHTML =
+"Seleziona una statistica";
 
-  try {
-
-    const currentYear = new Date().getFullYear();
-
-    const stats = {};
-
-    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
-      stats[id] = {
-        name: emp.name,
-        total: 0
-      };
-    });
-
-    const snapshot = await firestore.getDocs(
-      firestore.collection(db, "shifts")
-    );
-
-    snapshot.forEach(doc => {
-
-      const ev = doc.data();
-
-      if (
-        ev.shift !== "CFI" &&
-        ev.shift !== "CFI/REP"
-      ) return;
-
-      const start = new Date(ev.startDate);
-      const end = new Date(ev.endDate);
-
-      for (
-        let d = new Date(start);
-        d <= end;
-        d.setDate(d.getDate() + 1)
-      ) {
-
-        if (d.getFullYear() !== currentYear)
-          continue;
-
-        const day = d.getDay();
-
-        const weight =
-          (day === 0 || day === 6)
-            ? 2
-            : 1;
-
-        if (stats[ev.employee]) {
-          stats[ev.employee].total += weight;
-        }
-
-      }
-
-    });
-
-    let html = `
-
-<h3>Totale giorni CFI / CFI-REP anno ${currentYear}</h3>
-
-<table style="width:100%;border-collapse:collapse;">
-<tr>
-<th>Dipendente</th>
-<th>Totale punti</th>
-</tr>
-`;
+};
 
 
-Object.values(stats).forEach(emp => {
+// ======================
+// 🎉 TURNI FESTIVI
+// ======================
 
-html += `
+window.showFestiviStats = async function(){
 
-<tr>
-<td>${emp.name}</td>
-<td>${emp.total}</td>
-</tr>
-
-`;
-
-});
+const container =
+document.getElementById("statsContent");
 
 
-html += `
-</table>
+container.innerHTML =
+"Caricamento festivi...";
 
-<br>
 
-<h3>Storico dettagliato</h3>
+const snapshot = await firestore.getDocs(
+firestore.collection(db,"events")
+);
 
-<table id="historyTable" style="width:100%;border-collapse:collapse;">
+
+let html = `
+
+<h3>🎉 Turnazione Festivi</h3>
+
+<table style="width:100%;border-collapse:collapse">
 
 <tr>
 <th>Data</th>
 <th>Dipendente</th>
-<th>Tipo</th>
-<th>Punti</th>
+<th>Turno</th>
 </tr>
 
 `;
 
 
-// storico
+snapshot.forEach(doc=>{
 
-snapshot.forEach(doc => {
 
 const ev = doc.data();
 
 
-if (
-ev.shift !== "CFI" &&
+if(
+ev.shift !== "FREP" &&
 ev.shift !== "CFI/REP"
-) return;
+)
+return;
 
 
-const start = new Date(ev.startDate);
-const end = new Date(ev.endDate);
-
-
-for(
-let d = new Date(start);
-d <= end;
-d.setDate(d.getDate()+1)
-){
-
-
-if(d.getFullYear() !== currentYear)
-continue;
-
-
-const day = d.getDay();
-
-
-const weight =
-(day===0 || day===6)
-? 2
-: 1;
-
+if(!isHoliday(ev.date))
+return;
 
 
 html += `
 
 <tr>
 
-<td>
-${d.toLocaleDateString("it-IT")}
-</td>
+<td>${ev.date}</td>
 
 <td>
 ${EMPLOYEES[ev.employee]?.name || ""}
 </td>
 
-<td>
-${ev.shift}
-</td>
-
-<td>
-${weight}
-</td>
+<td>${ev.shift}</td>
 
 </tr>
 
-
 `;
-
-}
 
 });
 
@@ -2734,14 +2641,180 @@ html += "</table>";
 
 container.innerHTML = html;
 
-  } catch (err) {
 
-    console.error(err);
+};
 
-    container.innerHTML =
-      "Errore caricamento statistiche";
 
-  }
+
+// ======================
+// 📊 TOTALE CFI / CFI-REP
+// ======================
+
+
+window.showCfiStats = async function(){
+
+
+const container =
+document.getElementById("statsContent");
+
+
+container.innerHTML =
+"Caricamento CFI...";
+
+
+const stats={};
+
+
+Object.keys(EMPLOYEES).forEach(id=>{
+
+stats[id]={
+name:EMPLOYEES[id].name,
+total:0
+};
+
+});
+
+
+
+const snapshot = await firestore.getDocs(
+firestore.collection(db,"events")
+);
+
+
+
+snapshot.forEach(doc=>{
+
+
+const ev = doc.data();
+
+
+if(
+ev.shift !== "CFI" &&
+ev.shift !== "CFI/REP"
+)
+return;
+
+
+
+const d =
+new Date(ev.date);
+
+
+
+const weight =
+(d.getDay()===0 ||
+d.getDay()===6 ||
+isHoliday(ev.date))
+?2:1;
+
+
+
+if(stats[ev.employee]){
+
+stats[ev.employee].total += weight;
+
+}
+
+
+});
+
+
+
+let html = `
+
+<h3>
+📊 Totale CFI / CFI-REP
+</h3>
+
+
+<table style="width:100%;border-collapse:collapse">
+
+<tr>
+<th>Dipendente</th>
+<th>Punti</th>
+</tr>
+
+`;
+
+
+
+Object.values(stats).forEach(emp=>{
+
+
+html += `
+
+<tr>
+
+<td>${emp.name}</td>
+
+<td>${emp.total}</td>
+
+</tr>
+
+`;
+
+});
+
+
+html += "</table>";
+
+
+container.innerHTML=html;
+
+
+};
+
+
+
+// ======================
+// CHIUSURA POPUP
+// ======================
+
+
+window.closeStatsPopup = function(){
+
+document.getElementById("statsPopup").style.display="none";
+
+};
+
+
+
+// ======================
+// 📄 STAMPA PDF STATISTICHE
+// ======================
+
+
+window.exportStatsPdf = function(){
+
+
+const {jsPDF}=window.jspdf;
+
+
+const pdf = new jsPDF();
+
+
+pdf.text(
+"Statistiche Reperibilità",
+14,
+15
+);
+
+
+
+pdf.autoTable({
+
+html:"#statsContent table",
+
+startY:25
+
+});
+
+
+
+pdf.save(
+"Statistiche_Reperibilita.pdf"
+);
+
 
 };
 
