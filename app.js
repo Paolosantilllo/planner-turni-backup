@@ -981,20 +981,53 @@ function generatePDF(months = 1) {
       if (!hasCoverage) uncoveredDays.add(d);
     }
 
-    // ======================
-    // 📌 TITOLO
-    // ======================
-    pdf.setFontSize(12);
-    pdf.setFont("helvetica", "bold");
+ // ======================
+// 📌 TITOLO + DATA + VERSIONE
+// ======================
 
-    pdf.text(
+pdf.setFontSize(12);
+pdf.setFont("helvetica", "bold");
+
+pdf.text(
   `Reperibilità specialisti PLF del mese di ${monthNames[month].toUpperCase()} ${year}`,
   148,
   startY,
   { align: "center" }
 );
 
-    startY += 5;
+
+// ======================
+// 📅 DATA INVIO + VERSIONE
+// ======================
+
+const today = new Date();
+
+const sendDate =
+  `${String(today.getDate()).padStart(2,"0")}/` +
+  `${String(today.getMonth()+1).padStart(2,"0")}/` +
+  `${today.getFullYear()}`;
+
+
+pdf.setFontSize(8);
+pdf.setFont("helvetica", "normal");
+
+pdf.text(
+  `Data invio: ${sendDate}`,
+  285,
+  startY - 3,
+  { align:"right" }
+);
+
+
+pdf.text(
+  `Versione: 1/1`,
+  285,
+  startY + 2,
+  { align:"right" }
+);
+
+
+startY += 5;
 
     // ======================
     // 📊 TABELLA
