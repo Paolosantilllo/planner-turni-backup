@@ -37,6 +37,22 @@ const monthTitle = document.getElementById("monthTitle");
 const employeeFilter = document.getElementById("employeeFilter");
 
 // ======================
+// FORMATTAZIONE DATE
+// ======================
+
+function formatDateIT(date){
+
+  if(!date) return "";
+
+  const parts = date.split("-");
+
+  if(parts.length !== 3) return date;
+
+  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+}
+
+// ======================
 // CARICA DIPENDENTI
 // ======================
 
