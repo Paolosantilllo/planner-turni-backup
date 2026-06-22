@@ -454,8 +454,10 @@ if (dayInfo.isSunday || dayInfo.isHoliday) {
 }
 
 
-box.onclick = () => openPopupWithDate(date, events);
-
+box.onclick = () => {
+  if (!window.IS_ADMIN) return;
+  openPopupWithDate(date, events);
+};
 
 const num = document.createElement("div");
 num.classList.add("day-number");
@@ -577,9 +579,12 @@ window.prevMonth = function(){
 ====================== */
 
 window.openPopup = function(){
-  document.getElementById("popup").style.display = "flex";
-};
 
+  if (!window.IS_ADMIN) return;
+
+  document.getElementById("popup").style.display = "flex";
+
+};
 window.closePopup = function(){
   document.getElementById("popup").style.display = "none";
 };
@@ -614,7 +619,12 @@ window.saveShift = async function () {
   const endDate = document.getElementById("endDate").value;
   const shift = document.getElementById("shift").value;
 
-  if (!employee || !startDate || !shift) {
+ if (!window.IS_ADMIN) {
+  alert("Non autorizzato");
+  return;
+}
+   
+   if (!employee || !startDate || !shift) {
     alert("Compila tutti i campi");
     return;
   }
@@ -843,7 +853,12 @@ window.deleteShift = async function () {
   const startDate = document.getElementById("startDate").value;
   const endDate = document.getElementById("endDate").value;
 
-  if (!employee || !startDate) {
+ if (!window.IS_ADMIN) {
+  alert("Non autorizzato");
+  return;
+}
+   
+   if (!employee || !startDate) {
     alert("Seleziona dipendente e data");
     return;
   }
