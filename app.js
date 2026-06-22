@@ -2703,7 +2703,7 @@ html += `
 
 <tr>
 
-<td>${ev.date}</td>
+<td>${formatDateIT(ev.date)}</td>
 
 <td>
 ${EMPLOYEES[ev.employee]?.name || ""}
@@ -2839,7 +2839,7 @@ let html = `
 
 <tr>
 <th>Dipendente</th>
-<th>Punti</th>
+<th>TOT.</th>
 </tr>
 
 `;
