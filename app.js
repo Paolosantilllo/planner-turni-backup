@@ -2563,6 +2563,8 @@ document.getElementById("statsPopup").style.display="flex";
 document.getElementById("statsContent").innerHTML =
 "Seleziona una statistica";
 
+document.getElementById("statsExport").innerHTML = "";
+
 };
 
 
@@ -2641,7 +2643,18 @@ html += "</table>";
 
 container.innerHTML = html;
 
+document.getElementById("statsExport").innerHTML = `
 
+<button
+class="save-btn"
+onclick="exportFestiviPdf()">
+
+📄 Esporta PDF Festivi
+
+</button>
+
+`;
+   
 };
 
 
@@ -2761,7 +2774,18 @@ html += "</table>";
 
 container.innerHTML=html;
 
+document.getElementById("statsExport").innerHTML = `
 
+<button
+class="save-btn"
+onclick="exportCfiPdf()">
+
+📄 Esporta PDF CFI
+
+</button>
+
+`;
+   
 };
 
 
@@ -2780,11 +2804,47 @@ document.getElementById("statsPopup").style.display="none";
 
 
 // ======================
-// 📄 STAMPA PDF STATISTICHE
+// PDF FESTIVI
+// ======================
+
+window.exportFestiviPdf = function(){
+
+const {jsPDF}=window.jspdf;
+
+const pdf = new jsPDF();
+
+pdf.setFontSize(16);
+pdf.text(
+"Turnazione Festivi",
+14,
+15
+);
+
+
+pdf.autoTable({
+
+html:"#statsContent table",
+
+startY:25
+
+});
+
+
+pdf.save(
+"Turnazione_Festivi.pdf"
+);
+
+
+};
+
+
+
+// ======================
+// PDF CFI
 // ======================
 
 
-window.exportStatsPdf = function(){
+window.exportCfiPdf = function(){
 
 
 const {jsPDF}=window.jspdf;
@@ -2792,9 +2852,9 @@ const {jsPDF}=window.jspdf;
 
 const pdf = new jsPDF();
 
-
+pdf.setFontSize(16);
 pdf.text(
-"Statistiche Reperibilità",
+"Totale CFI / CFI-REP",
 14,
 15
 );
@@ -2810,49 +2870,13 @@ startY:25
 });
 
 
-
 pdf.save(
-"Statistiche_Reperibilita.pdf"
+"Totale_CFI_CFI-REP.pdf"
 );
 
 
 };
 
 
-// ======================
-// CHIUSURA POPUP
-// ======================
-
-window.closeStatsPopup = function () {
-
-  document.getElementById("statsPopup").style.display = "none";
-
-};
 
 
-// ======================
-// EXPORT PDF STATISTICHE
-// ======================
-
-window.exportStatsPdf = function () {
-
-  const { jsPDF } = window.jspdf;
-
-  const pdf = new jsPDF();
-
-  pdf.setFontSize(16);
-
-  pdf.text(
-    "Statistiche Reperibilità",
-    14,
-    15
-  );
-
-  pdf.autoTable({
-    html: "#statsContent table",
-    startY: 25
-  });
-
-  pdf.save("Statistiche_Reperibilita.pdf");
-
-};
