@@ -1647,8 +1647,34 @@ window.sendChangeRequest = async function(){
   const shift =
     document.getElementById("changeShift").value;
 
+// ======================
+// 🚫 BLOCCO DATE PASSATE
+// ======================
 
-  if(!window.selectedFromDate || !window.selectedToDate){
+const today = new Date();
+
+today.setHours(0,0,0,0);
+
+
+const fromDateObj = new Date(window.selectedFromDate);
+const toDateObj = new Date(window.selectedToDate);
+
+
+if (
+  fromDateObj < today ||
+  toDateObj < today
+) {
+
+  alert(
+    "❌ Non puoi richiedere un cambio con date già trascorse"
+  );
+
+  return;
+
+}
+
+   
+   if(!window.selectedFromDate || !window.selectedToDate){
 
     alert("Seleziona giorno da dare e giorno da ricevere");
     return;
