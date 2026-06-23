@@ -76,7 +76,7 @@ export function initAuth(onReady) {
     IS_ADMIN = data.role === "ADMIN";
 
     /* 🔔 REGISTRA TOKEN DISPOSITIVO */
-(async () => {
+(async (user) => {
 
   try {
 
@@ -94,7 +94,6 @@ export function initAuth(onReady) {
 
     console.log("FCM TOKEN:", token);
 
-    // salva su Firestore
     await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       employee: CURRENT_EMPLOYEE,
@@ -106,7 +105,7 @@ export function initAuth(onReady) {
     console.error("Errore registrazione device:", err);
   }
 
-})();
+})(user);
     
     window.CURRENT_USER = CURRENT_USER;
     window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
