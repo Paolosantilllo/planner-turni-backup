@@ -64,7 +64,8 @@ export async function initAuth(onReady) {
 
   onAuthStateChanged(auth, async (user) => {
 
-    /* ❌ NON LOGGATO */
+    console.log("🔥 AUTH TRIGGER PARTITO", user);
+
     if (!user) {
       window.location.href = "login.html";
       return;
