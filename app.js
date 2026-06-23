@@ -1339,9 +1339,9 @@ headStyles: {
     return;
   }
 
-  // 🤎 REP
+// 🟤 REP
 if (value === "REP" || value === "FREP") {
-  data.cell.styles.fillColor = [245, 245, 220];
+  data.cell.styles.fillColor = [240, 220, 215];
   return;
 }
 
