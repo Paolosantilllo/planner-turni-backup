@@ -1339,11 +1339,11 @@ headStyles: {
     return;
   }
 
-  // 🩷 REP
-  if (value === "REP" || value === "FREP") {
-    data.cell.styles.fillColor = [255,182,193];
-    return;
-  }
+  // 🤎 REP
+if (value === "REP" || value === "FREP") {
+  data.cell.styles.fillColor = [245, 245, 220];
+  return;
+}
 
   // 🟡 LIC / REC
   if (value === "LIC" || value === "REC") {
