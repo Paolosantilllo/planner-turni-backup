@@ -279,86 +279,54 @@ function isHoliday(dateStr){
    CARICA EVENTI FIREBASE
 ====================== */
 
-async function loadEvents() {
-
-  console.log("📅 Caricamento eventi mese corrente");
-
-
-  // mostra subito giorni calendario
-  renderCalendar();
-
+function loadEvents() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
 
-  const start =
-    `${year}-${String(month + 1).padStart(2,"0")}-01`;
+  // MOSTRA SUBITO IL CALENDARIO
+  renderCalendar();
 
 
-  const endDay =
-    new Date(year, month + 1, 0).getDate();
+  firestore.onSnapshot(
+
+    firestore.collection(db, "events"),
+
+    (snap) => {
 
 
-  const end =
-    `${year}-${String(month + 1).padStart(2,"0")}-${String(endDay).padStart(2,"0")}`;
+      savedEvents = [];
 
 
-  try {
+      snap.forEach(doc => {
+
+        const ev = {
+          id: doc.id,
+          ...doc.data()
+        };
 
 
-    const q = query(
-
-      firestore.collection(db,"events"),
-
-      where("date", ">=", start),
-
-      where("date", "<=", end)
-
-    );
-
-
-    const snap = await getDocs(q);
-
-
-    savedEvents = [];
-
-
-    snap.forEach(doc => {
-
-      savedEvents.push({
-
-        id: doc.id,
-
-        ...doc.data()
+        savedEvents.push(ev);
 
       });
 
-    });
+
+      console.log(
+        "EVENTI CARICATI:",
+        savedEvents.length
+      );
 
 
-    console.log(
-      "✅ EVENTI CARICATI:",
-      savedEvents.length
-    );
+      // aggiorna quando arrivano i dati
+      renderCalendar();
 
 
-    renderCalendar();
+    }
 
+  );
 
-  } catch(err) {
-
-
-    console.error(
-      "❌ ERRORE CARICAMENTO EVENTI:",
-      err
-    );
-
-
-  }
-
-}
-// ======================
+}// ======================
 // 🔔 CARICA RICHIESTE CAMBIO
 // ======================
 
