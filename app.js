@@ -281,25 +281,63 @@ function isHoliday(dateStr){
 
 function loadEvents() {
 
+  console.log("📅 Caricamento eventi...");
+
+  // mostra subito calendario vuoto
+  renderCalendar();
+
+
   firestore.onSnapshot(
+
     firestore.collection(db, "events"),
+
     (snap) => {
+
 
       savedEvents = [];
 
+
       snap.forEach(doc => {
+
         savedEvents.push({
+
           id: doc.id,
           ...doc.data()
+
         });
+
       });
 
-      console.log("EVENTI CARICATI:", savedEvents.length);
 
-            renderCalendar(); // 👈 SOLO QUI
+      // ordina per data
+      savedEvents.sort((a,b)=>
+        a.date.localeCompare(b.date)
+      );
+
+
+      console.log(
+        "✅ EVENTI CARICATI:",
+        savedEvents.length
+      );
+
+
+      // aggiorna calendario appena arrivano
+      renderCalendar();
+
+
+    },
+
+    (error)=>{
+
+      console.error(
+        "❌ Errore caricamento eventi:",
+        error
+      );
 
     }
+
   );
+
 }
 
 
