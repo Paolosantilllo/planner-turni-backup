@@ -22,10 +22,16 @@ export async function initPush(user) {
     }
 
 
-    const token = await getToken(messaging, {
-      vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
-    });
+   const registration = await navigator.serviceWorker.register(
+  "/planner-turni/firebase-messaging-sw.js"
+);
 
+console.log("✅ PUSH SW registrato", registration);
+
+const token = await getToken(messaging, {
+  vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
+  serviceWorkerRegistration: registration
+});
 
     if (token) {
 
