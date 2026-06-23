@@ -712,13 +712,28 @@ calendar.appendChild(box);
  // NAVIGAZIONE MESI
  // ======================
 window.nextMonth = function(){
-  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-  renderCalendar();
-};
 
+  currentDate =
+  new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    1
+  );
+
+  loadEvents();
+
+};
 window.prevMonth = function(){
-  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-  renderCalendar();
+
+  currentDate =
+  new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() - 1,
+    1
+  );
+
+  loadEvents();
+
 };
 
 /* ======================
