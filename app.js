@@ -281,8 +281,11 @@ function isHoliday(dateStr){
 
 async function loadEvents() {
 
-
   console.log("📅 Caricamento eventi mese corrente");
+
+
+  // mostra subito giorni calendario
+  renderCalendar();
 
 
   const year = currentDate.getFullYear();
@@ -293,13 +296,12 @@ async function loadEvents() {
     `${year}-${String(month + 1).padStart(2,"0")}-01`;
 
 
-  const endDate =
+  const endDay =
     new Date(year, month + 1, 0).getDate();
 
 
   const end =
-    `${year}-${String(month + 1).padStart(2,"0")}-${String(endDate).padStart(2,"0")}`;
-
+    `${year}-${String(month + 1).padStart(2,"0")}-${String(endDay).padStart(2,"0")}`;
 
 
   try {
@@ -311,9 +313,7 @@ async function loadEvents() {
 
       where("date", ">=", start),
 
-      where("date", "<=", end),
-
-      orderBy("date")
+      where("date", "<=", end)
 
     );
 
@@ -321,13 +321,10 @@ async function loadEvents() {
     const snap = await getDocs(q);
 
 
-
     savedEvents = [];
 
 
-
     snap.forEach(doc => {
-
 
       savedEvents.push({
 
@@ -337,37 +334,30 @@ async function loadEvents() {
 
       });
 
-
     });
 
 
-
     console.log(
-      "✅ EVENTI MESE:",
+      "✅ EVENTI CARICATI:",
       savedEvents.length
     );
 
 
-
     renderCalendar();
-
 
 
   } catch(err) {
 
 
     console.error(
-      "❌ Errore caricamento eventi:",
+      "❌ ERRORE CARICAMENTO EVENTI:",
       err
     );
 
 
   }
 
-
 }
-
-
 // ======================
 // 🔔 CARICA RICHIESTE CAMBIO
 // ======================
