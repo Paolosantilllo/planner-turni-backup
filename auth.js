@@ -122,3 +122,32 @@ export async function logout() {
   }
 
 }
+
+async function registerDeviceToken(user) {
+
+  try {
+
+    const messaging = getMessaging();
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
+
+    const token = await getToken(messaging, {
+      vapidKey: "LA_TUA_VAPID_KEY"
+    });
+
+    if (!token) return;
+
+    console.log("FCM TOKEN:", token);
+
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      employee: CURRENT_EMPLOYEE,
+      role: IS_ADMIN ? "ADMIN" : "USER",
+      fcmTokens: arrayUnion(token)
+    }, { merge: true });
+
+  } catch (err) {
+    console.error("Errore registrazione device:", err);
+  }
+}
