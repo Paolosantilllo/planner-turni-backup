@@ -196,9 +196,8 @@ window.Notification?.permission);
 
     const token = await getToken(messaging, {
 
-      vapidKey:
-      "BFbZ0Pz3kOKUY0FQFGy85omU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
-
+    vapidKey: 
+      "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
     });
 
 
