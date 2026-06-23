@@ -141,6 +141,7 @@ async function registerDeviceToken(user) {
   try {
 
     console.log("🔔 registerDeviceToken PARTITA");
+    alert("🔔 registerDeviceToken PARTITA");
 
     console.log("Notification support:",
       "Notification" in window);
@@ -185,6 +186,7 @@ async function registerDeviceToken(user) {
   } catch (err) {
 
     console.error("❌ ERRORE REGISTER TOKEN:", err);
+    alert("ERRORE: " + err.message);
 
   }
 
