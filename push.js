@@ -22,7 +22,7 @@ export async function initPush(user) {
     }
 
     const token = await getToken(messaging, {
-      vapidKey: "LA_TUA_VAPID_KEY"
+      vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
     });
 
     console.log("🔥 PUSH TOKEN:", token);
