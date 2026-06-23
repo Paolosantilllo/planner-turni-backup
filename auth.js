@@ -62,7 +62,7 @@ function mapUser(email) {
 
 export async function initAuth(onReady) {
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
 
     /* ❌ NON LOGGATO */
     if (!user) {
