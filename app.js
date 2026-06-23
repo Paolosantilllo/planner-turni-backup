@@ -5,7 +5,7 @@
 import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
-import { initPushNotifications } from "./push.js";
+import { initPush } from "./push.js";
 
 window.logout = logout;
 
@@ -23,7 +23,7 @@ initAuth(() => {
 
   setupAdminUI();
 
-  initPushNotifications();
+  initPush();
 
 });
 
