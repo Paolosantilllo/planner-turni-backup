@@ -34,8 +34,8 @@ export const EMPLOYEES = {
 ====================== */
 
 export const SHIFT_COLORS = {
-  REP: "#F5F5DC",       // beige
-  FREP: "#F5F5DC",      // beige
+  REP: "#F0DCD7",
+  FREP: "#F0DCD7",
   CFI: "#66BB6A",       // verde
   "CFI/REP": "#66BB6A", // verde
   LIC: "#FFEB3B",       // giallo
