@@ -151,6 +151,8 @@ async function registerDeviceToken(user) {
 
     const permission = await Notification.requestPermission();
 
+alert("Permesso notifiche: " + permission);
+
     console.log("Permission dopo richiesta:",
       permission);
 
