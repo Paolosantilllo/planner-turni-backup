@@ -75,6 +75,39 @@ export function initAuth(onReady) {
     CURRENT_EMPLOYEE = data.employee;
     IS_ADMIN = data.role === "ADMIN";
 
+    /* 🔔 REGISTRA TOKEN DISPOSITIVO */
+(async () => {
+
+  try {
+
+    const messaging = getMessaging();
+
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") return;
+
+    const token = await getToken(messaging, {
+      vapidKey: "LA_TUA_VAPID_KEY"
+    });
+
+    if (!token) return;
+
+    console.log("FCM TOKEN:", token);
+
+    // salva su Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      employee: CURRENT_EMPLOYEE,
+      role: IS_ADMIN ? "ADMIN" : "USER",
+      fcmTokens: arrayUnion(token)
+    }, { merge: true });
+
+  } catch (err) {
+    console.error("Errore registrazione device:", err);
+  }
+
+})();
+    
     window.CURRENT_USER = CURRENT_USER;
     window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
     window.IS_ADMIN = IS_ADMIN;
