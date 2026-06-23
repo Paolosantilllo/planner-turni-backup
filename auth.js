@@ -89,7 +89,10 @@ CURRENT_EMPLOYEE = data.employee;
 IS_ADMIN = data.role === "ADMIN";
 
 /* 🔔 REGISTRA TOKEN DISPOSITIVO */
+/* 🔔 REGISTRA TOKEN DISPOSITIVO */
 await registerDeviceToken(user);
+
+console.log("🚀 DOPO REGISTER");
 
 window.CURRENT_USER = CURRENT_USER;
 window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
