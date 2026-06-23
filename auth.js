@@ -142,6 +142,15 @@ async function registerDeviceToken(user) {
 
     console.log("🔔 registerDeviceToken PARTITA");
 
+console.log("APP STANDALONE:",
+window.navigator.standalone);
+
+console.log("NOTIFICATION:",
+window.Notification);
+
+console.log("PERMISSION:",
+window.Notification?.permission);
+
     // controllo supporto notifiche
     if (!("Notification" in window)) {
 
