@@ -140,31 +140,52 @@ async function registerDeviceToken(user) {
 
   try {
 
-   console.log("🔔 registerDeviceToken PARTITA");
-    
-    const messaging = getMessaging();
+    console.log("🔔 registerDeviceToken PARTITA");
+
+    console.log("Notification support:",
+      "Notification" in window);
+
+    console.log("Permission attuale:",
+      Notification.permission);
 
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") return;
+
+    console.log("Permission dopo richiesta:",
+      permission);
+
+    if (permission !== "granted") {
+      console.log("❌ Notifiche NON autorizzate");
+      return;
+    }
+
+    const messaging = getMessaging();
 
     const token = await getToken(messaging, {
       vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
     });
 
-    if (!token) return;
+    console.log("TOKEN OTTENUTO:", token);
 
-    console.log("FCM TOKEN:", token);
+    if (!token) {
+      console.log("❌ Nessun token ricevuto");
+      return;
+    }
 
     const uid = user.uid || user.email;
 
-await setDoc(doc(db, "users", uid), {
+    await setDoc(doc(db, "users", uid), {
       email: user.email,
       employee: CURRENT_EMPLOYEE,
       role: IS_ADMIN ? "ADMIN" : "USER",
       fcmTokens: arrayUnion(token)
     }, { merge: true });
 
+    console.log("✅ Token salvato su Firestore");
+
   } catch (err) {
-    console.error("Errore registrazione device:", err);
+
+    console.error("❌ ERRORE REGISTER TOKEN:", err);
+
   }
+
 }
