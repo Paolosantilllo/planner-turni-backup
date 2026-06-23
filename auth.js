@@ -60,7 +60,7 @@ function mapUser(email) {
    INIT AUTH GUARD
 ====================== */
 
-export function initAuth(onReady) {
+export async function initAuth(onReady) {
 
   onAuthStateChanged(auth, (user) => {
 
@@ -89,7 +89,7 @@ CURRENT_EMPLOYEE = data.employee;
 IS_ADMIN = data.role === "ADMIN";
 
 /* 🔔 REGISTRA TOKEN DISPOSITIVO */
-registerDeviceToken(user);
+await registerDeviceToken(user);
 
 window.CURRENT_USER = CURRENT_USER;
 window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
@@ -140,7 +140,7 @@ async function registerDeviceToken(user) {
 
   try {
 
-   console.log("🔔 AVVIO REGISTRAZIONE NOTIFICHE");
+   console.log("🔔 registerDeviceToken PARTITA");
     
     const messaging = getMessaging();
 
