@@ -22,28 +22,26 @@ export async function initPush(user) {
     }
 
     const token = await getToken(messaging, {
-      vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
-    });
+  vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc"
+});
 
-    console.log("🔥 PUSH TOKEN:", token);
 
-    // 🔥 SALVATAGGIO TOKEN UTENTE SU FIRESTORE
-    if (user?.email) {
+if(token){
 
-      await firestore.setDoc(
-        firestore.doc(db, "users", user.email),
-        {
-          email: user.email,
-          token: token,
-          lastUpdate: new Date()
-        },
-        { merge: true }
-      );
+  console.log("🔥 PUSH TOKEN:", token);
 
-    }
+  if (user?.email) {
 
-  } catch (err) {
-    console.error("❌ Errore push:", err);
+    await firestore.setDoc(
+      firestore.doc(db, "users", user.email),
+      {
+        email: user.email,
+        token: token,
+        lastUpdate: new Date()
+      },
+      { merge:true }
+    );
+
   }
 
 }
