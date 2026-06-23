@@ -3053,7 +3053,7 @@ function setupAdminUI() {
   hide("pdfBtn");
   hide("statsBtn");
   hide("addBtn");
-
+  hide("logoutBtn"); 
 }
 
 
