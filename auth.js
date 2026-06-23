@@ -6,6 +6,19 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
+import { db } from "./firebase.js";
+
+import {
+  doc,
+  setDoc,
+  arrayUnion
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+import {
+  getMessaging,
+  getToken
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+
 /* ======================
    STATO GLOBALE UTENTE
 ====================== */
@@ -140,7 +153,9 @@ async function registerDeviceToken(user) {
 
     console.log("FCM TOKEN:", token);
 
-    await setDoc(doc(db, "users", user.uid), {
+    const uid = user.uid || user.email;
+
+await setDoc(doc(db, "users", uid), {
       email: user.email,
       employee: CURRENT_EMPLOYEE,
       role: IS_ADMIN ? "ADMIN" : "USER",
