@@ -140,6 +140,8 @@ async function registerDeviceToken(user) {
 
   try {
 
+   console.log("🔔 AVVIO REGISTRAZIONE NOTIFICHE");
+    
     const messaging = getMessaging();
 
     const permission = await Notification.requestPermission();
