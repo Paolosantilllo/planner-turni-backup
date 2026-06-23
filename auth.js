@@ -11,7 +11,11 @@ import { db } from "./firebase.js";
 import {
   doc,
   setDoc,
-  arrayUnion
+  arrayUnion,
+  query,
+  where,
+  orderBy,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 import {
