@@ -94,3 +94,24 @@ export function listenForegroundNotifications() {
   });
 
 }
+
+
+// ======================
+// 🔔 BOTTONE ATTIVA PUSH
+// ======================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("enablePushBtn");
+
+  if(btn){
+
+    btn.addEventListener("click", () => {
+
+      initPush(window.CURRENT_USER);
+
+    });
+
+  }
+
+});
