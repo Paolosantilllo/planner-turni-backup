@@ -1236,32 +1236,3 @@ button:disabled{
   height:56px;
   padding:0;
 }
-/* ======================
-   PULSANTE PDF
-====================== */
-
-.monthly-send{
-  display:flex;
-  justify-content:center;
-  margin-bottom:15px;
-}
-
-.monthly-send-btn{
-
-  width:220px;
-  height:60px;
-
-  border:none;
-  border-radius:18px;
-
-  background:#1677ff;
-  color:white;
-
-  font-size:22px;
-  font-weight:700;
-
-  cursor:pointer;
-
-  box-shadow:0 8px 20px rgba(22,119,255,0.25);
-
-}
