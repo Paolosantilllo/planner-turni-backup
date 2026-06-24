@@ -16,7 +16,15 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-/* ======================
+self.addEventListener("push", event => {
+
+  console.log("🔥 PUSH RAW ARRIVATO", event);
+
+});
+
+
+
+/* ====================
    NOTIFICHE BACKGROUND
 ====================== */
 
