@@ -44,7 +44,7 @@ const token = await getToken(messaging, {
           firestore.doc(db, "users", user.email),
           {
             email: user.email,
-            token: token,
+            fcmToken: token,
             lastUpdate: new Date()
           },
           { merge: true }
