@@ -11,6 +11,8 @@ window.logout = logout;
 
 initAuth((user) => {
 
+  window.CURRENT_USER = user;
+
   populateEmployeeSelects();
 
   setDefaultFilter();
@@ -22,8 +24,6 @@ initAuth((user) => {
   loadNotificationBadge();
 
   setupAdminUI();
-
-  initPush(user);
 
 });
 
