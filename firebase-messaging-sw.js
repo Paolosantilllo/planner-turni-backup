@@ -38,7 +38,8 @@ messaging.onBackgroundMessage((payload) => {
   const title = notification.title || "Planner REP";
   const body = notification.body || "";
 
-  self.registration.showNotification(title, {
+  console.log("🚀 SHOW NOTIFICATION");
+   self.registration.showNotification(title, {
 
     body: body,
     icon: "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg",
