@@ -9,7 +9,7 @@ import { initPush } from "./push.js";
 
 window.logout = logout;
 
-initAuth(() => {
+initAuth((user) => {
 
   populateEmployeeSelects();
 
@@ -23,7 +23,7 @@ initAuth(() => {
 
   setupAdminUI();
 
-  initPush();
+  initPush(user);
 
 });
 
