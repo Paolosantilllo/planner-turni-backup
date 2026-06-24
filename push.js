@@ -12,33 +12,41 @@ import {
 
 export async function initPush(user) {
 
-  try {
+  const btn = document.getElementById("enablePushBtn");
 
-    const permission = await Notification.requestPermission();
+  if (!btn) {
+    console.log("Pulsante notifiche non trovato");
+    return;
+  }
 
-    if (permission !== "granted") {
-      console.log("❌ Notifiche negate");
-      return;
-    }
+  btn.addEventListener("click", async () => {
 
+    try {
 
-   const registration = await navigator.serviceWorker.register(
-  "/planner-turni/firebase-messaging-sw.js"
-);
+      const permission =
+        await Notification.requestPermission();
 
-console.log("✅ PUSH SW registrato", registration);
+      console.log("Permesso:", permission);
 
-const token = await getToken(messaging, {
-  vapidKey: "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
-  serviceWorkerRegistration: registration
-});
+      if (permission !== "granted") {
+        alert("Notifiche non autorizzate");
+        return;
+      }
 
-    if (token) {
+      const registration =
+        await navigator.serviceWorker.register(
+          "/planner-turni/firebase-messaging-sw.js"
+        );
 
-      console.log("🔥 PUSH TOKEN:", token);
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
+        serviceWorkerRegistration: registration
+      });
 
+      console.log("TOKEN:", token);
 
-      if (user?.email) {
+      if (user?.email && token) {
 
         await firestore.setDoc(
           firestore.doc(db, "users", user.email),
@@ -52,12 +60,19 @@ const token = await getToken(messaging, {
 
       }
 
+      alert("✅ Notifiche attivate");
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert(
+        "❌ Errore attivazione notifiche"
+      );
+
     }
 
-
-  } catch (err) {
-    console.error("❌ Errore push:", err);
-  }
+  });
 
 }
 
