@@ -2289,22 +2289,24 @@ await firestore.updateDoc(
 
 // 🔔 NOTIFICA A MANUNTA
 
+const message =
+`✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`;
+
+
 await firestore.addDoc(
-
  firestore.collection(db,"notifications"),
-
  {
   employee:req.fromEmployee,
-
-  message:
-  `✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
-
+  message: message,
   read:false,
-
   createdAt:new Date()
-
  }
+);
 
+
+console.log(
+"📨 Notifica creata per:",
+req.fromEmployee
 );
 
 
