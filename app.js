@@ -1577,26 +1577,29 @@ window.loadChangeDays = function () {
 
       div.onclick = () => {
 
-        if (!hasEvent) return;
+  if (!hasEvent) return;
 
-        if (isFrom) {
+  if (isFrom) {
 
-          document.getElementById(
-            "selectedFromText"
-          ).innerText = iso;
+    window.selectedFromDate = iso;
 
-          window.selectedFromDate = iso;
+    document.getElementById("selectedFromText").innerText = iso;
 
-        } else {
+    // 🔥 chiudi subito calendario FROM
+    document.getElementById("changeCalendarFrom")
+      ?.classList.add("hidden-calendar");
 
-          document.getElementById(
-            "selectedToText"
-          ).innerText = iso;
+  } else {
 
-          window.selectedToDate = iso;
-        }
-      };
+    window.selectedToDate = iso;
 
+    document.getElementById("selectedToText").innerText = iso;
+
+    // 🔥 chiudi subito calendario TO
+    document.getElementById("changeCalendarTo")
+      ?.classList.add("hidden-calendar");
+  }
+};
       container.appendChild(div);
     }
   }
