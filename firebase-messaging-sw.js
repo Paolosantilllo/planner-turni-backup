@@ -41,8 +41,8 @@ messaging.onBackgroundMessage((payload) => {
   self.registration.showNotification(title, {
 
     body: body,
-    icon: "/logo.png",
-    badge: "/logo.png",
+    icon: "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg",
+badge: "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg",
 
     // 🔥 IMPORTANTISSIMO: dati per click
     data: data,
