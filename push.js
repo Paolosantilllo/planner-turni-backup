@@ -12,70 +12,56 @@ import {
 
 export async function initPush(user) {
 
-  const btn = document.getElementById("enablePushBtn");
+  try {
 
-  if (!btn) {
-    console.log("Pulsante notifiche non trovato");
-    return;
-  }
+    const permission =
+      await Notification.requestPermission();
 
-  btn.addEventListener("click", async () => {
+    console.log("Permesso:", permission);
 
-    try {
-
-      const permission =
-        await Notification.requestPermission();
-
-      console.log("Permesso:", permission);
-
-      if (permission !== "granted") {
-        alert("Notifiche non autorizzate");
-        return;
-      }
-
-      const registration =
-        await navigator.serviceWorker.register(
-          "/planner-turni/firebase-messaging-sw.js"
-        );
-
-      const token = await getToken(messaging, {
-        vapidKey:
-          "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
-        serviceWorkerRegistration: registration
-      });
-
-      console.log("TOKEN:", token);
-
-      if (user?.email && token) {
-
-        await firestore.setDoc(
-          firestore.doc(db, "users", user.email),
-          {
-            email: user.email,
-            fcmToken: token,
-            lastUpdate: new Date()
-          },
-          { merge: true }
-        );
-
-      }
-
-      alert("✅ Notifiche attivate");
-
-    } catch (err) {
-
-      console.error(err);
-
-      alert(
-        "❌ Errore attivazione notifiche"
-      );
-
+    if (permission !== "granted") {
+      console.log("Notifiche non autorizzate");
+      return;
     }
 
-  });
+    const registration =
+      await navigator.serviceWorker.register(
+        "/planner-turni/firebase-messaging-sw.js"
+      );
+
+    const token = await getToken(messaging, {
+      vapidKey:
+        "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
+      serviceWorkerRegistration: registration
+    });
+
+    console.log("TOKEN:", token);
+
+    if (user?.email && token) {
+
+      await firestore.setDoc(
+        firestore.doc(db, "users", user.email),
+        {
+          email: user.email,
+          fcmToken: token,
+          lastUpdate: new Date()
+        },
+        { merge: true }
+      );
+
+      console.log("✅ Token salvato");
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Errore notifiche:",
+      err
+    );
+
+  }
 
 }
-
 /* ======================
    NOTIFICHE APP APERTA
 ====================== */
