@@ -25,6 +25,8 @@ initAuth((user) => {
 
   setupAdminUI();
 
+  initPush(user);
+
 });
 
 /* ======================
