@@ -12,51 +12,133 @@ import {
 
 export async function initPush(user) {
 
-  try {
+const btn = document.getElementById("enablePushBtn");
 
-    const permission =
-      await Notification.requestPermission();
+if(!btn){
 
-    console.log("Permesso:", permission);
+ console.log("Pulsante notifiche non trovato");
 
-    if (permission !== "granted") {
-      console.log("Notifiche non autorizzate");
-      return;
-    }
+ return;
 
-    const registration =
-      await navigator.serviceWorker.register(
-        "/planner-turni/firebase-messaging-sw.js"
-      );
+}
 
-    const token = await getToken(messaging, {
-      vapidKey:
-        "BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
-      serviceWorkerRegistration: registration
-    });
+btn.onclick = async ()=>{
 
-    console.log("TOKEN:", token);
+try{
 
-    if (user?.email && token) {
+const permission =
 
-      await firestore.setDoc(
-        firestore.doc(db, "users", user.email),
-        {
-          email: user.email,
-          fcmToken: token,
-          lastUpdate: new Date()
-        },
-        { merge: true }
-      );
+await Notification.requestPermission();
 
-      console.log("✅ Token salvato");
-    }
+console.log(
 
-  } catch (err) {
+"Permesso:",
 
-    console.error(
-      "Errore notifiche:",
-      err
+permission
+
+);
+
+if(permission !== "granted"){
+
+alert("Notifiche non autorizzate");
+
+return;
+
+}
+
+const registration =
+
+await navigator.serviceWorker.register(
+
+"/planner-turni/firebase-messaging-sw.js"
+
+);
+
+const token =
+
+await getToken(
+
+messaging,
+
+{
+
+vapidKey:
+
+"BFbZ0Pz3kOKUY0FQFGy85omU5UT22XK4Dg8NDkiU4gueTSN4J8KJLz3-XKIV73Upqe1XZLS1yRnq_9yBFMgBfCc",
+
+serviceWorkerRegistration:
+
+registration
+
+}
+
+);
+
+console.log(
+
+"TOKEN:",
+
+token
+
+);
+
+if(user?.email && token){
+
+await firestore.setDoc(
+
+firestore.doc(
+
+db,
+
+"users",
+
+user.email
+
+),
+
+{
+
+email:user.email,
+
+fcmToken:token,
+
+lastUpdate:new Date()
+
+},
+
+{merge:true}
+
+);
+
+console.log(
+
+"✅ Token salvato"
+
+);
+
+}
+
+alert(
+
+"✅ Notifiche attivate"
+
+);
+
+btn.style.display="none";
+
+}catch(err){
+
+console.error(
+
+"Errore notifiche:",
+
+err
+
+);
+
+alert(
+
+"❌ Errore attivazione notifiche"
     );
 
   }
