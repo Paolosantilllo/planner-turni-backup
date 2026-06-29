@@ -5,15 +5,23 @@
 import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
 import { db, firestore } from "./firebase.js";
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
-import { initPush } from "./push.js";
-
+import {
+  initPush,
+  listenForegroundNotifications
+} from "./push.js";
 window.logout = logout;
 
 initAuth((user) => {
 
   window.CURRENT_USER = user;
 
-  populateEmployeeSelects();
+ window.CURRENT_EMPLOYEE = user.email === EMPLOYEES.A.email
+ ? "A"
+ : Object.keys(EMPLOYEES).find(
+    id => EMPLOYEES[id].email === user.email
+   );
+   
+   populateEmployeeSelects();
 
   setDefaultFilter();
 
@@ -27,6 +35,7 @@ initAuth((user) => {
 
   initPush(user);
 
+   listenForegroundNotifications();
 });
 
 /* ======================
@@ -113,12 +122,12 @@ employeeFilter.addEventListener("change", () => {
 function setDefaultFilter() {
 
   const role =
-    EMPLOYEES[CURRENT_EMPLOYEE]?.role;
+    EMPLOYEES[window.CURRENT_EMPLOYEE]?.role;
 
   // Admin e Santillo vedono tutti
   if (
     role === "ADMIN" ||
-    CURRENT_EMPLOYEE === "A"
+    window.CURRENT_EMPLOYEE === "A"
   ) {
 
     employeeFilter.value = "ALL";
@@ -2300,12 +2309,18 @@ const message =
 
 await firestore.addDoc(
  firestore.collection(db,"notifications"),
- {
-  employee:req.fromEmployee,
-  message: message,
-  read:false,
-  createdAt:new Date()
- }
+{
+ employee:req.fromEmployee,
+
+ email:
+ EMPLOYEES[req.fromEmployee].email,
+
+ message: message,
+
+ read:false,
+
+ createdAt:new Date()
+}
 );
 
 
@@ -2322,16 +2337,18 @@ await firestore.addDoc(
  firestore.collection(db,"notifications"),
 
  {
-  employee:req.toEmployee,
+ employee:req.toEmployee,
 
-  message:
-  `✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
+ email:
+ EMPLOYEES[req.toEmployee].email,
 
-  read:false,
+ message:
+ `✅ L'Admin ha approvato...`,
 
-  createdAt:new Date()
+ read:false,
 
- }
+ createdAt:new Date()
+}
 
 );
 
@@ -2366,7 +2383,10 @@ await firestore.addDoc(
  {
   employee:req.fromEmployee,
 
-  message:
+    email:
+EMPLOYEES[req.fromEmployee].email,
+ 
+    message:
   `❌ L'Admin ha rifiutato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
 
   read:false,
