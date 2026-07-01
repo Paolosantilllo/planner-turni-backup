@@ -4,38 +4,39 @@
 
 import { initAuth, logout, CURRENT_EMPLOYEE } from "./auth.js";
 import { db, firestore } from "./firebase.js";
+
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
 import {
   initPush,
   listenForegroundNotifications
 } from "./push.js";
+
 window.logout = logout;
 
 initAuth((user) => {
 
   window.CURRENT_USER = user;
 
- window.CURRENT_EMPLOYEE = user.email === EMPLOYEES.A.email
- ? "A"
- : Object.keys(EMPLOYEES).find(
-    id => EMPLOYEES[id].email === user.email
-   );
-   
-   populateEmployeeSelects();
+  // 🔥 USIAMO QUELLO GIÀ CALCOLATO DA auth.js
+  window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
 
+  populateEmployeeSelects();
   setDefaultFilter();
-
   loadEvents();
-
   loadChangeRequests();
-
   loadNotificationBadge();
-
   setupAdminUI();
 
   initPush(user);
+  listenForegroundNotifications();
 
-   listenForegroundNotifications();
 });
 
 /* ======================
@@ -45,10 +46,23 @@ initAuth((user) => {
 let currentDate = new Date();
 let savedEvents = [];
 
+let unsubscribeEvents = null;
+let eventsByDate = {};
+
+// ======================
+// 📄 VERSIONI PDF
+// ======================
+
+window.pdfVersion = "1/1";
+window.currentPdfKey = "";
+
+window.currentPdfBlob = null;
+window.currentPdfHash = null;
+window.currentPdfMonths = 1;
+
 const calendar = document.getElementById("calendar");
 const monthTitle = document.getElementById("monthTitle");
 const employeeFilter = document.getElementById("employeeFilter");
-
 // ======================
 // FORMATTAZIONE DATE
 // ======================
@@ -65,6 +79,47 @@ function formatDateIT(date){
 
 }
 
+// ======================
+// 📄 VERSIONE PDF
+// ======================
+
+async function getPdfVersion(pdfKey) {
+
+  const ref = doc(db, "pdfVersions", pdfKey);
+
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) {
+    return {
+      version: 1,
+      signature: null
+    };
+  }
+
+  const data = snap.data();
+
+  return {
+    version: data.version || 1,
+    signature: data.signature || null
+  };
+
+}
+
+async function savePdfVersion(version, signature) {
+
+  const ref = doc(db, "pdfVersions", window.currentPdfKey);
+
+  await setDoc(ref, {
+
+    version,
+
+    signature,
+
+    updatedAt: serverTimestamp()
+
+  });
+
+}
 // ======================
 // CARICA DIPENDENTI
 // ======================
@@ -214,64 +269,66 @@ window.validateShift = function(events, employee, date, shift) {
     }
   }
 
-  // ======================
-  // REP RULES
-  // ======================
+// ======================
+// REP RULES
+// ======================
 
-  if (shift === "REP") {
+if (shift === "REP") {
 
-    if (!info.isWeekday) {
-      return {
-        ok: false,
-        message: "REP solo lunedì-sabato"
-      };
-    }
-
-    const monthlyCount = events.filter(e =>
-      e.employee === employee &&
-      e.shift === "REP" &&
-      new Date(e.date).getMonth() === new Date(date).getMonth()
-    ).length;
-
-    if (monthlyCount >= 6) {
-      return {
-        ok: false,
-        message: "Max 6 REP al mese"
-      };
-    }
+  if (!info.isWeekday) {
+    return {
+      ok: false,
+      message: "REP solo lunedì-sabato"
+    };
   }
 
-  // ======================
-  // FREP RULES
-  // ======================
+  const monthlyCount = events.filter(e =>
+    e.employee === employee &&
+    e.shift === "REP" &&
+    new Date(e.date).getMonth() === new Date(date).getMonth() &&
+    new Date(e.date).getFullYear() === new Date(date).getFullYear()
+  ).length;
 
-  if (shift === "FREP") {
+  if (monthlyCount >= 6) {
+    return {
+      ok: false,
+      message: "Max 6 REP al mese"
+    };
+  }
+}
 
-    if (!info.isSunday && !info.isHoliday) {
-      return {
-        ok: false,
-        message: "FREP solo domenica e festivi"
-      };
-    }
+// ======================
+// FREP RULES
+// ======================
 
-    const monthlyCount = events.filter(e =>
-      e.employee === employee &&
-      e.shift === "FREP" &&
-      new Date(e.date).getMonth() === new Date(date).getMonth()
-    ).length;
+if (shift === "FREP") {
 
-    if (monthlyCount >= 2) {
-      return {
-        ok: false,
-        message: "Max 2 FREP al mese"
-      };
-    }
+  if (!info.isSunday && !info.isHoliday) {
+    return {
+      ok: false,
+      message: "FREP solo domenica e festivi"
+    };
   }
 
-  return {
-    ok: true,
-    finalShift: shift
-  };
+  const monthlyCount = events.filter(e =>
+    e.employee === employee &&
+    e.shift === "FREP" &&
+    new Date(e.date).getMonth() === new Date(date).getMonth() &&
+    new Date(e.date).getFullYear() === new Date(date).getFullYear()
+  ).length;
+
+  if (monthlyCount >= 2) {
+    return {
+      ok: false,
+      message: "Max 2 FREP al mese"
+    };
+  }
+}
+
+return {
+  ok: true,
+  finalShift: shift
+};
 };
 /* ======================
    CHECK FESTIVI
@@ -294,23 +351,22 @@ function isHoliday(dateStr){
 
 function loadEvents() {
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  // chiude il vecchio listener
+  if (unsubscribeEvents) {
+    unsubscribeEvents();
+  }
 
-
-  // MOSTRA SUBITO IL CALENDARIO
+  // mostra subito il calendario
   renderCalendar();
 
-
-  firestore.onSnapshot(
+  unsubscribeEvents = firestore.onSnapshot(
 
     firestore.collection(db, "events"),
 
     (snap) => {
 
-
       savedEvents = [];
-
+      eventsByDate = {};
 
       snap.forEach(doc => {
 
@@ -319,27 +375,31 @@ function loadEvents() {
           ...doc.data()
         };
 
-
         savedEvents.push(ev);
 
-      });
+        // indicizzazione per data
+        if (!eventsByDate[ev.date]) {
+          eventsByDate[ev.date] = [];
+        }
 
+        eventsByDate[ev.date].push(ev);
+
+      });
 
       console.log(
         "EVENTI CARICATI:",
         savedEvents.length
       );
 
-
-      // aggiorna quando arrivano i dati
       renderCalendar();
-
 
     }
 
   );
 
-}// ======================
+}
+
+// ======================
 // 🔔 CARICA RICHIESTE CAMBIO
 // ======================
 
@@ -515,14 +575,14 @@ for (let day = 1; day <= daysInMonth; day++) {
 
   const selectedEmployee = employeeFilter.value;
 
-let events = savedEvents.filter(e => {
-  if (e.date !== date) return false;
+let events = (eventsByDate[date] || []).filter(e => {
 
   if (selectedEmployee === "ALL") {
     return true;
   }
 
   return e.employee === selectedEmployee;
+
 });
 
 const box = document.createElement("div");
@@ -530,6 +590,34 @@ box.classList.add("day");
 box.style.cursor = "pointer";
    
 // ======================
+// 📅 EVIDENZIA IL GIORNO ODIERNO
+// ======================
+
+const today = new Date();
+
+const todayString =
+`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+
+if (date === todayString) {
+
+  box.classList.add("today");
+
+  const day = new Date(date);
+  const dayNumber = day.getDay();
+
+  // Domenica
+  if(dayNumber === 0){
+    box.classList.add("sunday");
+  }
+
+  // Sabato
+  if(dayNumber === 6){
+    box.classList.add("saturday");
+  }
+
+}
+   
+   // ======================
 // 🟣 CONTROLLO COPERTURA
 // ======================
 
@@ -767,10 +855,13 @@ window.saveShift = async function () {
 
   try {
 
-    const writes = [];
+const writes = [];
 
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+// Contatori dei turni aggiunti in questa operazione
+let addedREP = 0;
+let addedFREP = 0;
 
+for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
   const dateStr = d.toISOString().split("T")[0];
 
   const month = d.getMonth();   // 👈 QUI VA MESSO
@@ -919,16 +1010,17 @@ if (info.isSunday || info.isHoliday) {
 ====================== */
 if (finalShift === "REP") {
 
-  const monthly = savedEvents.filter(e =>
-    e.employee === employee &&
-    e.shift === "REP" &&
-    new Date(e.date).getMonth() === d.getMonth()
-  ).length;
+ const monthly = savedEvents.filter(e =>
+  e.employee === employee &&
+  e.shift === "REP" &&
+  new Date(e.date).getMonth() === d.getMonth() &&
+  new Date(e.date).getFullYear() === d.getFullYear()
+).length + addedREP;
 
-  if (monthly >= 6) {
-    alert("Max 6 REP al mese");
-    return;
-  }
+if (monthly >= 6) {
+  alert("Max 6 REP al mese");
+  return;
+}
 }
 
 /* ======================
@@ -942,17 +1034,27 @@ if (finalShift === "FREP") {
   }
 
   const monthly = savedEvents.filter(e =>
-    e.employee === employee &&
-    e.shift === "FREP" &&
-    new Date(e.date).getMonth() === d.getMonth()
-  ).length;
+  e.employee === employee &&
+  e.shift === "FREP" &&
+  new Date(e.date).getMonth() === d.getMonth() &&
+  new Date(e.date).getFullYear() === d.getFullYear()
+).length + addedFREP;
 
-  if (monthly >= 2) {
+  if (monthly >=2) {
     alert("Max 2 FREP al mese");
     return;
   }
 }
-  writes.push(
+
+   if (finalShift === "REP") {
+  addedREP++;
+}
+
+if (finalShift === "FREP") {
+  addedFREP++;
+}
+   
+   writes.push(
     firestore.addDoc(
       firestore.collection(db, "events"),
       {
@@ -1035,14 +1137,44 @@ window.deleteShift = async function () {
 //  📤 PDF EXPORT
 // ======================
 
-function generatePDF(months = 1) {
-
-  const missingMessages = [];
+async function generatePDF(months = 1) {
+  
+   window.currentPdfMonths = months;
+   const missingMessages = [];
 
   const baseYear = currentDate.getFullYear();
   const baseMonth = currentDate.getMonth();
 
-  const daysInMonth =
+  // ======================
+// 📄 CHIAVE VERSIONE PDF
+// ======================
+
+const snapshot = [];
+
+for (let m = 0; m < months; m++) {
+
+  const monthDate = new Date(baseYear, baseMonth + m, 1);
+
+  snapshot.push(
+    `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, "0")}`
+  );
+
+}
+
+const pdfKey = snapshot.join("_");
+
+window.currentPdfKey = pdfKey;
+
+// Recupera informazioni versione
+const pdfInfo = await getPdfVersion(pdfKey);
+
+// La versione da stampare nel PDF
+window.pdfVersion = `1/${pdfInfo.version}`;
+
+// Salva anche le informazioni complete per usarle in sharePdf()
+window.currentPdfInfo = pdfInfo;
+   
+   const daysInMonth =
     new Date(baseYear, baseMonth + 1, 0).getDate();
 
   // ======================
@@ -1089,7 +1221,11 @@ function generatePDF(months = 1) {
   // 📄 PDF INIT
   // ======================
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("landscape", "mm", "a4");
+  const pdf = new jsPDF({
+  orientation: "landscape",
+  unit: "mm",
+  format: "a4"
+});
 
   const monthNames = [
     "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
@@ -1149,41 +1285,45 @@ pdf.text(
   { align: "center" }
 );
 
-
+   // ======================
+// 📌 INFO INVIO PDF
 // ======================
-// 📅 DATA INVIO + VERSIONE
-// ======================
-
-const today = new Date();
-
-const sendDate =
-  `${String(today.getDate()).padStart(2,"0")}/` +
-  `${String(today.getMonth()+1).padStart(2,"0")}/` +
-  `${today.getFullYear()}`;
-
 
 pdf.setFontSize(8);
 pdf.setFont("helvetica", "normal");
 
+
+const now = new Date();
+
+
+const dataInvio =
+now.toLocaleDateString("it-IT")
++
+" "
++
+now.toLocaleTimeString("it-IT");
+
+
 pdf.text(
-  `Data invio: ${sendDate}`,
+  `Data invio: ${dataInvio}`,
   285,
-  startY - 3,
-  { align:"right" }
+  8,
+  {
+    align:"right"
+  }
 );
 
 
 pdf.text(
-  `Versione: 1/1`,
+  `Versione: ${window.pdfVersion || "1/1"}`,
   285,
-  startY + 2,
-  { align:"right" }
+  13,
+  {
+    align:"right"
+  }
 );
-
-
-startY += 5;
-
-    // ======================
+     
+     // ======================
     // 📊 TABELLA
     // ======================
     const head = [
@@ -1219,7 +1359,7 @@ startY += 5;
     });
 
     const pageWidth = pdf.internal.pageSize.getWidth();
-    const nameColWidth = 28;
+    const nameColWidth = 22;
     const usableWidth = pageWidth - nameColWidth - 10;
     const dayColWidth = usableWidth / daysInMonthLoop;
 
@@ -1242,13 +1382,14 @@ headStyles: {
   lineWidth: 0.1
 },
        
-      tableWidth: "wrap",
+      tableWidth: "auto",
       margin: { left: 3, right: 3 },
       styles: {
-        fontSize: 4.5,
-        cellPadding: 0.4,
+        fontSize: 3.8,
+        cellPadding: 0.15,
         halign: "center",
-        valign: "middle"
+        valign: "middle",
+         overflow: "hidden"
       },
       columnStyles,
 
@@ -1350,37 +1491,39 @@ headStyles: {
     `${year}-${String(month + 1).padStart(2,"0")}-${String(dayNumber).padStart(2,"0")}`
   );
 
-  // ======================
-  // 🟠🔴 WEEKEND (SOLO SE CELLA VUOTA)
-  // ======================
-  if (!value || value === "") {
+ // ======================
+// 🟣 GIORNI SCOPERTI (PRIORITÀ MASSIMA)
+// ======================
 
-    // 🔴 Domenica / festivi
-    if (weekday === 0 || info.isHoliday) {
-      data.cell.styles.fillColor = [255,59,48];
-      data.cell.styles.textColor = [255,255,255];
-      return;
-    }
+if ((!value || value === "") && uncoveredDays.has(dayNumber)) {
 
-    // 🟠 Sabato
-    if (weekday === 6) {
-      data.cell.styles.fillColor = [255,149,0];
-      data.cell.styles.textColor = [255,255,255];
-      return;
-    }
+  data.cell.styles.fillColor = [180,120,255];
+  data.cell.styles.textColor = [255,255,255];
+  return;
+
+}
+
+// ======================
+// 🟠🔴 WEEKEND (SOLO SE CELLA VUOTA)
+// ======================
+
+if (!value || value === "") {
+
+  // 🔴 Domenica / festivi
+  if (weekday === 0 || info.isHoliday) {
+    data.cell.styles.fillColor = [255,59,48];
+    data.cell.styles.textColor = [255,255,255];
+    return;
   }
 
-  // ======================
-  // 🟣 GIORNI SCOPERTI (SOLO SE CELLA VUOTA)
-  // ======================
-  if (uncoveredDays.has(dayNumber)) {
-
-    if (!value || value === "") {
-      data.cell.styles.fillColor = [180,120,255];
-      data.cell.styles.textColor = [255,255,255];
-      return;
-    }
+  // 🟠 Sabato
+  if (weekday === 6) {
+    data.cell.styles.fillColor = [255,149,0];
+    data.cell.styles.textColor = [255,255,255];
+    return;
   }
+
+}
 
   // ======================
   // 🟢 CFI
@@ -1416,35 +1559,33 @@ if (value === "REP" || value === "FREP") {
     }
   }
 
-  // ======================
-  // 📤 OUTPUT (DEVE STARE QUI)
-  // ======================
-  const blobUrl = pdf.output("bloburl");
-  window.open(blobUrl, "_blank");
+// ======================
+// 📤 ANTEPRIMA PDF
+// ======================
+
+const blob = pdf.output("blob");
+
+const url = URL.createObjectURL(blob);
+
+
+// salvo per il pulsante condividi dopo
+
+window.currentPdfBlob = blob;
+
+window.currentPdfName =
+`Reperibilita_${baseYear}_${String(baseMonth+1).padStart(2,"0")}.pdf`;
+
+
+// mostra anteprima nel popup della PWA
+
+const pdfPopup = document.getElementById("pdfPopup");
+
+if (pdfPopup) {
+  pdfPopup.style.display = "flex";
 }
 
- // ======================
-// 📤 PDF POPUP CONTROL
-// ======================
-window.openPdfPopup = function () {
-  document.getElementById("pdfPopup").style.display = "flex";
-};
-
-window.closePdfPopup = function () {
-  document.getElementById("pdfPopup").style.display = "none";
-};
-
-window.confirmPdfExport = function () {
-
-  const months = parseInt(
-    document.getElementById("monthsRange").value
-  );
-
-  closePdfPopup();
-
-  generatePDF(months);
-};
-
+await renderPdfPreview(blob);
+ }
 
 // ======================
 // BOTTONE PDF
@@ -1454,16 +1595,56 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("pdfBtn");
 
-  if (!btn) {
-    console.error("pdfBtn non trovato");
-    return;
+  if(btn){
+
+    btn.addEventListener("click",()=>{
+
+      document.getElementById("monthsPopup").style.display="flex";
+
+    });
+
   }
 
-  btn.addEventListener("click", () => {
-    document.getElementById("pdfPopup").style.display = "flex";
-  });
-
 });
+
+
+window.closeMonthsPopup = function(){
+
+  document.getElementById("monthsPopup").style.display="none";
+
+};
+
+
+
+window.confirmPdfExport = function(){
+
+  const months = parseInt(
+    document.getElementById("monthsRange").value
+  );
+
+
+  closeMonthsPopup();
+
+
+  generatePDF(months);
+
+};
+
+
+// ======================
+// ❌ CHIUDI PDF POPUP
+// ======================
+
+window.closePdfPopup = function(){
+
+  const popup =
+  document.getElementById("pdfPopup");
+
+  if(popup){
+    popup.style.display = "none";
+  }
+
+};
 // ======================
 // 🔁 CAMBIO REPERIBILITA'
 // ======================
@@ -3123,4 +3304,269 @@ function setupAdminUI() {
   hide("logoutBtn"); 
 }
 
+async function renderPdfPreview(blob) {
 
+  const canvas = document.getElementById("pdfCanvas");
+  const ctx = canvas.getContext("2d");
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const buffer = await blob.arrayBuffer();
+
+  const pdf = await pdfjsLib.getDocument({
+    data: buffer
+  }).promise;
+
+  // Mostra la prima pagina (nel tuo PDF è sufficiente se è di un mese)
+  const page = await pdf.getPage(1);
+
+  const container =
+    document.querySelector("#pdfPopup .pdf-container");
+
+  const viewport = page.getViewport({ scale: 1 });
+
+const scale =
+  container.clientWidth / viewport.width;
+
+
+// aumenta qualità PDF
+const qualityScale = 2;
+
+const scaledViewport =
+  page.getViewport({
+    scale: scale * qualityScale
+  });
+
+
+const dpr = window.devicePixelRatio || 1;
+
+
+// alta risoluzione per iPhone Retina
+
+canvas.width = scaledViewport.width * dpr;
+canvas.height = scaledViewport.height * dpr;
+
+
+canvas.style.width =
+  (scaledViewport.width / qualityScale) + "px";
+
+canvas.style.height =
+  (scaledViewport.height / qualityScale) + "px";
+ctx.setTransform(
+  dpr,
+  0,
+  0,
+  dpr,
+  0,
+  0
+);
+
+
+await page.render({
+
+  canvasContext: ctx,
+
+  viewport: scaledViewport
+
+}).promise;
+
+}
+
+// ======================
+// 🔑 FIRMA CALENDARIO PDF
+// ======================
+
+function getCalendarSignature() {
+
+  const baseYear = currentDate.getFullYear();
+  const baseMonth = currentDate.getMonth();
+  const months = window.currentPdfMonths || 1;
+
+  const start = new Date(baseYear, baseMonth, 1);
+
+  const end = new Date(
+    baseYear,
+    baseMonth + months,
+    0
+  );
+
+
+  const events = savedEvents
+    .filter(ev => {
+
+      const d = new Date(ev.date);
+
+      return d >= start && d <= end;
+
+    })
+    .sort((a,b)=>{
+
+      if(a.date !== b.date)
+        return a.date.localeCompare(b.date);
+
+      if(a.employee !== b.employee)
+        return a.employee.localeCompare(b.employee);
+
+      return a.shift.localeCompare(b.shift);
+
+    });
+
+
+  return JSON.stringify(
+
+    events.map(e=>({
+
+      date:e.date,
+      employee:e.employee,
+      shift:e.shift
+
+    }))
+
+  );
+
+}
+// ======================
+// 📤 CONDIVIDI PDF
+// ======================
+
+window.sharePdf = async function () {
+
+  console.log("sharePdf chiamata");
+
+
+  if (!window.currentPdfBlob) {
+
+    alert("Nessun PDF disponibile");
+
+    return;
+
+  }
+
+
+  // 🔑 firma del calendario del PDF generato
+  const signature = getCalendarSignature();
+
+
+  console.log(
+    "FIRMA CALENDARIO:",
+    signature
+  );
+
+
+  // ======================
+  // 📄 VERSIONE FIREBASE
+  // ======================
+
+  const pdfInfo =
+    await getPdfVersion(window.currentPdfKey);
+
+
+  let version =
+    pdfInfo.version;
+
+
+  // Se il contenuto è cambiato
+  if (
+    pdfInfo.signature &&
+    pdfInfo.signature !== signature
+  ) {
+
+    version++;
+
+
+  }
+
+
+  // salva sempre la situazione attuale
+
+  await savePdfVersion(
+    version,
+    signature
+  );
+
+
+  window.pdfVersion =
+    `1/${version}`;
+
+
+  console.log(
+    "VERSIONE PDF:",
+    window.pdfVersion
+  );
+
+
+  // ======================
+  // 📅 DATA INVIO
+  // ======================
+
+  const now = new Date();
+
+
+  const dataInvio =
+    now.toLocaleDateString("it-IT")
+    +
+    " "
+    +
+    now.toLocaleTimeString("it-IT");
+
+
+  window.pdfSendDate =
+    dataInvio;
+
+
+
+  // ======================
+  // 📄 CREA FILE
+  // ======================
+
+  const file =
+    new File(
+
+      [window.currentPdfBlob],
+
+      "Reperibilità PLF.pdf",
+
+      {
+        type:"application/pdf"
+      }
+
+    );
+
+
+
+  // ======================
+  // 📤 CONDIVIDI
+  // ======================
+
+  if (
+    navigator.share &&
+    navigator.canShare({
+      files:[file]
+    })
+
+  ) {
+
+
+    await navigator.share({
+
+      title:
+      "Reperibilità PLF",
+
+      files:[file]
+
+    });
+
+
+  } else {
+
+
+    alert(
+      "Condivisione non supportata"
+    );
+
+
+  }
+
+
+};
