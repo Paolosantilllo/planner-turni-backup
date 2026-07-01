@@ -25,6 +25,7 @@
 
   <div class="app-logo">
   </div>
+ 
 
   <!-- HEADER -->
 <header class="topbar">
@@ -39,12 +40,7 @@
 
 </header>
 
-<!-- 📤 PDF EXPORT -->
-<div class="monthly-send">
-  <button class="monthly-send-btn" id="pdfBtn">
-    📤
-  </button>
-</div>
+
 
   <!-- TOOLBAR -->
   <div class="toolbar">
@@ -60,41 +56,47 @@
   🔔 Attiva notifiche
 </button>
     
-    <button class="change-btn" onclick="openChangePopup()">
-    🔁
-  </button>
+<button class="change-btn" onclick="openChangePopup()">
+  🔁
+</button>
+
+<button class="notify-btn" onclick="openRequestsPopup()">
+  📋 <span id="requestBadge"></span>
+</button>
+
+<button class="notify-btn" onclick="openNotificationsPopup()">
+  🔔 <span id="notifBadge"></span>
+</button>
+
+<div class="plus-group">
+
+  <div class="top-icons">
 
 
-  <button class="notify-btn" onclick="openRequestsPopup()">
-    📋 <span id="requestBadge"></span>
-  </button>
 
+<button class="monthly-send-btn" id="pdfBtn">
+  📤
+</button>
 
-  <button class="notify-btn" onclick="openNotificationsPopup()">
-    🔔 <span id="notifBadge"></span>
-  </button>
+    <button id="statsBtn" class="floating-stats" onclick="openStatsPopup()">
+      📊
+    </button>
 
+  </div>
 
   <button
-  id="statsBtn"
-  class="stats-btn"
-  onclick="openStatsPopup()">
-  📊
+    id="addBtn"
+    class="add-btn"
+    onclick="openPopup()">
+    +
   </button>
-
-
-  <button
-  id="addBtn"
-  class="add-btn"
-  onclick="openPopup()">
-  +
-  </button>
-
 
 </div>
 
   </div>
 
+  </div>
+    
   <!-- GIORNI -->
   <div class="weekdays">
     <div>L</div>
@@ -401,14 +403,58 @@
   </div>
 
 </div>
-<!-- POPUP PDF EXPORT -->
+
+  <!-- POPUP SCELTA MESI PDF -->
+
+<div class="popup" id="monthsPopup">
+
+  <div class="popup-content">
+
+    <div class="popup-header">
+
+      <h2>Invia PDF</h2>
+
+      <button class="close-btn" onclick="closeMonthsPopup()">
+        ✕
+      </button>
+
+    </div>
+
+
+    <label>Quanti mesi vuoi visualizzare?</label>
+
+
+    <select id="monthsRange">
+
+      <option value="1">1 mese</option>
+      <option value="2">2 mesi</option>
+      <option value="3">3 mesi</option>
+      <option value="4">4 mesi</option>
+
+    </select>
+
+
+    <button
+      class="save-btn"
+      onclick="confirmPdfExport()">
+
+      📄 Visualizza PDF
+
+    </button>
+
+
+  </div>
+
+</div>
+  
+  <!-- POPUP PDF PREVIEW -->
 <div class="popup" id="pdfPopup">
 
   <div class="popup-content">
 
     <div class="popup-header">
 
-      <h2>Esportazione PDF</h2>
+      <h2>Anteprima PDF</h2>
 
       <button class="close-btn" onclick="closePdfPopup()">
         ✕
@@ -416,28 +462,20 @@
 
     </div>
 
-    <p>
-      Mancano alcune reperibilità.<br>
-      Vuoi continuare l’esportazione?
-    </p>
+    <!-- PDF PREVIEW -->
+<div class="pdf-container">
 
-    <label for="monthsRange">Numero mesi da esportare</label>
+  <canvas id="pdfCanvas"></canvas>
 
-    <select id="monthsRange">
-      <option value="1">1 mese (mese corrente)</option>
-      <option value="2">2 mesi</option>
-      <option value="3">3 mesi</option>
-      <option value="4">4 mesi</option>
-    </select>
-
+</div>
     <div class="popup-actions">
 
-      <button class="save-btn" onclick="confirmPdfExport()">
-        Genera PDF
+      <button class="delete-btn" onclick="closePdfPopup()">
+        Chiudi
       </button>
 
-      <button class="delete-btn" onclick="closePdfPopup()">
-        Annulla
+      <button class="save-btn" onclick="sharePdf()">
+        📤 Condividi
       </button>
 
     </div>
@@ -446,6 +484,7 @@
 
 </div>
 
+    
  
 <!-- POPUP STATISTICHE -->
 <div class="popup" id="statsPopup">
@@ -500,8 +539,9 @@ onclick="showCfiStats()">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-<script>
+  <script>
 console.log("🚀 INDEX HTML CARICATO NUOVO");
 </script>
   
