@@ -25,80 +25,69 @@
 
   <div class="app-logo">
   </div>
- 
+
 
   <!-- HEADER -->
-<header class="topbar">
+  <header class="topbar">
 
-  <button class="month-btn" onclick="prevMonth()">◀</button>
+    <button class="month-btn" onclick="prevMonth()">◀</button>
 
-  <h1 id="monthTitle"></h1>
+    <h1 id="monthTitle"></h1>
 
-  <button class="month-btn" onclick="nextMonth()">▶</button>
+    <button class="month-btn" onclick="nextMonth()">▶</button>
 
-  <button id="logoutBtn" class="logout-btn" onclick="logout()">Logout</button>
+    <button id="logoutBtn" class="logout-btn" onclick="logout()">
+      Logout
+    </button>
 
-</header>
+  </header>
 
 
 
   <!-- TOOLBAR -->
   <div class="toolbar">
 
-  <select id="employeeFilter" onchange="renderCalendar()">
-</select>
 
-  <div class="toolbar-actions">
+    <select id="employeeFilter" onchange="renderCalendar()">
+    </select>
 
-<button
-  id="enablePushBtn"
-  class="notify-btn">
-  🔔 Attiva notifiche
-</button>
-    
-<button class="change-btn" onclick="openChangePopup()">
-  🔁
-</button>
 
-<button class="notify-btn" onclick="openRequestsPopup()">
-  📋 <span id="requestBadge"></span>
-</button>
+    <div class="toolbar-actions">
 
-<button class="notify-btn" onclick="openNotificationsPopup()">
-  🔔 <span id="notifBadge"></span>
-</button>
 
-<div class="plus-group">
+      <button class="change-btn" onclick="openChangePopup()">
+        🔁
+      </button>
 
-  <div class="top-icons">
+
+      <button class="notify-btn" onclick="openRequestsPopup()">
+        📋 <span id="requestBadge"></span>
+      </button>
+
+
+      <button class="notify-btn" onclick="openNotificationsPopup()">
+        🔔 <span id="notifBadge"></span>
+      </button>
 
 
 
-<button class="monthly-send-btn" id="pdfBtn">
-  📤
-</button>
+      <button
+        id="addBtn"
+        class="add-btn"
+        onclick="openPopup()">
+        +
+      </button>
 
-    <button id="statsBtn" class="floating-stats" onclick="openStatsPopup()">
-      📊
-    </button>
+
+    </div>
 
   </div>
 
-  <button
-    id="addBtn"
-    class="add-btn"
-    onclick="openPopup()">
-    +
-  </button>
 
-</div>
 
-  </div>
-
-  </div>
-    
-  <!-- GIORNI -->
+  <!-- GIORNI SETTIMANA -->
   <div class="weekdays">
+
     <div>L</div>
     <div>Ma</div>
     <div>Me</div>
@@ -106,13 +95,28 @@
     <div>V</div>
     <div class="saturday">S</div>
     <div class="sunday">D</div>
+
   </div>
+
+
 
   <!-- CALENDARIO -->
   <div class="calendar" id="calendar"></div>
 
-</div>
 
+
+  <!-- ROTELLINA SOLO ADMIN -->
+  <button
+    id="adminBtn"
+    class="admin-floating-btn"
+    style="display:none"
+    onclick="openAdminPage()">
+    ⚙️
+  </button>
+
+
+
+</div>
 <!-- POPUP REPERIBILITÀ -->
 <div class="popup" id="popup">
 
@@ -484,57 +488,118 @@
 
 </div>
 
-    
- 
-<!-- POPUP STATISTICHE -->
-<div class="popup" id="statsPopup">
+    <!-- PAGINA AMMINISTRAZIONE -->
+<div id="adminPage" class="admin-page" style="display:none;">
 
-  <div class="popup-content">
+  <div class="admin-header">
 
-    <div class="popup-header">
+    <button class="month-btn" onclick="closeAdminPage()">
+      ◀
+    </button>
 
-      <h2>📊 Statistiche Reperibilità</h2>
+    <h2>⚙️ Amministrazione</h2>
 
-      <button
-        class="close-btn"
-        onclick="closeStatsPopup()">
-        ✕
-      </button>
-
-    </div>
-
-<div id="statsMenu">
-
-
-<button 
-class="save-btn"
-onclick="showFestiviStats()">
-
-🎉 Turnazione Festivi
-
-</button>
-
-
-<button 
-class="save-btn"
-onclick="showCfiStats()">
-
-📊 Totale CFI / CFI-REP
-
-</button>
-
-
-</div>
-
-
-<div id="statsContent"></div>
-
-
-<div id="statsExport"></div>
   </div>
 
+  <div class="admin-menu">
+
+   <!-- 👥 GESTIONE NOMINATIVI -->
+<button
+  class="save-btn"
+  onclick="openEmployeesPage()">
+  👥 Gestione Nominativi
+</button>
+
+    <!-- 📊 TOTALE CFI / CFI-REP -->
+<button
+  class="save-btn"
+  onclick="exportCfiPdf(); closeAdminPage();">
+  📊 Totale CFI / CFI-REP
+</button>
+    
+    <!-- 📊 Turnazione Festivi -->
+<button
+  class="save-btn"
+  onclick="exportFestiviPdf(); closeAdminPage();">
+  🎉 Turnazione Festivi
+</button>
+
+    <!-- 📄 PDF EXPORT -->
+  <button
+  class="save-btn"
+  onclick="
+    closeAdminPage();
+    document.getElementById('monthsPopup').style.display='flex';
+  ">
+  📄 Esporta PDF
+</button>
+
+   </div>
+
 </div>
+ <!-- PAGINA GESTIONE NOMINATIVI -->
+<div id="employeesPage" class="admin-page" style="display:none;">
+
+  <div class="admin-header">
+
+    <button class="month-btn" onclick="closeEmployeesPage()">
+      ◀
+    </button>
+
+    <h2>👥 Gestione Nominativi</h2>
+
+  </div>
+
+  <div class="admin-menu">
+
+    <button
+      class="save-btn"
+      onclick="openEmployeeEditor()">
+      ➕ Nuovo nominativo
+    </button>
+
+    <div id="employeesList"></div>
+
+      <!-- POPUP EDIT NOMINATIVO -->
+    <div id="employeePopup" class="popup">
+
+      <div class="popup-content">
+
+        <div class="popup-header">
+
+          <h2>👤 Nuovo Nominativo</h2>
+
+          <button class="close-btn" onclick="closeEmployeeEditor()">
+            ✕
+          </button>
+
+        </div>
+
+        <label>Nome</label>
+        <input type="text" id="empName">
+
+        <label>Colore</label>
+        <input type="color" id="empColor">
+
+        <label>Ruolo</label>
+        <select id="empRole">
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+
+        <button class="save-btn" onclick="saveEmployee()">
+          💾 Salva
+        </button>
+
+      </div>
+
+    </div>
   
+   </div>
+
+</div>
+
+ 
   <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -547,3 +612,6 @@ console.log("🚀 INDEX HTML CARICATO NUOVO");
   
   <!-- APP -->
 <script type="module" src="app.js"></script>
+
+  </body>
+</html>
