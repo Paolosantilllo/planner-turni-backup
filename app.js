@@ -1,3 +1,4 @@
+
 /* ======================
    IMPORT MODULI
 ====================== */
@@ -8,7 +9,10 @@ import { db, firestore } from "./firebase.js";
 import {
   doc,
   getDoc,
+  getDocs,
+  collection,
   setDoc,
+  deleteDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
@@ -20,19 +24,35 @@ import {
 
 window.logout = logout;
 
+/* ======================
+   INIT AUTH
+====================== */
+
 initAuth((user) => {
 
   window.CURRENT_USER = user;
 
-  // 🔥 USIAMO QUELLO GIÀ CALCOLATO DA auth.js
+  // 🔥 dipendente corrente
   window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
+document.getElementById("app").classList.add("show");
+   
+  // ======================
+  // 🔐 RUOLO ADMIN
+  // ======================
+  window.IS_ADMIN =
+    EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN"
+    || CURRENT_EMPLOYEE === "A";
 
+  // ======================
+  // UI INIT
+  // ======================
   populateEmployeeSelects();
   setDefaultFilter();
   loadEvents();
   loadChangeRequests();
   loadNotificationBadge();
-  setupAdminUI();
+
+setupAdminUI();
 
   initPush(user);
   listenForegroundNotifications();
@@ -48,6 +68,10 @@ let savedEvents = [];
 
 let unsubscribeEvents = null;
 let eventsByDate = {};
+
+const employeesData = {};
+
+let editingEmployeeId = null;
 
 // ======================
 // 📄 VERSIONI PDF
@@ -121,7 +145,7 @@ async function savePdfVersion(version, signature) {
 
 }
 // ======================
-// CARICA DIPENDENTI
+// CARICA NOMINATIVI
 // ======================
 
 function populateEmployeeSelects() {
@@ -667,7 +691,7 @@ box.appendChild(num);
 
 
 // ======================
-// ORDINA DIPENDENTI A-B-C-D
+// ORDINA NOMINATIVI A-B-C-D
 // ======================
 
 events.sort((a,b)=>{
@@ -1132,7 +1156,63 @@ window.deleteShift = async function () {
   }
 };
 
+  // ======================
+// 🖼️ RENDER ANTEPRIMA PDF
+// ======================
 
+async function renderPdfPreview(blob) {
+
+  const canvas = document.getElementById("pdfCanvas");
+  if (!canvas) return;
+
+  const pdfjsLib = window["pdfjsLib"];
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const arrayBuffer = await blob.arrayBuffer();
+
+  const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer
+  }).promise;
+
+  const page = await pdf.getPage(1);
+
+  const viewport = page.getViewport({
+    scale: 1.5
+  });
+
+  const context = canvas.getContext("2d");
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+
+  await page.render({
+    canvasContext: context,
+    viewport
+  }).promise;
+}
+
+// ======================
+// 📄 APRE ANTEPRIMA PDF
+// ======================
+
+async function openPdfPreview(pdf, fileName){
+
+  const blob = pdf.output("blob");
+
+  window.currentPdfBlob = blob;
+  window.currentPdfName = fileName;
+
+  const pdfPopup = document.getElementById("pdfPopup");
+
+  if(pdfPopup){
+    pdfPopup.style.display = "flex";
+  }
+
+  await renderPdfPreview(blob);
+
+}
 // ======================
 //  📤 PDF EXPORT
 // ======================
@@ -1145,7 +1225,9 @@ async function generatePDF(months = 1) {
   const baseYear = currentDate.getFullYear();
   const baseMonth = currentDate.getMonth();
 
-  // ======================
+
+   
+// ======================
 // 📄 CHIAVE VERSIONE PDF
 // ======================
 
@@ -1338,9 +1420,9 @@ pdf.text(
       })
     ];
 
-    const dipendenti = Object.keys(EMPLOYEES);
+    const nominativi = Object.keys(EMPLOYEES);
 
-    const body = dipendenti.map(nome => {
+    const body = nominativi.map(nome => {
       const row = [EMPLOYEES[nome].name];
 
       for (let d = 1; d <= daysInMonthLoop; d++) {
@@ -1471,7 +1553,7 @@ headStyles: {
   }
 
   // ======================
-  // RIGHE DIPENDENTI
+  // RIGHE NOMINATIVI
   // ======================
   if (data.section === "body") {
 
@@ -1563,28 +1645,10 @@ if (value === "REP" || value === "FREP") {
 // 📤 ANTEPRIMA PDF
 // ======================
 
-const blob = pdf.output("blob");
-
-const url = URL.createObjectURL(blob);
-
-
-// salvo per il pulsante condividi dopo
-
-window.currentPdfBlob = blob;
-
-window.currentPdfName =
-`Reperibilita_${baseYear}_${String(baseMonth+1).padStart(2,"0")}.pdf`;
-
-
-// mostra anteprima nel popup della PWA
-
-const pdfPopup = document.getElementById("pdfPopup");
-
-if (pdfPopup) {
-  pdfPopup.style.display = "flex";
-}
-
-await renderPdfPreview(blob);
+await openPdfPreview(
+  pdf,
+  `Reperibilita_${baseYear}_${String(baseMonth + 1).padStart(2, "0")}.pdf`
+);
  }
 
 // ======================
@@ -1887,75 +1951,46 @@ window.sendChangeRequest = async function(){
 // ======================
 
 const today = new Date();
-
 today.setHours(0,0,0,0);
 
-
-const fromDateObj = new Date(window.selectedFromDate);
-const toDateObj = new Date(window.selectedToDate);
-
-
-if (
-  fromDateObj < today ||
-  toDateObj < today
-) {
-
-  alert(
-    "❌ Non puoi richiedere un cambio con date già trascorse"
-  );
-
+if (!window.selectedFromDate || !window.selectedToDate) {
+  alert("Seleziona giorno da dare e giorno da ricevere");
   return;
-
 }
 
-   
-   if(!window.selectedFromDate || !window.selectedToDate){
+const fromDateObj = new Date(window.selectedFromDate + "T00:00:00");
+const toDateObj = new Date(window.selectedToDate + "T00:00:00");
 
-    alert("Seleziona giorno da dare e giorno da ricevere");
-    return;
+if (fromDateObj < today || toDateObj < today) {
+  alert("❌ Non puoi richiedere un cambio con date già trascorse");
+  return;
+}
 
-  }
+try {
+  await firestore.addDoc(
+    firestore.collection(db, "changeRequests"),
+    {
+      fromEmployee: CURRENT_EMPLOYEE,
+      toEmployee: toEmployee,
+      fromDate: window.selectedFromDate,
+      toDate: window.selectedToDate,
+      shift: shift,
+      status: "PENDING_USER",
+      createdAt: new Date()
+    }
+  );
 
+  alert("✅ Richiesta inviata");
+  closeChangePopup();
 
-  try {
+}catch(err){
 
+console.error(
+"Errore invio richiesta:",
+err
+);
 
-    await firestore.addDoc(
-      firestore.collection(db,"changeRequests"),
-      {
-
-        fromEmployee: CURRENT_EMPLOYEE,
-
-        toEmployee: toEmployee,
-
-        fromDate: window.selectedFromDate,
-
-        toDate: window.selectedToDate,
-
-        shift: shift,
-
-        status:"PENDING_USER",
-
-        createdAt: new Date()
-
-      }
-    );
-
-
-    alert("✅ Richiesta inviata");
-
-
-    closeChangePopup();
-
-  } catch(err){
-
-    console.error(
-      "Errore invio richiesta:",
-      err
-    );
-
-  }
-
+}
 };
 
 // ======================
@@ -2928,324 +2963,48 @@ err
 
 };
 
-// ======================
-// 📊 POPUP STATISTICHE
-// ======================
-
-
-window.openStatsPopup = function(){
-
-document.getElementById("statsPopup").style.display="flex";
-
-document.getElementById("statsContent").innerHTML =
-"Seleziona una statistica";
-
-document.getElementById("statsExport").innerHTML = "";
-
-};
-
-
-// ======================
-// 🎉 TURNI FESTIVI
-// ======================
-
-window.showFestiviStats = async function(){
-
-const container =
-document.getElementById("statsContent");
-
-try {
-
-container.innerHTML =
-"Caricamento festivi...";
-
-
-const snapshot = await firestore.getDocs(
-  firestore.collection(db,"events")
-);
-
-let html = `
-
-<h3>🎉 Turnazione Festivi</h3>
-
-<table style="width:100%;border-collapse:collapse">
-
-<tr>
-<th>Data</th>
-<th>Dipendente</th>
-<th>Turno</th>
-</tr>
-
-`;
-
-
-snapshot.forEach(doc=>{
-
-
-const ev = doc.data();
-
-
-if(
-ev.shift !== "FREP" &&
-ev.shift !== "CFI/REP"
-)
-return;
-
-
-if(!isHoliday(ev.date))
-return;
-
-
-html += `
-
-<tr>
-
-<td>${formatDateIT(ev.date)}</td>
-
-<td>
-${EMPLOYEES[ev.employee]?.name || ""}
-</td>
-
-<td>${ev.shift}</td>
-
-</tr>
-
-`;
-
-});
-
-
-html += "</table>";
-
-
-container.innerHTML = html;
-
-
-document.getElementById("statsExport").innerHTML = `
-
-<button
-class="save-btn"
-onclick="exportFestiviPdf()">
-
-📄 Esporta PDF Festivi
-
-</button>
-
-`;
-
-
-}catch(err){
-
-console.error(
-"Errore statistiche festivi:",
-err.message,
-err
-);
-
-container.innerHTML =
-"❌ Errore caricamento festivi";
-
-}
-
-};
-
-
-
-// ======================
-// 📊 TOTALE CFI / CFI-REP
-// ======================
-
-window.showCfiStats = async function(){
-
-
-const container =
-document.getElementById("statsContent");
-
-
-try {
-
-
-container.innerHTML =
-"Caricamento CFI...";
-
-
-const stats={};
-
-
-Object.keys(EMPLOYEES).forEach(id=>{
-
-stats[id]={
-name:EMPLOYEES[id].name,
-total:0
-};
-
-});
-
-
-
-const snapshot = await firestore.getDocs(
-  firestore.collection(db,"events")
-);
-
-snapshot.forEach(doc=>{
-
-
-const ev = doc.data();
-
-
-if(
-ev.shift !== "CFI" &&
-ev.shift !== "CFI/REP"
-)
-return;
-
-
-
-const d =
-new Date(ev.date);
-
-
-
-const weight =
-(d.getDay()===0 ||
-d.getDay()===6 ||
-isHoliday(ev.date))
-?2:1;
-
-
-
-if(stats[ev.employee]){
-
-stats[ev.employee].total += weight;
-
-}
-
-
-});
-
-
-
-let html = `
-
-<h3>
-📊 Totale CFI / CFI-REP
-</h3>
-
-
-<table style="width:100%;border-collapse:collapse">
-
-<tr>
-<th>Dipendente</th>
-<th>TOT.</th>
-</tr>
-
-`;
-
-
-
-Object.values(stats).forEach(emp=>{
-
-
-html += `
-
-<tr>
-
-<td>${emp.name}</td>
-
-<td>${emp.total}</td>
-
-</tr>
-
-`;
-
-});
-
-
-html += "</table>";
-
-
-container.innerHTML=html;
-
-
-
-document.getElementById("statsExport").innerHTML = `
-
-<button
-class="save-btn"
-onclick="exportCfiPdf()">
-
-📄 Esporta PDF CFI
-
-</button>
-
-`;
-
-
-
-}catch(err){
-
-
-console.error(
-"Errore statistiche CFI:",
-err.message,
-err
-);
-
-
-container.innerHTML =
-"❌ Errore caricamento CFI";
-
-
-}
-
-
-};
-
-
-// ======================
-// CHIUSURA POPUP
-// ======================
-
-
-window.closeStatsPopup = function(){
-
-document.getElementById("statsPopup").style.display="none";
-
-};
-
-
 
 // ======================
 // PDF FESTIVI
 // ======================
 
-window.exportFestiviPdf = function(){
+window.exportFestiviPdf = async function(){
 
-const {jsPDF}=window.jspdf;
-
+const { jsPDF } = window.jspdf;
 const pdf = new jsPDF();
 
 pdf.setFontSize(16);
-pdf.text(
-"Turnazione Festivi",
-14,
-15
+pdf.text("Turnazione Festivi", 14, 15);
+
+const snapshot = await firestore.getDocs(
+  firestore.collection(db, "events")
 );
 
+let rows = [];
 
-pdf.autoTable({
+snapshot.forEach(doc => {
 
-html:"#statsContent table",
+  const ev = doc.data();
 
-startY:25
+  if (ev.shift !== "FREP" && ev.shift !== "CFI/REP") return;
+  if (!isHoliday(ev.date)) return;
+
+  rows.push([
+    formatDateIT(ev.date),
+    EMPLOYEES[ev.employee]?.name || "",
+    ev.shift
+  ]);
 
 });
 
+pdf.autoTable({
+  head: [["Data", "Dipendente", "Turno"]],
+  body: rows,
+  startY: 25
+});
 
-pdf.save(
-"Turnazione_Festivi.pdf"
-);
-
+// 👉 apre direttamente il tuo sistema PDF (quello già funzionante)
+await openPdfPreview(pdf, "Turnazione_Festivi.pdf");
 
 };
 
@@ -3256,121 +3015,127 @@ pdf.save(
 // ======================
 
 
-window.exportCfiPdf = function(){
+window.exportCfiPdf = async function(){
 
-
-const {jsPDF}=window.jspdf;
-
-
+const { jsPDF } = window.jspdf;
 const pdf = new jsPDF();
-
+window.lastPdf = pdf;
+   
 pdf.setFontSize(16);
-pdf.text(
-"Totale CFI / CFI-REP",
-14,
-15
+pdf.text("Totale CFI / CFI-REP", 14, 15);
+
+const stats = {};
+
+Object.keys(EMPLOYEES).forEach(id => {
+ stats[id] = {
+  name: EMPLOYEES[id].name,
+  cfiF: 0,
+  cfiA: 0
+};
+});
+
+const snapshot = await firestore.getDocs(
+  firestore.collection(db, "events")
 );
 
+snapshot.forEach(doc => {
 
+  const ev = doc.data();
 
-pdf.autoTable({
+  if (ev.shift !== "CFI" && ev.shift !== "CFI/REP") return;
 
-html:"#statsContent table",
+ const d = new Date(ev.date);
+const today = new Date();
+const year = today.getFullYear();
 
-startY:25
+// SOLO ANNO CORRENTE
+if (d.getFullYear() !== year) return;
+
+// peso come prima
+const weight =
+  (d.getDay() === 0 ||
+   d.getDay() === 6 ||
+   isHoliday(ev.date))
+  ? 2
+  : 1;
+
+if (stats[ev.employee]) {
+
+  // TOT ANNUALE
+  stats[ev.employee].cfiA += weight;
+
+const today = new Date();
+today.setHours(23, 59, 59, 999);
+
+// dentro snapshot.forEach
+if (d <= today) {
+  stats[ev.employee].cfiF += weight;
+}
+
+}
 
 });
 
+const rows = Object.values(stats).map(emp => [
+  emp.name,
+  emp.cfiF,
+  emp.cfiA
+]);
 
-pdf.save(
-"Totale_CFI_CFI-REP.pdf"
-);
+pdf.autoTable({
+  head: [["Nominativi", "TOT. CFI/F", "TOT. CFI/A"]],
+  body: rows,
+  startY: 25
+});
 
+// 👉 usa lo stesso sistema PDF con anteprima
+await openPdfPreview(pdf, "Totale_CFI_CFI-REP.pdf");
 
+};
+
+window.sharePdf = async function () {
+  if (!window.lastPdf) return;
+
+  const pdfBlob = window.lastPdf.output("blob");
+
+  const file = new File([pdfBlob], "CFI.pdf", {
+    type: "application/pdf",
+  });
+
+  if (navigator.share) {
+    await navigator.share({
+      files: [file],
+      title: "Totale CFI",
+    });
+  } else {
+    alert("Condivisione non supportata su questo dispositivo");
+  }
 };
 
 function setupAdminUI() {
 
-  if (window.IS_ADMIN) return;
+  const isAdmin = window.IS_ADMIN === true;
 
-  const hide = (id) => {
+  const toggle = (id, visible) => {
     const el = document.getElementById(id);
-    if (el) el.style.display = "none";
+    if (el) el.style.display = visible ? "inline-flex" : "none";
   };
 
-  hide("pdfBtn");
-  hide("statsBtn");
-  hide("addBtn");
-  hide("logoutBtn"); 
-}
+  // ======================
+  // BOTTONI ADMIN ONLY
+  // ======================
 
-async function renderPdfPreview(blob) {
+  toggle("adminOnlyBtn", isAdmin);
+  toggle("adminBtn", isAdmin); // ⚙️ se vuoi nascondere anche questo
 
-  const canvas = document.getElementById("pdfCanvas");
-  const ctx = canvas.getContext("2d");
+  // ======================
+  // BOTTONI PRINCIPALI
+  // ======================
 
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-  const buffer = await blob.arrayBuffer();
-
-  const pdf = await pdfjsLib.getDocument({
-    data: buffer
-  }).promise;
-
-  // Mostra la prima pagina (nel tuo PDF è sufficiente se è di un mese)
-  const page = await pdf.getPage(1);
-
-  const container =
-    document.querySelector("#pdfPopup .pdf-container");
-
-  const viewport = page.getViewport({ scale: 1 });
-
-const scale =
-  container.clientWidth / viewport.width;
-
-
-// aumenta qualità PDF
-const qualityScale = 2;
-
-const scaledViewport =
-  page.getViewport({
-    scale: scale * qualityScale
-  });
-
-
-const dpr = window.devicePixelRatio || 1;
-
-
-// alta risoluzione per iPhone Retina
-
-canvas.width = scaledViewport.width * dpr;
-canvas.height = scaledViewport.height * dpr;
-
-
-canvas.style.width =
-  (scaledViewport.width / qualityScale) + "px";
-
-canvas.style.height =
-  (scaledViewport.height / qualityScale) + "px";
-ctx.setTransform(
-  dpr,
-  0,
-  0,
-  dpr,
-  0,
-  0
-);
-
-
-await page.render({
-
-  canvasContext: ctx,
-
-  viewport: scaledViewport
-
-}).promise;
-
+  toggle("pdfBtn", isAdmin);
+  toggle("statsBtn", isAdmin);
+  toggle("addBtn", isAdmin);
+  toggle("logoutBtn", isAdmin);
 }
 
 // ======================
@@ -3568,5 +3333,232 @@ window.sharePdf = async function () {
 
   }
 
+   };
+   
+// ======================
+// ⚙️ PAGINA AMMINISTRAZIONE
+// ======================
+
+window.openAdminPage = function () {
+
+  document.getElementById("app").style.display = "none";
+  document.getElementById("adminPage").style.display = "block";
+
+};
+
+window.closeAdminPage = function () {
+
+  document.getElementById("adminPage").style.display = "none";
+  document.getElementById("app").style.display = "block";
+
+};
+
+// ======================
+// CARICA NOMINATIVI FIRESTORE
+// ======================
+
+async function loadEmployeesFromFirestore() {
+  try {
+
+    window.employeesData = window.employeesData || {};
+
+    Object.keys(employeesData).forEach(key => {
+      delete employeesData[key];
+    });
+
+const snapshot = await firestore.getDocs(
+  firestore.collection(db, "employees")
+);
+
+    snapshot.forEach(doc => {
+      employeesData[doc.id] = doc.data();
+    });
+
+    console.log("👥 Nominativi caricati:", employeesData);
+
+  } catch (err) {
+    console.error("Errore caricamento employees:", err);
+  }
+}
+
+// ======================
+// GESTIONE NOMINATIVI
+// ======================
+
+window.openEmployeesPage = async function () {
+
+  document.getElementById("adminPage").style.display = "none";
+  document.getElementById("employeesPage").style.display = "block";
+
+  const container = document.getElementById("employeesList");
+  container.innerHTML = "<p>Caricamento...</p>";
+
+  await loadEmployeesFromFirestore();
+  loadEmployeesList();
+};
+
+window.closeEmployeesPage = function () {
+
+  document.getElementById("employeesPage").style.display = "none";
+  document.getElementById("adminPage").style.display = "block";
+
+};
+
+// ======================
+// LISTA NOMINATIVI
+// ======================
+
+window.loadEmployeesList = function () {
+
+  const container = document.getElementById("employeesList");
+  container.innerHTML = "";
+
+  Object.keys(employeesData).forEach(id => {
+
+    const emp = employeesData[id];
+
+    container.innerHTML += `
+      <div class="employee-row">
+
+        <span>${emp.name}</span>
+
+        <div class="employee-actions">
+
+          <button onclick="editEmployee('${id}')">✏️</button>
+          <button onclick="deleteEmployee('${id}')">🗑️</button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+};
+
+// ======================
+// EDIT / DELETE
+// ======================
+
+window.editEmployee = function (id) {
+
+  editingEmployeeId = id;
+
+  const emp = employeesData[id];
+
+  document.getElementById("empName").value = emp.name || "";
+  document.getElementById("empColor").value = emp.color || "#ffffff";
+  document.getElementById("empRole").value = emp.role || "USER";
+
+  document.querySelector("#employeePopup h2").textContent =
+    "✏️ Modifica Nominativo";
+
+  document.getElementById("employeePopup").style.display = "flex";
+
+};
+
+window.deleteEmployee = async function (id) {
+
+  const emp = employeesData[id];
+
+  const ok = confirm(
+    `Vuoi eliminare "${emp.name}"?`
+  );
+
+  if (!ok) return;
+
+  try {
+
+    await firestore.deleteDoc(
+      firestore.doc(db, "employees", id)
+    );
+
+    await loadEmployeesFromFirestore();
+    loadEmployeesList();
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Errore eliminazione nominativo");
+
+  }
+
+};
+
+// ======================
+// ➕ NUOVO NOMINATIVO (FIX IMPORTANTE)
+// ======================
+
+window.openEmployeeEditor = function () {
+
+  // reset campi
+  document.getElementById("empName").value = "";
+  document.getElementById("empColor").value = "#ffffff";
+  document.getElementById("empRole").value = "USER";
+
+  // apri popup
+  document.getElementById("employeePopup").style.display = "flex";
+};
+window.closeEmployeeEditor = function () {
+  document.getElementById("employeePopup").style.display = "none";
+};
+
+window.saveEmployee = async function () {
+
+  const name = document.getElementById("empName").value.trim();
+  const color = document.getElementById("empColor").value;
+  const role = document.getElementById("empRole").value;
+
+  if (!name) {
+    alert("Inserisci un nome");
+    return;
+  }
+
+  try {
+
+    if (editingEmployeeId) {
+
+      // ✏️ MODIFICA
+      await firestore.setDoc(
+        firestore.doc(db, "employees", editingEmployeeId),
+        {
+          name,
+          color,
+          role
+        },
+        { merge: true }
+      );
+
+    } else {
+
+      // ➕ NUOVO NOMINATIVO
+      await firestore.addDoc(
+        firestore.collection(db, "employees"),
+        {
+          name,
+          color,
+          role
+        }
+      );
+
+    }
+
+    // Chiudi popup
+    document.getElementById("employeePopup").style.display = "none";
+
+    editingEmployeeId = null;
+
+    document.querySelector("#employeePopup h2").textContent =
+      "👤 Nuovo Nominativo";
+
+    // Ricarica lista
+    await loadEmployeesFromFirestore();
+    loadEmployeesList();
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Errore salvataggio nominativo");
+
+  }
 
 };
