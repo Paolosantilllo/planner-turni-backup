@@ -102,6 +102,9 @@ window.CURRENT_USER = CURRENT_USER;
 window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
 window.IS_ADMIN = IS_ADMIN;
 
+// 🔥 aggiungi questo evento di “ready”
+window.dispatchEvent(new Event("authReady"));
+    
     console.log("LOGIN OK:", {
       user: CURRENT_USER,
       employee: CURRENT_EMPLOYEE,
