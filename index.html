@@ -560,40 +560,60 @@
 
     <div id="employeesList"></div>
 
-      <!-- POPUP EDIT NOMINATIVO -->
-    <div id="employeePopup" class="popup">
+     <!-- POPUP EDIT NOMINATIVO -->
+<div id="employeePopup" class="popup">
 
-      <div class="popup-content">
+  <div class="popup-content">
 
-        <div class="popup-header">
+    <div class="popup-header">
 
-          <h2>👤 Nuovo Nominativo</h2>
+      <h2>👤 Nuovo Nominativo</h2>
 
-          <button class="close-btn" onclick="closeEmployeeEditor()">
-            ✕
-          </button>
-
-        </div>
-
-        <label>Nome</label>
-        <input type="text" id="empName">
-
-        <label>Colore</label>
-        <input type="color" id="empColor">
-
-        <label>Ruolo</label>
-        <select id="empRole">
-          <option value="USER">USER</option>
-          <option value="ADMIN">ADMIN</option>
-        </select>
-
-        <button class="save-btn" onclick="saveEmployee()">
-          💾 Salva
-        </button>
-
-      </div>
+      <button class="close-btn" onclick="closeEmployeeEditor()">
+        ✕
+      </button>
 
     </div>
+
+    <label>Codice</label>
+    <input
+      type="text"
+      id="empCode"
+      maxlength="3"
+      style="text-transform:uppercase">
+
+    <label>Nome</label>
+    <input type="text" id="empName">
+
+    <label>Email</label>
+    <input
+      type="email"
+      id="empEmail"
+      placeholder="nome@email.it">
+
+    <!-- 🔥 AGGIUNGI QUESTO -->
+    <label>Password</label>
+    <input
+      type="password"
+      id="empPassword"
+      placeholder="Password iniziale">
+
+    <label>Colore</label>
+    <input type="color" id="empColor">
+
+    <label>Ruolo</label>
+    <select id="empRole">
+      <option value="USER">USER</option>
+      <option value="ADMIN">ADMIN</option>
+    </select>
+
+    <button class="save-btn" onclick="saveEmployee()">
+      💾 Salva
+    </button>
+
+  </div>
+
+</div>
   
    </div>
 
