@@ -1,5 +1,5 @@
 
-/* ======================
+ /* ======================
    IMPORT MODULI
 ====================== */
 
@@ -11,16 +11,29 @@ import {
   getDoc,
   getDocs,
   collection,
+  query,
+  where,
   setDoc,
   deleteDoc,
+  addDoc,
+  updateDoc,
+  onSnapshot,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
 import { EMPLOYEES, SHIFT_COLORS } from "./employees.js";
+
 import {
   initPush,
   listenForegroundNotifications
 } from "./push.js";
+
+/* ======================
+   FIREBASE AUTH (NUOVO)
+====================== */
+
+import { auth } from "./firebase.js";
+import { createUserWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 window.logout = logout;
 
@@ -28,37 +41,47 @@ window.logout = logout;
    INIT AUTH
 ====================== */
 
-initAuth((user) => {
+initAuth(async (user) => {
 
   window.CURRENT_USER = user;
 
-  // 🔥 dipendente corrente
-  window.CURRENT_EMPLOYEE = CURRENT_EMPLOYEE;
-document.getElementById("app").classList.add("show");
-   
-  // ======================
-  // 🔐 RUOLO ADMIN
-  // ======================
-  window.IS_ADMIN =
-    EMPLOYEES[CURRENT_EMPLOYEE]?.role === "ADMIN"
-    || CURRENT_EMPLOYEE === "A";
+  // 🔥 prendo dipendente da UID Firebase
+ const q = query(
+  collection(db, "employees"),
+  where("uid", "==", user.uid)
+);
 
-  // ======================
-  // UI INIT
-  // ======================
-  populateEmployeeSelects();
+const snap = await getDocs(q);
+
+ console.log("UID LOGIN:", user.uid);
+console.log("DOCUMENTI TROVATI:", snap.docs.map(d => d.data()));
+ 
+if (snap.empty) {
+  alert("Utente non registrato come dipendente");
+  return;
+}
+
+const employee = snap.docs[0].data();
+
+window.CURRENT_EMPLOYEE = employee.code;
+window.CURRENT_EMPLOYEE_DATA = employee;
+
+window.IS_ADMIN = employee.role === "ADMIN";
+
+  document.getElementById("app").classList.add("show");
+
+  await populateEmployeeSelects();
   setDefaultFilter();
   loadEvents();
   loadChangeRequests();
   loadNotificationBadge();
 
-setupAdminUI();
+  setupAdminUI();
 
   initPush(user);
   listenForegroundNotifications();
 
 });
-
 /* ======================
    STATO APP
 ====================== */
@@ -69,7 +92,8 @@ let savedEvents = [];
 let unsubscribeEvents = null;
 let eventsByDate = {};
 
-const employeesData = {};
+window.employeesData = window.employeesData || {};
+const employeesData = window.employeesData;
 
 let editingEmployeeId = null;
 
@@ -148,7 +172,9 @@ async function savePdfVersion(version, signature) {
 // CARICA NOMINATIVI
 // ======================
 
-function populateEmployeeSelects() {
+async function populateEmployeeSelects() {
+
+  await loadEmployeesFromFirestore();
 
   const filter =
     document.getElementById("employeeFilter");
@@ -161,7 +187,7 @@ function populateEmployeeSelects() {
     filter.innerHTML =
       '<option value="ALL">Tutti</option>';
 
-    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
+    Object.entries(employeesData).forEach(([id, emp]) => {
 
       filter.innerHTML += `
         <option value="${id}">
@@ -177,7 +203,7 @@ function populateEmployeeSelects() {
 
     employee.innerHTML = "";
 
-    Object.entries(EMPLOYEES).forEach(([id, emp]) => {
+    Object.entries(employeesData).forEach(([id, emp]) => {
 
       employee.innerHTML += `
         <option value="${id}">
@@ -694,7 +720,7 @@ box.appendChild(num);
 // ORDINA NOMINATIVI A-B-C-D
 // ======================
 
-events.sort((a,b)=>{
+events.sort((a, b) => {
 
   const order = {
     A: 1,
@@ -703,10 +729,9 @@ events.sort((a,b)=>{
     D: 4
   };
 
-  return order[a.employee] - order[b.employee];
+  return (order[a.employee] || 999) - (order[b.employee] || 999);
 
 });
-
 
 // ======================
 // EVENTI DEL GIORNO
@@ -723,40 +748,28 @@ events.forEach(ev => {
   el.classList.add("event");
 
 
-  const emp = EMPLOYEES[ev.employee];
+ const emp = employeesData[ev.employee];
 
+if (selectedEmployee === "ALL") {
 
-  if (selectedEmployee === "ALL") {
-
-
-    // Colore dipendente
-
-    if (emp?.color) {
-
-      el.classList.add(emp.color);
-
-    }
-
-
-  } else {
-
-
-    // Colore turno
-
-    const shiftKey = (ev.shift || "").trim();
-
-    const color = SHIFT_COLORS[shiftKey];
-
-
-    if (color) {
-
-      el.style.backgroundColor = color;
-
-    }
-
-
-  el.style.color = "#000";
+  // Colore del dipendente
+  if (emp?.color) {
+    el.style.backgroundColor = emp.color;
   }
+
+} else {
+
+  // Colore del turno
+  const shiftKey = (ev.shift || "").trim();
+  const color = SHIFT_COLORS[shiftKey];
+
+  if (color) {
+    el.style.backgroundColor = color;
+  }
+
+}
+
+el.style.color = "#000";
 
 
 
@@ -837,7 +850,7 @@ window.closePopup = function(){
 window.openPopupWithDate = function(date, events = []) {
 
   document.getElementById("startDate").value = date;
-  document.getElementById("endDate").value = date;
+  document.getElementById("endDate").value = date
 
   const employeeSelect = document.getElementById("employee");
 
@@ -1420,19 +1433,21 @@ pdf.text(
       })
     ];
 
-    const nominativi = Object.keys(EMPLOYEES);
+   const nominativi = Object.keys(employeesData);
 
-    const body = nominativi.map(nome => {
-      const row = [EMPLOYEES[nome].name];
+const body = nominativi.map(id => {
+  const row = [employeesData[id].name];
 
       for (let d = 1; d <= daysInMonthLoop; d++) {
 
         const dateStr =
           `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-        const ev = savedEvents.find(e =>
-          e.date === dateStr && e.employee === nome
-        );
+       const employeeId = id;
+
+const ev = savedEvents.find(e =>
+  e.date === dateStr && e.employee === employeeId
+);
 
         row.push(ev ? ev.shift : "");
       }
@@ -1918,14 +1933,14 @@ function loadChangeEmployees() {
 
   select.innerHTML = "";
 
-  Object.keys(EMPLOYEES).forEach(emp => {
+  Object.keys(employeesData).forEach(emp => {
 
     if (emp === CURRENT_EMPLOYEE) return;
 
     const option = document.createElement("option");
 
     option.value = emp;
-    option.textContent = EMPLOYEES[emp].name;
+    option.textContent = employeesData[emp].name;
 
     select.appendChild(option);
 
@@ -2524,25 +2539,19 @@ const message =
 
 
 await firestore.addDoc(
- firestore.collection(db,"notifications"),
-{
- employee:req.fromEmployee,
-
- email:
- EMPLOYEES[req.fromEmployee].email,
-
- message: message,
-
- read:false,
-
- createdAt:new Date()
-}
+  firestore.collection(db, "notifications"),
+  {
+    employee: req.fromEmployee,
+    email: employeesData[req.fromEmployee]?.email,
+    message: message,
+    read: false,
+    createdAt: new Date()
+  }
 );
 
-
 console.log(
-"📨 Notifica creata per:",
-req.fromEmployee
+  "📨 Notifica creata per:",
+  req.fromEmployee
 );
 
 
@@ -2556,11 +2565,9 @@ await firestore.addDoc(
  employee:req.toEmployee,
 
  email:
- EMPLOYEES[req.toEmployee].email,
-
- message:
- `✅ L'Admin ha approvato...`,
-
+employeesData[req.toEmployee]?.email,
+message:
+`✅ L'Admin ha approvato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
  read:false,
 
  createdAt:new Date()
@@ -2600,7 +2607,7 @@ await firestore.addDoc(
   employee:req.fromEmployee,
 
     email:
-EMPLOYEES[req.fromEmployee].email,
+employeesData[req.fromEmployee]?.email,
  
     message:
   `❌ L'Admin ha rifiutato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
@@ -2620,8 +2627,11 @@ await firestore.addDoc(
 
  firestore.collection(db,"notifications"),
 
- {
+{
   employee:req.toEmployee,
+
+  email:
+  employeesData[req.toEmployee]?.email,
 
   message:
   `❌ L'Admin ha rifiutato il cambio reperibilità ${req.fromDate} ➡️ ${req.toDate}`,
@@ -2630,7 +2640,7 @@ await firestore.addDoc(
 
   createdAt:new Date()
 
- }
+}
 
 );
 
@@ -2709,7 +2719,7 @@ Gestione richiesta
 </h2>
 
 <div class="request-employee-popup">
-${EMPLOYEES[req.fromEmployee].name}
+${employeesData[req.fromEmployee]?.name}
 </div>
 
 <div class="request-shift-popup">
@@ -2753,12 +2763,13 @@ list.appendChild(div);
         // 👑 LIVELLO ADMIN
         // ======================
 
-        if(
-          EMPLOYEES[CURRENT_EMPLOYEE].role === "ADMIN" &&
-          req.status === "PENDING_ADMIN"
-        ){
-
-
+       if(
+    employeesData[CURRENT_EMPLOYEE]?.role === "ADMIN" &&
+    req.status === "PENDING_ADMIN"
+)
+        
+        {
+          
           const div =
           document.createElement("div");
 
@@ -2775,11 +2786,11 @@ Gestione richiesta
 </h2>
 
 <div class="request-employee-popup">
-Richiedente: ${EMPLOYEES[req.fromEmployee].name}
+Richiedente: ${employeesData[req.fromEmployee]?.name}
 </div>
 
 <div class="request-employee-popup">
-Ricevente: ${EMPLOYEES[req.toEmployee].name}
+Ricevente: ${employeesData[req.toEmployee]?.name}
 </div>
 
 <div class="request-shift-popup">
@@ -2874,7 +2885,7 @@ if(action === "ACCEPT"){
 
 
   notificationText =
-  `✅ La richiesta di cambio è stata accettata da ${EMPLOYEES[req.toEmployee].name} ed inoltrata all'Admin`;
+  `✅ La richiesta di cambio è stata accettata da ${employeesData[req.toEmployee]?.name}ed inoltrata all'Admin`;
 
 
 
@@ -2891,9 +2902,8 @@ else{
   newStatus = "USER_REJECTED";
 
 
-  notificationText =
-  `❌ La richiesta di cambio è stata rifiutata da ${EMPLOYEES[req.toEmployee].name}`;
-
+ notificationText =
+  `❌ La richiesta di cambio è stata rifiutata da ${employeesData[req.toEmployee]?.name}`;
 
 }
 
@@ -2991,7 +3001,7 @@ snapshot.forEach(doc => {
 
   rows.push([
     formatDateIT(ev.date),
-    EMPLOYEES[ev.employee]?.name || "",
+    employeesData[ev.employee]?.name || "",
     ev.shift
   ]);
 
@@ -3014,7 +3024,6 @@ await openPdfPreview(pdf, "Turnazione_Festivi.pdf");
 // PDF CFI
 // ======================
 
-
 window.exportCfiPdf = async function(){
 
 const { jsPDF } = window.jspdf;
@@ -3026,12 +3035,12 @@ pdf.text("Totale CFI / CFI-REP", 14, 15);
 
 const stats = {};
 
-Object.keys(EMPLOYEES).forEach(id => {
- stats[id] = {
-  name: EMPLOYEES[id].name,
-  cfiF: 0,
-  cfiA: 0
-};
+Object.keys(employeesData).forEach(id => {
+  stats[id] = {
+    name: employeesData[id]?.name,
+    cfiF: 0,
+    cfiA: 0
+  };
 });
 
 const snapshot = await firestore.getDocs(
@@ -3091,25 +3100,6 @@ pdf.autoTable({
 // 👉 usa lo stesso sistema PDF con anteprima
 await openPdfPreview(pdf, "Totale_CFI_CFI-REP.pdf");
 
-};
-
-window.sharePdf = async function () {
-  if (!window.lastPdf) return;
-
-  const pdfBlob = window.lastPdf.output("blob");
-
-  const file = new File([pdfBlob], "CFI.pdf", {
-    type: "application/pdf",
-  });
-
-  if (navigator.share) {
-    await navigator.share({
-      files: [file],
-      title: "Totale CFI",
-    });
-  } else {
-    alert("Condivisione non supportata su questo dispositivo");
-  }
 };
 
 function setupAdminUI() {
@@ -3420,7 +3410,11 @@ window.loadEmployeesList = function () {
     container.innerHTML += `
       <div class="employee-row">
 
-        <span>${emp.name}</span>
+        <div>
+          <strong>${emp.name}</strong><br>
+          <small>${emp.email || ""}</small><br>
+          <small>${emp.role}</small>
+        </div>
 
         <div class="employee-actions">
 
@@ -3445,7 +3439,14 @@ window.editEmployee = function (id) {
 
   const emp = employeesData[id];
 
+  // Codice dipendente
+  document.getElementById("empCode").value = id;
+  document.getElementById("empCode").disabled = true;
+
+  // Altri campi
   document.getElementById("empName").value = emp.name || "";
+  document.getElementById("empEmail").value =
+  emp.email || "";
   document.getElementById("empColor").value = emp.color || "#ffffff";
   document.getElementById("empRole").value = emp.role || "USER";
 
@@ -3468,12 +3469,22 @@ window.deleteEmployee = async function (id) {
 
   try {
 
+    // 🗑️ elimina documento users
+    if (emp.uid) {
+      await firestore.deleteDoc(
+        firestore.doc(db, "users", emp.uid)
+      );
+    }
+
+    // 🗑️ elimina documento employees
     await firestore.deleteDoc(
       firestore.doc(db, "employees", id)
     );
 
     await loadEmployeesFromFirestore();
     loadEmployeesList();
+    await populateEmployeeSelects();
+    await renderCalendar();
 
   } catch (err) {
 
@@ -3490,59 +3501,133 @@ window.deleteEmployee = async function (id) {
 
 window.openEmployeeEditor = function () {
 
+  editingEmployeeId = null;
+
   // reset campi
+  document.getElementById("empCode").value = "";
+  document.getElementById("empCode").disabled = false;
+
   document.getElementById("empName").value = "";
+  document.getElementById("empEmail").value = "";
   document.getElementById("empColor").value = "#ffffff";
   document.getElementById("empRole").value = "USER";
+
+  // titolo popup
+  document.querySelector("#employeePopup h2").textContent =
+    "👤 Nuovo Nominativo";
 
   // apri popup
   document.getElementById("employeePopup").style.display = "flex";
 };
+
 window.closeEmployeeEditor = function () {
+
   document.getElementById("employeePopup").style.display = "none";
+
 };
 
 window.saveEmployee = async function () {
 
-  const name = document.getElementById("empName").value.trim();
-  const color = document.getElementById("empColor").value;
-  const role = document.getElementById("empRole").value;
+  const code = document.getElementById("empCode").value.trim().toUpperCase();
 
+const email = document.getElementById("empEmail")?.value.trim() || "";
+const password = document.getElementById("empPassword")?.value || "";
+const name = document.getElementById("empName").value.trim();
+const color = document.getElementById("empColor").value;
+const role = document.getElementById("empRole").value;
+ 
   if (!name) {
     alert("Inserisci un nome");
     return;
   }
 
+ if (!code) {
+  alert("Inserisci il codice dipendente");
+  return;
+}
+ 
   try {
 
+    // ======================
+    // ✏️ MODIFICA DIPENDENTE
+    // ======================
     if (editingEmployeeId) {
 
-      // ✏️ MODIFICA
-      await firestore.setDoc(
+      await firestore.updateDoc(
         firestore.doc(db, "employees", editingEmployeeId),
-        {
-          name,
-          color,
-          role
-        },
-        { merge: true }
-      );
-
-    } else {
-
-      // ➕ NUOVO NOMINATIVO
-      await firestore.addDoc(
-        firestore.collection(db, "employees"),
-        {
-          name,
-          color,
-          role
-        }
+       {
+  code,
+  name,
+  email,
+  color,
+  role
+}
       );
 
     }
 
-    // Chiudi popup
+    // ======================
+    // ➕ NUOVO DIPENDENTE (FIREBASE AUTH)
+    // ======================
+    else {
+
+      if (!email || !password) {
+        alert("Email e password obbligatorie");
+        return;
+      }
+
+     // 🔐 crea utente auth
+const userCredential =
+  await createUserWithEmailAndPassword(auth, email, password);
+
+const uid = userCredential.user.uid;
+
+
+// ======================
+// 📦 CREA PROFILO EMPLOYEE
+// ======================
+
+await firestore.setDoc(
+  firestore.doc(db, "employees", code),
+  {
+    code,
+    uid,
+    name,
+    email,
+    color,
+    role,
+    createdAt: new Date()
+  }
+);
+
+
+// ======================
+// 👤 CREA UTENTE LOGIN
+// ======================
+
+console.log("PRIMA USERS", uid, email, code);
+     
+console.log("CREO USERS:", uid);
+
+await firestore.setDoc(
+  firestore.doc(db, "users", uid),
+  {
+    uid: uid,
+    email: email,
+    employee: code,
+    role: role,
+    active: true,
+    createdAt: new Date()
+  }
+);
+
+console.log("USERS CREATO");
+    }
+
+    // ======================
+    // UI RESET
+    // ======================
+
     document.getElementById("employeePopup").style.display = "none";
 
     editingEmployeeId = null;
@@ -3550,15 +3635,19 @@ window.saveEmployee = async function () {
     document.querySelector("#employeePopup h2").textContent =
       "👤 Nuovo Nominativo";
 
-    // Ricarica lista
     await loadEmployeesFromFirestore();
     loadEmployeesList();
+    await populateEmployeeSelects();
+    await renderCalendar();
 
   } catch (err) {
 
-    console.error(err);
-    alert("Errore salvataggio nominativo");
+    console.error("Errore salvataggio nominativo:", err);
 
+    if (err.code === "auth/email-already-in-use") {
+      alert("Email già registrata");
+    } else {
+      alert("Errore salvataggio dipendente");
+    }
   }
-
 };
