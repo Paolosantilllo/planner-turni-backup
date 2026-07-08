@@ -17,7 +17,8 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import {
-  getAuth
+  getAuth,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import {
@@ -43,14 +44,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+
+const secondaryAuth = getAuth(secondaryApp);
+
 /* ======================
    SERVIZI CORE
 ====================== */
 
 export const auth = getAuth(app);
+export { secondaryAuth };
+
 export const db = getFirestore(app);
 export const messaging = getMessaging(app);
-
 /* ======================
    FIRESTORE API WRAPPER (IMPORTANTE)
 ====================== */
