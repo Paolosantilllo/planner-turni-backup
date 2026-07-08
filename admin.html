@@ -1,1 +1,63 @@
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Planner Turni</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="admin-container">
+
+    <h1>⚙️ Amministrazione</h1>
+
+    <button onclick="goHome()">← Torna alla Home</button>
+
+    <hr>
+
+    <div id="adminMenu">
+
+      <button onclick="openEmployees()">👥 Dipendenti</button>
+
+      <button onclick="openStats()">📊 Statistiche reperibilità</button>
+
+      <button onclick="exportPDF()">📄 Esporta PDF</button>
+
+      <button onclick="openSettings()">⚙️ Impostazioni</button>
+
+    </div>
+
+    <div id="adminContent"></div>
+
+  </div>
+
+  <!-- Firebase & Logica -->
+  <script src="firebase.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin.js"></script>
+
+  <!-- 🔐 BLOCCO ACCESSO ADMIN -->
+  <script>
+    auth.onAuthStateChanged(async (user) => {
+
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "employees", user.uid));
+
+      if (!userDoc.exists() || userDoc.data().ruolo !== "admin") {
+        alert("Accesso negato");
+        window.location.href = "index.html";
+      }
+
+    });
+  </script>
+
+</body>
+</html>
