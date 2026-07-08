@@ -31,9 +31,11 @@ import {
    FIREBASE AUTH (NUOVO)
 ====================== */
 
-import { auth } from "./firebase.js";
-import { createUserWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { auth, secondaryAuth } from "./firebase.js";
+import {
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 window.logout = logout;
 
@@ -3578,8 +3580,11 @@ const role = document.getElementById("empRole").value;
 
      // 🔐 crea utente auth
 const userCredential =
-  await createUserWithEmailAndPassword(auth, email, password);
-
+  await createUserWithEmailAndPassword(
+    secondaryAuth,
+    email,
+    password
+  );
 const uid = userCredential.user.uid;
 
 
